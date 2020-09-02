@@ -16,8 +16,13 @@ class Display
     using Window = std::shared_ptr<GLFWwindow>;
 
     protected:
+    
+    static const std::string vertexShader;
+    static const std::string fragmentShader;
 
     Window window_;
+
+    void init_gl();
 
     public:
 
