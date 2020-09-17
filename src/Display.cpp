@@ -99,6 +99,18 @@ void Display::set_image(int width, int height, const float* data)
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+void Display::set_buffer(int width, int height, GLuint bufferId)
+{
+    imageSize_.width  = width;
+    imageSize_.height = height;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, bufferId);
+    glBindTexture(GL_TEXTURE_2D, texId_);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+        0, GL_RGB, GL_FLOAT, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+}
+
 int Display::should_close() const
 {
     glfwPollEvents();
@@ -112,6 +124,18 @@ void Display::wait_for_close() const
         std::this_thread::sleep_for(100ms);
     }
 }
+
+GLuint Display::create_buffer(size_t size) const
+{
+    glfwMakeContextCurrent(window_.get());
+    GLuint id;
+    glGenBuffers(1, &id);
+    glBindBuffer(GL_ARRAY_BUFFER, id);
+    glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STREAM_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    return id;
+}
+
 
 void Display::draw()
 {
@@ -136,10 +160,6 @@ void Display::draw()
                             0.0,0.0,0.0,1.0};
     Shape wSize;
     glfwGetWindowSize(window_.get(), &wSize.width, &wSize.height);
-    std::cout << "Window :";
-    wSize.print(std::cout);
-    std::cout << "Image :";
-    imageSize_.print(std::cout);
 
     if(wSize.ratio() > imageSize_.ratio()) {
         viewMatrix[0] = imageSize_.ratio() / wSize.ratio();

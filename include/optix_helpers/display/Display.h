@@ -44,6 +44,7 @@ class Display
         }
     };
 
+
     protected:
     
     static const Source vertexShader;
@@ -63,9 +64,11 @@ class Display
     void terminate();
     
     void set_image(int width, int height, const float* data);
+    void set_buffer(int width, int height, GLuint bufferId);
 
     int should_close() const;
     void wait_for_close() const;
+    GLuint create_buffer(size_t size) const;
 
     void draw();
 };
