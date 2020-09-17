@@ -5,9 +5,20 @@
 #include <memory>
 #include <thread>
 
+#include <GL/glew.h>
+//#define GL3_PROTOTYPES 1
+#include <GL/gl.h>
+
+//#include <glm/glm.hpp>
+//#include <glm/gtx/transform.hpp>
+//#include <glm/gtc/type_ptr.hpp>
+
 #include <GLFW/glfw3.h>
 
-namespace optix_helpers {
+#include <optix_helpers/Source.h>
+#include <optix_helpers/display/utils.h>
+
+namespace optix_helpers { namespace display {
 
 class Display
 {
@@ -17,10 +28,11 @@ class Display
 
     protected:
     
-    static const std::string vertexShader;
-    static const std::string fragmentShader;
+    static const Source vertexShader;
+    static const Source fragmentShader;
 
     Window window_;
+    GLuint displayProgram_;
 
     void init_gl();
 
@@ -30,10 +42,14 @@ class Display
             const std::string& title = "optix render");
     static void terminate();
 
+
     int should_close() const;
     void wait_for_close() const;
+
+    void draw();
 };
 
-};
+}; //namespace display
+}; //namespace optix_helpers
 
 #endif //_DEF_OPTIX_HELPERS_DISPLAY_H_
