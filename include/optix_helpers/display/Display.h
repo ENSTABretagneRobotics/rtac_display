@@ -25,6 +25,24 @@ class Display
     public:
 
     using Window = std::shared_ptr<GLFWwindow>;
+    struct Shape
+    {
+        int width;
+        int height;
+
+        float ratio() const
+        {
+            return ((float)width/height);
+        }
+
+        void print(std::ostream& os)
+        {
+            os << "width : " << width
+               << ", height : " << height
+               << ", ratio : " << this->ratio()
+               << "\n";
+        }
+    };
 
     protected:
     
@@ -34,16 +52,17 @@ class Display
     Window window_;
     GLuint displayProgram_;
     GLuint texId_;
+    Shape  imageSize_;
 
     void init_texture();
 
     public:
 
-    Display(size_t width = 800, size_t height = 600,
+    Display(int width = 800, int height = 600,
             const std::string& title = "optix render");
     void terminate();
     
-    void set_image(size_t width, size_t height, const float* data);
+    void set_image(int width, int height, const float* data);
 
     int should_close() const;
     void wait_for_close() const;
@@ -53,5 +72,6 @@ class Display
 
 }; //namespace display
 }; //namespace optix_helpers
+
 
 #endif //_DEF_OPTIX_HELPERS_DISPLAY_H_

@@ -6,16 +6,14 @@ const Source Display::vertexShader = Source( R"(
 #version 430 core
 
 in vec2 point;
-in vec3 color;
-
 out vec2 uv;
-out vec3 c;
+uniform mat4 view;
 
 void main()
 {
-    gl_Position = vec4(point, 0.0, 1.0);
+    //gl_Position = vec4(point, 0.0, 1.0);
+    gl_Position = view*vec4(point, 0.0, 1.0);
     uv = 0.5f*(point.xy + 1.0f);
-    c = color;
 }
 )", "vertex");
 
@@ -24,22 +22,20 @@ const Source Display::fragmentShader = Source(R"(
 
 in vec2 uv;
 uniform sampler2D tex;
-in vec3 c;
 
 out vec4 outColor;
 
 void main()
 {
     outColor = texture(tex, uv);
-    //outColor = vec4(c, 1.0);
-    //outColor = vec4(uv, 0.0, 1.0);
 }
 )", "fragment");
 
-Display::Display(size_t width, size_t height, const std::string& title) :
+Display::Display(int width, int height, const std::string& title) :
     window_(NULL),
     displayProgram_(0),
-    texId_(0)
+    texId_(0),
+    imageSize_({0,0})
 {
     if(!glfwInit()) {
         throw std::runtime_error("GLFW initialization failure.");
@@ -90,8 +86,10 @@ void Display::terminate()
     glfwTerminate();
 }
 
-void Display::set_image(size_t width, size_t height, const float* data)
+void Display::set_image(int width, int height, const float* data)
 {
+    imageSize_.width  = width;
+    imageSize_.height = height;
     glBindTexture(GL_TEXTURE_2D, texId_);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
         0, GL_RGB, GL_FLOAT, data);
@@ -128,6 +126,26 @@ void Display::draw()
     
     
     glfwMakeContextCurrent(window_.get());
+
+    float viewMatrix[16] = {1.0,0.0,0.0,0.0,
+                            0.0,1.0,0.0,0.0,
+                            0.0,0.0,1.0,0.0,
+                            0.0,0.0,0.0,1.0};
+    Shape wSize;
+    glfwGetWindowSize(window_.get(), &wSize.width, &wSize.height);
+    std::cout << "Window :";
+    wSize.print(std::cout);
+    std::cout << "Image :";
+    imageSize_.print(std::cout);
+
+    if(wSize.ratio() > imageSize_.ratio()) {
+        viewMatrix[0] = imageSize_.ratio() / wSize.ratio();
+    }
+    else {
+        viewMatrix[5] = wSize.ratio() / imageSize_.ratio();
+    }
+    glViewport(0,0,wSize.width,wSize.height);
+
     glClear(GL_COLOR_BUFFER_BIT);
     ////glLineWidth(11);
     ////glColor3f(0.7,0.7,0.0);
@@ -138,6 +156,10 @@ void Display::draw()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors1);
     glEnableVertexAttribArray(1);
+
+    glUniformMatrix4fv(glGetUniformLocation(displayProgram_, "view"),
+        1, GL_FALSE, viewMatrix);
+
 
     glUniform1i(glGetUniformLocation(displayProgram_, "tex"), 0);
     glActiveTexture(GL_TEXTURE0);
@@ -160,4 +182,5 @@ void Display::draw()
 
 }; //namespace display
 }; //namespace optix_helpers
+
 

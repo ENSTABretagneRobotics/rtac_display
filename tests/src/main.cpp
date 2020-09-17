@@ -18,7 +18,7 @@ int main()
     //display.wait_for_close();
     while(!display.should_close()) {
         display.draw();
-        std::this_thread::sleep_for(100ms);
+        //std::this_thread::sleep_for(100ms);
     }
 
     return 0;
