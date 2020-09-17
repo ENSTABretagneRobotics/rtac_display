@@ -84,6 +84,9 @@ GLuint create_render_program(const Source& vertexShaderSource,
 
         throw std::runtime_error("Program link error :\n" + std::string(error.get()));
     }
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
     return programId;
 }
 }; //namespace display

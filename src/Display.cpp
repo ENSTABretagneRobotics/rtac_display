@@ -5,19 +5,16 @@ namespace optix_helpers { namespace display {
 const Source Display::vertexShader = Source( R"(
 #version 430 core
 
-in vec2 points;
+in vec2 point;
 in vec3 color;
-//in vec2 texPoints;
 
-uniform mat4 projection;
-//out vec2 texCoords;
+out vec2 uv;
 out vec3 c;
 
 void main()
 {
-    //gl_Position = projection * vec4(points, 0.0, 1.0);
-    //texPointsOut = texPoints;
-    gl_Position = vec4(points, 0.0, 1.0);
+    gl_Position = vec4(point, 0.0, 1.0);
+    uv = 0.5f*(point.xy + 1.0f);
     c = color;
 }
 )", "vertex");
@@ -25,22 +22,24 @@ void main()
 const Source Display::fragmentShader = Source(R"(
 #version 430 core
 
-//in vec2 texCoords;
-//uniform sampler2D tex;
+in vec2 uv;
+uniform sampler2D tex;
 in vec3 c;
 
 out vec4 outColor;
 
 void main()
 {
-    //outColor = texture(tex, texCoords);
-    outColor = vec4(c, 1.0);
+    outColor = texture(tex, uv);
+    //outColor = vec4(c, 1.0);
+    //outColor = vec4(uv, 0.0, 1.0);
 }
 )", "fragment");
 
 Display::Display(size_t width, size_t height, const std::string& title) :
     window_(NULL),
-    displayProgram_(0)
+    displayProgram_(0),
+    texId_(0)
 {
     if(!glfwInit()) {
         throw std::runtime_error("GLFW initialization failure.");
@@ -64,11 +63,39 @@ Display::Display(size_t width, size_t height, const std::string& title) :
     glClearColor(0.7,0.7,0.7,1.0);
     glViewport(0.0,0.0,width,height);
     displayProgram_ = create_render_program(vertexShader, fragmentShader);
+    this->init_texture();
+}
+
+void Display::init_texture()
+{
+    if(!texId_)
+        glGenTextures(1, &texId_);
+
+    glBindTexture(GL_TEXTURE_2D, texId_);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    //glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Display::terminate()
 {
+    glDeleteTextures(1, &texId_);
+    glDeleteProgram(displayProgram_);
     glfwTerminate();
+}
+
+void Display::set_image(size_t width, size_t height, const float* data)
+{
+    glBindTexture(GL_TEXTURE_2D, texId_);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+        0, GL_RGB, GL_FLOAT, data);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 int Display::should_close() const
@@ -87,7 +114,6 @@ void Display::wait_for_close() const
 
 void Display::draw()
 {
-    std::cout << "Drawing" << std::endl;
     float vertices[] = {-1.0,-1.0,
                          1.0,-1.0,
                          1.0, 1.0,
@@ -101,6 +127,7 @@ void Display::draw()
                               0, 2, 3};
     
     
+    glfwMakeContextCurrent(window_.get());
     glClear(GL_COLOR_BUFFER_BIT);
     ////glLineWidth(11);
     ////glColor3f(0.7,0.7,0.0);
@@ -111,6 +138,10 @@ void Display::draw()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors1);
     glEnableVertexAttribArray(1);
+
+    glUniform1i(glGetUniformLocation(displayProgram_, "tex"), 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texId_);
     
     //glDrawElements(GL_LINE_STRIP, 3, GL_UNSIGNED_INT, indexes);
     //glDrawElements(GL_LINE_STRIP, 4, GL_UNSIGNED_INT, indexes);
@@ -118,6 +149,7 @@ void Display::draw()
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indexes);
     //glDrawArrays(GL_TRIANGLES, 0, 3);
     
+    glBindTexture(GL_TEXTURE_2D, 0);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
 

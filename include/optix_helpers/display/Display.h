@@ -33,15 +33,17 @@ class Display
 
     Window window_;
     GLuint displayProgram_;
+    GLuint texId_;
 
-    void init_gl();
+    void init_texture();
 
     public:
 
     Display(size_t width = 800, size_t height = 600,
             const std::string& title = "optix render");
-    static void terminate();
-
+    void terminate();
+    
+    void set_image(size_t width, size_t height, const float* data);
 
     int should_close() const;
     void wait_for_close() const;
