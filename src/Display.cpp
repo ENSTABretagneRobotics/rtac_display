@@ -13,7 +13,9 @@ void main()
 {
     //gl_Position = vec4(point, 0.0, 1.0);
     gl_Position = view*vec4(point, 0.0, 1.0);
-    uv = 0.5f*(point.xy + 1.0f);
+    //uv = 0.5f*(point.xy + 1.0f);
+    uv.x = 0.5f*(point.x + 1.0f);
+    uv.y = 0.5f*(1.0f - point.y);
 }
 )", "vertex");
 
@@ -55,8 +57,9 @@ Display::Display(int width, int height, const std::string& title) :
     //if(GLEW_ARB_compute_shader)
     //    std::cout << "Compute shader ok !" << std::endl;
 
-    //glClearColor(0.0,0.0,0.0,1.0);
-    glClearColor(0.7,0.7,0.7,1.0);
+    glClearColor(0.0,0.0,0.0,1.0);
+    //glClearColor(0.7,0.7,0.7,1.0);
+
     glViewport(0.0,0.0,width,height);
     displayProgram_ = create_render_program(vertexShader, fragmentShader);
     this->init_texture();

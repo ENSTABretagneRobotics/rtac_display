@@ -1,8 +1,15 @@
 project(optix_display_test VERSION 0.1)
 
-add_executable(display_test
-    src/main.cpp
+list(APPEND test_names
+    base_test
+    animation_test
 )
-target_link_libraries(display_test
+list(APPEND test_deps
+    optix_helpers
     optix_helpers_display
 )
+
+foreach(name ${test_names})
+    add_executable(${name} src/${name}.cpp)
+    target_link_libraries(${name} ${test_deps})
+endforeach()
