@@ -47,9 +47,12 @@ int main()
             auto t1 = chrono::high_resolution_clock::now();
             chrono::duration<double> ellapsed = t1 - t0;
             cout << "Frame Rate : " << count / ellapsed.count() << "\r";
+            count = 0;
+            t0 = chrono::high_resolution_clock::now();
         }
         count++;
     }
+    cout << endl;
 
     return 0;
 }

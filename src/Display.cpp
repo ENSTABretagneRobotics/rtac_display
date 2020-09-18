@@ -60,6 +60,9 @@ Display::Display(int width, int height, const std::string& title) :
     glClearColor(0.0,0.0,0.0,1.0);
     //glClearColor(0.7,0.7,0.7,1.0);
 
+    // to measure fps
+    glfwSwapInterval(0);
+
     glViewport(0.0,0.0,width,height);
     displayProgram_ = create_render_program(vertexShader, fragmentShader);
     this->init_texture();
