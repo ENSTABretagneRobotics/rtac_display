@@ -29,7 +29,7 @@ int main()
     for(int i = 0; i < 3*W*H; i++) data[i] = 0.7;
 
     scene.view()->look_at({0.0,0.0,0.0}, { 2.0, 5.0, 4.0});
-    float dangle = 0.01;
+    float dangle = 0.001;
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));
 
     int count = 0;
