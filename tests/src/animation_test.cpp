@@ -8,7 +8,6 @@ using Pose = rtac::types::Pose<float>;
 using Quaternion = rtac::types::Quaternion<float>;
 
 #include <optix_helpers/samples/scenes.h>
-#include <optix_helpers/samples/utils.h>
 using namespace optix_helpers::samples;
 
 #include <optix_helpers/display/Display.h>
@@ -21,12 +20,7 @@ int main()
 
     Display display;
     
-    //GLuint renderVbo = display.create_buffer(3*sizeof(float)*W*H);
-
     scenes::Scene0<RenderBufferGL> scene(W,H);
-
-    //std::vector<float> data(3*W*H);
-    //for(int i = 0; i < 3*W*H; i++) data[i] = 0.7;
 
     scene.view()->look_at({0.0,0.0,0.0}, { 2.0, 5.0, 4.0});
     float dangle = 0.001;
@@ -38,8 +32,6 @@ int main()
         scene.view()->set_pose(R * scene.view()->pose());
         
         scene.launch();
-        //scene.view()->write_data(reinterpret_cast<uint8_t*>(data.data()));
-        //display.set_image(W,H,data.data());
         display.set_buffer(W,H,scene.render_buffer()->gl_id());
         display.draw();
         

@@ -53,7 +53,7 @@ Display::Display(int width, int height, const std::string& title) :
     GLenum initGlewStatus(glewInit());
     if(initGlewStatus != GLEW_OK)
         std::cout << "Failed to initialize glew" << std::endl;
-    std::cout << glGetString(GL_VERSION) << std::endl;
+    //std::cout << glGetString(GL_VERSION) << std::endl;
     //if(GLEW_ARB_compute_shader)
     //    std::cout << "Compute shader ok !" << std::endl;
 
