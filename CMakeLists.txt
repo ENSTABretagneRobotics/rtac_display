@@ -11,11 +11,13 @@ endif()
 
 list(APPEND optix_helpers_display_PUBLIC_HEADERS
     include/optix_helpers/display/Display.h
+    include/optix_helpers/display/RenderBufferGL.h
 )
 
 add_library(optix_helpers_display SHARED
     src/utils.cpp
     src/Display.cpp
+    src/RenderBufferGL.cpp
 )
 target_include_directories(optix_helpers_display PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
