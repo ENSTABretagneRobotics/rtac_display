@@ -33,6 +33,9 @@ GLuint RenderBufferGLObj::gl_id()
     return vboId_;
 }
 
+RenderBufferGL::RenderBufferGL()
+{}
+
 RenderBufferGL::RenderBufferGL(const Context& context, RTformat format,
                                const std::string& name) :
     Handle<RenderBufferGLObj>(context, format, name)

@@ -36,6 +36,7 @@ class RenderBufferGL : public Handle<RenderBufferGLObj>
 {
     public:
     
+    RenderBufferGL();
     RenderBufferGL(const Context& context, RTformat format,
                    const std::string& name);
 
