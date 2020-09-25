@@ -12,6 +12,7 @@ endif()
 list(APPEND optix_helpers_display_PUBLIC_HEADERS
     include/optix_helpers/display/utils.h
     include/optix_helpers/display/View.h
+    include/optix_helpers/display/ImageView.h
     include/optix_helpers/display/Renderer.h
     include/optix_helpers/display/Display.h
     include/optix_helpers/display/RenderBufferGL.h
@@ -20,6 +21,7 @@ list(APPEND optix_helpers_display_PUBLIC_HEADERS
 add_library(optix_helpers_display SHARED
     src/utils.cpp
     src/View.cpp
+    src/ImageView.cpp
     src/Renderer.cpp
     src/Display.cpp
     src/RenderBufferGL.cpp
