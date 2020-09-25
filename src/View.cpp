@@ -7,12 +7,12 @@ ViewObj::ViewObj(const Mat4& mat) :
 {}
 
 
-void ViewObj::update_projection(size_t screenWidth, size_t screenHeight)
+void ViewObj::update_projection(const Shape& scree)
 {}
 
-ViewObj::Mat4 ViewObj::view_matrix(size_t screenWidth, size_t screenHeight)
+ViewObj::Mat4 ViewObj::view_matrix(const Shape& screen)
 {
-    this->update_projection(screenWidth, screenHeight);
+    this->update_projection(screen);
     return this->view_matrix();
 }
 
