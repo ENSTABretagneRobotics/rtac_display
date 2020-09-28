@@ -24,6 +24,12 @@ void ImageViewObj::set_image_shape(const Shape& image)
 {
     image_ = image;
 }
+
+ImageViewObj::Shape ImageViewObj::image_shape() const
+{
+    return image_;
+}
+
 //ImageView::ImageView(const Shape& image) :
 //    Handle<ImageViewObj>(image)
 //{}

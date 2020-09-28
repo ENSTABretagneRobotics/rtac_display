@@ -29,7 +29,7 @@ class RenderBufferGLObj : public RenderBufferObj
                       const std::string& name);
 
     virtual void set_size(size_t width, size_t height);
-    GLuint gl_id();
+    GLuint gl_id() const;
 };
 
 using RenderBufferGL = Handle<RenderBufferGLObj>;

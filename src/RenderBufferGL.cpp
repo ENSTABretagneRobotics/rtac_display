@@ -28,7 +28,7 @@ void RenderBufferGLObj::set_size(size_t width, size_t height)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-GLuint RenderBufferGLObj::gl_id()
+GLuint RenderBufferGLObj::gl_id() const
 {
     return vboId_;
 }

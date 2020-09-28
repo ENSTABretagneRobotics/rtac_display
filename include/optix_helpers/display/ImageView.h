@@ -26,6 +26,8 @@ class ImageViewObj : public ViewObj
     
     virtual void update_projection(const Shape& screen);
     void set_image_shape(const Shape& image);
+
+    Shape image_shape() const;
 };
 
 using ImageView = Handle<ImageViewObj>;

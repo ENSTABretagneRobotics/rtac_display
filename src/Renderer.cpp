@@ -8,6 +8,11 @@ RendererObj::RendererObj(const Source& vertexShader, const Source& fragmentShade
     view_(view)
 {}
 
+void RendererObj::set_screen_size(const Shape& screen)
+{
+    view_->update_projection(screen);
+}
+
 void RendererObj::draw()
 {}
 

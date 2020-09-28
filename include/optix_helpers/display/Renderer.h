@@ -15,6 +15,10 @@ namespace optix_helpers { namespace display {
 
 class RendererObj
 {
+    public:
+
+    using Shape = ViewObj::Shape;
+
     protected:
     
     GLuint renderProgram_;
@@ -24,7 +28,8 @@ class RendererObj
 
     RendererObj(const Source& vertexShader, const Source& fragmentShader,
                 const View& view);
-
+    
+    virtual void set_screen_size(const Shape& screen);
     virtual void draw();
 };
 
