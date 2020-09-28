@@ -6,7 +6,15 @@
 
 namespace optix_helpers { namespace display {
 
-class ImageRendererObj : public Handle
+class ImageRendererObj : public RendererObj
+{
+    public:
+
+    using Mat4  = ImageViewObj::Mat4;
+    using Shape = ImageViewObj::Shape;
+
+    ImageRendererObj();
+};
 
 }; //namespace display
 }; //namespace optix_helpers

@@ -28,15 +28,16 @@ class RendererObj
     virtual void draw();
 };
 
-class Renderer : Handle<RendererObj>
-{
-    public:
-
-    Renderer();
-    Renderer(const Source& vertexShader, const Source& fragmentShader,
-             const View& view);
-    Renderer(const std::shared_ptr<RendererObj>& obj);
-};
+using Renderer = Handle<RendererObj>;
+//class Renderer : Handle<RendererObj>
+//{
+//    public:
+//
+//    Renderer();
+//    Renderer(const Source& vertexShader, const Source& fragmentShader,
+//             const View& view);
+//    Renderer(const std::shared_ptr<RendererObj>& obj);
+//};
 
 }; //namespace display
 }; //namespace optix_helpers

@@ -24,14 +24,14 @@ void ImageViewObj::set_image_shape(const Shape& image)
 {
     image_ = image;
 }
-ImageView::ImageView(const Shape& image) :
-    Handle<ImageViewObj>(image)
-{}
-
-ImageView::operator View()
-{
-    return View(std::dynamic_pointer_cast<ViewObj>(this->obj_));
-}
+//ImageView::ImageView(const Shape& image) :
+//    Handle<ImageViewObj>(image)
+//{}
+//
+//ImageView::operator View()
+//{
+//    return View(std::dynamic_pointer_cast<ViewObj>(this->obj_));
+//}
 
 }; //namespace display
 }; //namespace optix_helpers
