@@ -32,17 +32,18 @@ class RenderBufferGLObj : public RenderBufferObj
     GLuint gl_id();
 };
 
-class RenderBufferGL : public Handle<RenderBufferGLObj>
-{
-    public:
-    
-    RenderBufferGL();
-    RenderBufferGL(const Context& context, RTformat format,
-                   const std::string& name);
-
-    operator RenderBuffer();
-    operator Buffer();
-};
+using RenderBufferGL = Handle<RenderBufferGLObj>;
+//class RenderBufferGL : public Handle<RenderBufferGLObj>
+//{
+//    public:
+//    
+//    RenderBufferGL();
+//    RenderBufferGL(const Context& context, RTformat format,
+//                   const std::string& name);
+//
+//    operator RenderBuffer();
+//    operator Buffer();
+//};
 
 }; //namespace display
 }; //namespace optix_helpers

@@ -33,23 +33,23 @@ GLuint RenderBufferGLObj::gl_id()
     return vboId_;
 }
 
-RenderBufferGL::RenderBufferGL()
-{}
-
-RenderBufferGL::RenderBufferGL(const Context& context, RTformat format,
-                               const std::string& name) :
-    Handle<RenderBufferGLObj>(context, format, name)
-{}
-
-RenderBufferGL::operator RenderBuffer()
-{
-    return RenderBuffer(std::dynamic_pointer_cast<RenderBufferObj>(this->obj_));
-}
-
-RenderBufferGL::operator Buffer()
-{
-    return Buffer(std::dynamic_pointer_cast<BufferObj>(this->obj_));
-}
+//RenderBufferGL::RenderBufferGL()
+//{}
+//
+//RenderBufferGL::RenderBufferGL(const Context& context, RTformat format,
+//                               const std::string& name) :
+//    Handle<RenderBufferGLObj>(context, format, name)
+//{}
+//
+//RenderBufferGL::operator RenderBuffer()
+//{
+//    return RenderBuffer(std::dynamic_pointer_cast<RenderBufferObj>(this->obj_));
+//}
+//
+//RenderBufferGL::operator Buffer()
+//{
+//    return Buffer(std::dynamic_pointer_cast<BufferObj>(this->obj_));
+//}
 
 }; //namespace display
 }; //namespace optix_helpers
