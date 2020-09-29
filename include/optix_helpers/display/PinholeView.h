@@ -20,11 +20,19 @@ class PinholeViewObj : public View3DObj
     protected:
 
     float fovy_;
+    float zNear_;
+    float zFar_;
+    virtual void update_projection();
 
     public:
     
-    PinholeViewObj(float fovy = 90.0f, const Pose& pose = Pose());
-    virtual void update_projection(const Shape& screen);
+    PinholeViewObj(float fovy = 90.0f, const Pose& pose = Pose()
+                   float zNear = 0.1f, float zFar = 1000.0f);
+
+    void set_fovy(float fovy);
+    void set_range(float zNear, float zFar);
+
+    float fovy() const;
 };
 using PinholeView = Handle<PinholeViewObj>;
 
