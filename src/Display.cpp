@@ -114,6 +114,16 @@ void Display::set_buffer(int width, int height, GLuint bufferId)
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 }
 
+Display::Shape Display::window_shape() const
+{
+    Shape wSize;
+    int width, height;
+    glfwGetWindowSize(window_.get(), &width, &height);
+    wSize.width  = width;
+    wSize.height = height;
+    return wSize;
+}
+
 int Display::should_close() const
 {
     glfwPollEvents();
@@ -139,8 +149,33 @@ GLuint Display::create_buffer(size_t size) const
     return id;
 }
 
+void Display::add_renderer(const Renderer& renderer)
+{
+    renderers_.push_back(renderer);
+}
 
 void Display::draw()
+{
+    glfwMakeContextCurrent(window_.get());
+    Shape wSize = this->window_shape();
+
+    glViewport(0,0,wSize.width,wSize.height);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    //this->draw_old();
+    
+    for(auto renderer : renderers_) {
+        if(renderer) {
+            renderer->set_screen_size(wSize);
+            renderer->draw();
+        }
+    }
+
+    glfwSwapBuffers(window_.get());
+}
+
+
+void Display::draw_old()
 {
     float vertices[] = {-1.0,-1.0,
                          1.0,-1.0,
@@ -162,13 +197,16 @@ void Display::draw()
                             0.0,0.0,1.0,0.0,
                             0.0,0.0,0.0,1.0};
     Shape wSize;
-    glfwGetWindowSize(window_.get(), &wSize.width, &wSize.height);
+    int width, height;
+    glfwGetWindowSize(window_.get(), &width, &height);
+    wSize.width  = width;
+    wSize.height = height;
 
-    if(wSize.ratio() > imageSize_.ratio()) {
-        viewMatrix[0] = imageSize_.ratio() / wSize.ratio();
+    if(wSize.ratio<float>() > imageSize_.ratio<float>()) {
+        viewMatrix[0] = imageSize_.ratio<float>() / wSize.ratio<float>();
     }
     else {
-        viewMatrix[5] = wSize.ratio() / imageSize_.ratio();
+        viewMatrix[5] = wSize.ratio<float>() / imageSize_.ratio<float>();
     }
     glViewport(0,0,wSize.width,wSize.height);
 

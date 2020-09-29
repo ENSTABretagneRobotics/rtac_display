@@ -12,6 +12,7 @@ using namespace optix_helpers::samples;
 
 #include <optix_helpers/display/Display.h>
 #include <optix_helpers/display/RenderBufferGL.h>
+#include <optix_helpers/display/ImageRenderer.h>
 using namespace optix_helpers::display;
 
 int main()
@@ -25,6 +26,9 @@ int main()
     scene.view()->look_at({0.0,0.0,0.0}, { 2.0, 5.0, 4.0});
     float dangle = 0.001;
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));
+    
+    auto imageRenderer = ImageRenderer::New();
+    display.add_renderer(imageRenderer);
 
     int count = 0;
     auto t0 = chrono::high_resolution_clock::now();
@@ -32,7 +36,8 @@ int main()
         scene.view()->set_pose(R * scene.view()->pose());
         
         scene.launch();
-        display.set_buffer(W,H,scene.render_buffer()->gl_id());
+        //display.set_buffer(W,H,scene.render_buffer()->gl_id());
+        imageRenderer->set_image(scene.render_buffer());
         display.draw();
         
         if(count >= 10) {

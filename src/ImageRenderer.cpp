@@ -34,7 +34,7 @@ void main()
 )", "fragment");
 
 ImageRendererObj::ImageRendererObj() :
-    RendererObj(vertexShader, fragmentShader, ImageView()),
+    RendererObj(vertexShader, fragmentShader, ImageView::New()),
     texId_(0),
     imageView_(std::dynamic_pointer_cast<ImageViewObj>(view_.ptr()))
 {

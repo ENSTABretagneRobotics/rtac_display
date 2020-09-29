@@ -31,7 +31,6 @@ class ImageRendererObj : public RendererObj
     
     void set_image(const Shape& imageSize, GLuint buffer);
     void set_image(const RenderBufferGL& buffer);
-    void set_screen_shape(const Shape& screen);
     
     virtual void draw();
 };
