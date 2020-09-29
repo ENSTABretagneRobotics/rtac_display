@@ -19,15 +19,16 @@ class ViewObj
 
     protected:
 
-    Mat4 projectionMatrix_;
+    Shape screenSize_;
+    Mat4  projectionMatrix_;
+
+    virtual void update_projection();
 
     public:
 
     ViewObj(const Mat4& mat = Mat4::Identity());
     
-    virtual void update_projection(const Shape& screen);
-    virtual Mat4 view_matrix(const Shape& screen);
-
+    void set_screen_size(const Shape& screen);
     virtual Mat4 view_matrix() const;
 };
 using View = Handle<ViewObj>;

@@ -83,7 +83,7 @@ void Display::draw()
     Shape wSize = this->window_shape();
 
     for(auto view : views_) {
-        view->update_projection(wSize);
+        view->set_screen_size(wSize);
     }
 
     glViewport(0,0,wSize.width,wSize.height);

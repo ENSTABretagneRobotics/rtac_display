@@ -3,17 +3,18 @@
 namespace optix_helpers { namespace display {
 
 ViewObj::ViewObj(const Mat4& mat) :
+    screenSize_({1,1}),
     projectionMatrix_(mat)
 {}
 
 
-void ViewObj::update_projection(const Shape& scree)
+void ViewObj::update_projection()
 {}
 
-ViewObj::Mat4 ViewObj::view_matrix(const Shape& screen)
+void ViewObj::set_screen_size(const Shape& screen)
 {
-    this->update_projection(screen);
-    return this->view_matrix();
+    screenSize_ = screen;
+    this->update_projection();
 }
 
 ViewObj::Mat4 ViewObj::view_matrix() const

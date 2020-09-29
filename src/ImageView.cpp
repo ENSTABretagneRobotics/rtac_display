@@ -7,11 +7,11 @@ ImageViewObj::ImageViewObj(const Shape& image) :
     image_(image)
 {}
 
-void ImageViewObj::update_projection(const Shape& screen)
+void ImageViewObj::update_projection()
 {
     projectionMatrix_ = Mat4::Identity();
     
-    float metaRatio = screen.ratio<float>() / image_.ratio<float>();
+    float metaRatio = screenSize_.ratio<float>() / image_.ratio<float>();
     if(metaRatio > 1.0f) {
         projectionMatrix_(0,0) = 1.0f / metaRatio;
     }
