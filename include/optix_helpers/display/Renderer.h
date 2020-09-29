@@ -22,17 +22,16 @@ class RendererObj
     protected:
     
     GLuint renderProgram_;
-    View   view_;
+    mutable View   view_;
 
     public:
 
     RendererObj(const Source& vertexShader, const Source& fragmentShader,
                 const View& view);
     
-    virtual void set_screen_size(const Shape& screen);
     virtual void draw();
 
-    View view();
+    View view() const;
 };
 
 using Renderer = Handle<RendererObj>;

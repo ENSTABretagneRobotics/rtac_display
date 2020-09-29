@@ -62,6 +62,11 @@ void Display::wait_for_close() const
 }
 void Display::add_view(const View& view)
 {
+    for(auto v : views_) {
+        if(v.is(view)) {
+            return;
+        }
+    }
     views_.push_back(view);
 }
 
@@ -69,6 +74,7 @@ void Display::add_view(const View& view)
 void Display::add_renderer(const Renderer& renderer)
 {
     renderers_.push_back(renderer);
+    views_.push_back(renderer->view());
 }
 
 void Display::draw()
