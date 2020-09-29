@@ -19,6 +19,9 @@ class RendererObj
 
     using Shape = ViewObj::Shape;
 
+    static const Source vertexShader;
+    static const Source fragmentShader;
+
     protected:
     
     GLuint renderProgram_;
@@ -26,10 +29,12 @@ class RendererObj
 
     public:
 
-    RendererObj(const Source& vertexShader, const Source& fragmentShader,
-                const View& view);
+    RendererObj(const Source& vertexShader = vertexShader,
+                const Source& fragmentShader = fragmentShader,
+                const View& view = View::New());
     
     virtual void draw();
+    void set_view(const View& view) const;
 
     View view() const;
 };
