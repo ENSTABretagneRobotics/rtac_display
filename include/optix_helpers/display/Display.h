@@ -29,11 +29,13 @@ class Display
 
     using Window    = std::shared_ptr<GLFWwindow>;
     using Shape     = ViewObj::Shape;
+    using Views     = std::vector<View>;
     using Renderers = std::vector<Renderer>;
 
     protected:
     
     Window    window_;
+    Views     views_;
     Renderers renderers_;
 
     public:
@@ -45,7 +47,8 @@ class Display
     Shape window_shape() const;
     int should_close() const;
     void wait_for_close() const;
-
+    
+    void add_view(const View& view);
     void add_renderer(const Renderer& renderer);
     void draw();
 };

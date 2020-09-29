@@ -16,6 +16,11 @@ void RendererObj::set_screen_size(const Shape& screen)
 void RendererObj::draw()
 {}
 
+View RendererObj::view()
+{
+    return view_;
+}
+
 }; //namespace display
 }; //namespace optix_helpers
 

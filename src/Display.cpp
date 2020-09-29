@@ -60,6 +60,11 @@ void Display::wait_for_close() const
         std::this_thread::sleep_for(100ms);
     }
 }
+void Display::add_view(const View& view)
+{
+    views_.push_back(view);
+}
+
 
 void Display::add_renderer(const Renderer& renderer)
 {
@@ -71,12 +76,15 @@ void Display::draw()
     glfwMakeContextCurrent(window_.get());
     Shape wSize = this->window_shape();
 
+    for(auto view : views_) {
+        view->update_projection(wSize);
+    }
+
     glViewport(0,0,wSize.width,wSize.height);
     glClear(GL_COLOR_BUFFER_BIT);
-    
+
     for(auto renderer : renderers_) {
         if(renderer) {
-            renderer->set_screen_size(wSize);
             renderer->draw();
         }
     }

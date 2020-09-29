@@ -29,6 +29,7 @@ int main()
     
     auto imageRenderer = ImageRenderer::New();
     display.add_renderer(imageRenderer);
+    display.add_view(imageRenderer->view());
 
     int count = 0;
     auto t0 = chrono::high_resolution_clock::now();

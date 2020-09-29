@@ -31,6 +31,8 @@ class RendererObj
     
     virtual void set_screen_size(const Shape& screen);
     virtual void draw();
+
+    View view();
 };
 
 using Renderer = Handle<RendererObj>;
