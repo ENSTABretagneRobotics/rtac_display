@@ -30,17 +30,7 @@ class ViewObj
 
     virtual Mat4 view_matrix() const;
 };
-
 using View = Handle<ViewObj>;
-//class View : public Handle<ViewObj>
-//{
-//    public:
-//
-//    using Mat4 = ViewObj::Mat4;
-//
-//    View(const Mat4& mat = Mat4::Identity());
-//    View(const std::shared_ptr<ViewObj>& obj);
-//};
 
 }; //namespace display
 }; //namespace optix_helpers

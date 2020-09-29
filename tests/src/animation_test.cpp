@@ -36,7 +36,6 @@ int main()
         scene.view()->set_pose(R * scene.view()->pose());
         
         scene.launch();
-        //display.set_buffer(W,H,scene.render_buffer()->gl_id());
         imageRenderer->set_image(scene.render_buffer());
         display.draw();
         

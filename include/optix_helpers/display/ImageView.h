@@ -31,17 +31,6 @@ class ImageViewObj : public ViewObj
 };
 
 using ImageView = Handle<ImageViewObj>;
-//class ImageView : public Handle<ImageViewObj>
-//{
-//    public:
-//
-//    using Mat4  = ImageViewObj::Mat4;
-//    using Shape = ImageViewObj::Shape;
-//
-//    ImageView(const Shape& image = {1,1});
-//
-//    operator View();
-//};
 
 }; //namespace display
 }; //namespace optix_helpers

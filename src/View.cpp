@@ -21,15 +21,6 @@ ViewObj::Mat4 ViewObj::view_matrix() const
     return projectionMatrix_;
 }
 
-//View::View(const Mat4& mat) :
-//    Handle<ViewObj>(mat)
-//{}
-//
-//View::View(const std::shared_ptr<ViewObj>& obj) :
-//    Handle<ViewObj>(obj)
-//{}
-    
-
 }; //namespace display
 }; //namespace optix_helpers
 

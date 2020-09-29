@@ -33,34 +33,20 @@ class Display
 
     protected:
     
-    static const Source vertexShader;
-    static const Source fragmentShader;
-
     Window    window_;
     Renderers renderers_;
-
-    GLuint displayProgram_;
-    GLuint texId_;
-    Shape  imageSize_;
-
-    void init_texture();
 
     public:
 
     Display(int width = 800, int height = 600,
             const std::string& title = "optix render");
     void terminate();
-    
-    void set_image(int width, int height, const float* data);
-    void set_buffer(int width, int height, GLuint bufferId);
 
     Shape window_shape() const;
     int should_close() const;
     void wait_for_close() const;
-    GLuint create_buffer(size_t size) const;
 
     void add_renderer(const Renderer& renderer);
-    void draw_old();
     void draw();
 };
 

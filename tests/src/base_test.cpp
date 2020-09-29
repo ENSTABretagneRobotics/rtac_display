@@ -14,7 +14,6 @@ int main()
                             0.0,1.0,0.0,
                             0.0,0.0,1.0};
     
-    display.set_image(2,2,data);
     //display.wait_for_close();
     while(!display.should_close()) {
         display.draw();

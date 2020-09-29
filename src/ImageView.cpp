@@ -30,15 +30,6 @@ ImageViewObj::Shape ImageViewObj::image_shape() const
     return image_;
 }
 
-//ImageView::ImageView(const Shape& image) :
-//    Handle<ImageViewObj>(image)
-//{}
-//
-//ImageView::operator View()
-//{
-//    return View(std::dynamic_pointer_cast<ViewObj>(this->obj_));
-//}
-
 }; //namespace display
 }; //namespace optix_helpers
 
