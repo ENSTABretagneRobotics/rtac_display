@@ -28,13 +28,7 @@ void View3DObj::look_at(const Vector3& target, const Vector3& position,
               0,1, 0,0,
               0,0, 0,1;
     viewMatrix_ = rtac::geometry::look_at(target, position, up).homogeneous_matrix();
-    using namespace std;
-    cout << "ViewMatrix1 :\n" << viewMatrix_ << endl;
-    cout << "ViewMatrix1 inverse :\n" << viewMatrix_.inverse() << endl;
     viewMatrix_ = viewMatrix_ * glView;
-    cout << "ViewMatrix2 :\n" << viewMatrix_ << endl;
-    cout << "ViewMatrix2 inverse :\n" << viewMatrix_.inverse() << endl;
-    cout << "Full :\n" << this->view_matrix() << endl;
 }
 
 View3DObj::Mat4 View3DObj::view_matrix() const

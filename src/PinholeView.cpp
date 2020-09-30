@@ -1,4 +1,6 @@
-#include <optix_helpers/display/View3D.h>
+#include <optix_helpers/display/PinholeView.h>
+
+#include <cmath>
 
 namespace optix_helpers { namespace display {
 
@@ -14,7 +16,13 @@ PinholeViewObj::PinholeViewObj(float fovy, const Pose& pose,
 
 void PinholeViewObj::update_projection()
 {
+    projectionMatrix_ = Mat4::Zero();
 
+    projectionMatrix_(0,0) = 1.0 / std::tan(0.5f*M_PI*fovy_/180.0);
+    projectionMatrix_(1,1) = projectionMatrix_(0,0) * screenSize_.ratio<float>();
+    projectionMatrix_(2,2) = (zFar_ + zNear_) / (zNear_ - zFar_);
+    projectionMatrix_(2,3) = 2.0f*zFar_*zNear_ / (zNear_ - zFar_);
+    projectionMatrix_(3,2) = -1.0f;
 }
 
 void PinholeViewObj::set_fovy(float fovy)

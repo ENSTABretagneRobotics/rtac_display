@@ -26,7 +26,7 @@ class PinholeViewObj : public View3DObj
 
     public:
     
-    PinholeViewObj(float fovy = 90.0f, const Pose& pose = Pose()
+    PinholeViewObj(float fovy = 90.0f, const Pose& pose = Pose(),
                    float zNear = 0.1f, float zFar = 1000.0f);
 
     void set_fovy(float fovy);

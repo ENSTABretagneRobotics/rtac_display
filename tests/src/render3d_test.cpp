@@ -14,6 +14,7 @@ using namespace optix_helpers::samples;
 #include <optix_helpers/display/RenderBufferGL.h>
 #include <optix_helpers/display/ImageRenderer.h>
 #include <optix_helpers/display/View3D.h>
+#include <optix_helpers/display/PinholeView.h>
 using namespace optix_helpers::display;
 
 int main()
@@ -29,10 +30,10 @@ int main()
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));
     
     auto imageRenderer = ImageRenderer::New();
-    display.add_renderer(imageRenderer);
+    //display.add_renderer(imageRenderer);
 
     auto renderer = Renderer::New();
-    auto view3d = View3D::New();
+    auto view3d = PinholeView::New();
     view3d->look_at({0,0,0}, {5,4,3});
     renderer->set_view(view3d);
     display.add_renderer(renderer);
