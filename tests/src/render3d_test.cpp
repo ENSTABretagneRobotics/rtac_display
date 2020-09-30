@@ -3,6 +3,9 @@
 #include <chrono>
 using namespace std;
 
+#include <rtac_base/misc.h>
+using FrameCounter = rtac::misc::FrameCounter;
+
 #include <rtac_base/types/Pose.h>
 using Pose = rtac::types::Pose<float>;
 using Quaternion = rtac::types::Quaternion<float>;
@@ -37,9 +40,8 @@ int main()
     view3d->look_at({0,0,0}, {5,4,3});
     renderer->set_view(view3d);
     display.add_renderer(renderer);
-
-    int count = 0;
-    auto t0 = chrono::high_resolution_clock::now();
+    
+    FrameCounter counter;
     while(!display.should_close()) {
         scene.view()->set_pose(R * scene.view()->pose());
         view3d->set_pose(scene.view()->pose());
@@ -48,14 +50,7 @@ int main()
         imageRenderer->set_image(scene.render_buffer());
         display.draw();
         
-        if(count >= 10) {
-            auto t1 = chrono::high_resolution_clock::now();
-            chrono::duration<double> ellapsed = t1 - t0;
-            cout << "Frame Rate : " << count / ellapsed.count() << "\r";
-            count = 0;
-            t0 = chrono::high_resolution_clock::now();
-        }
-        count++;
+        cout << counter;
     }
     cout << endl;
 
