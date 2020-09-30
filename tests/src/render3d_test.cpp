@@ -30,7 +30,7 @@ int main()
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));
     
     auto imageRenderer = ImageRenderer::New();
-    //display.add_renderer(imageRenderer);
+    display.add_renderer(imageRenderer);
 
     auto renderer = Renderer::New();
     auto view3d = PinholeView::New();
@@ -42,6 +42,7 @@ int main()
     auto t0 = chrono::high_resolution_clock::now();
     while(!display.should_close()) {
         scene.view()->set_pose(R * scene.view()->pose());
+        view3d->set_pose(scene.view()->pose());
         
         scene.launch();
         imageRenderer->set_image(scene.render_buffer());

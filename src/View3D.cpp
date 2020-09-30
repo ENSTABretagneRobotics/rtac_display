@@ -4,14 +4,20 @@ namespace optix_helpers { namespace display {
 
 using namespace rtac::types::indexing;
 
+const View3DObj::Mat4 View3DObj::viewFrameGL = (Mat4() << 1, 0, 0, 0,
+                                                          0, 0,-1, 0,
+                                                          0, 1, 0, 0,
+                                                          0, 0, 0, 1).finished();
+
 View3DObj::View3DObj(const Pose& pose, const Mat4& projection) :
-    ViewObj(projection),
-    viewMatrix_(pose.homogeneous_matrix())
-{}
+    ViewObj(projection)
+{
+    this->set_pose(pose);
+}
 
 void View3DObj::set_pose(const Pose& pose)
 {
-    viewMatrix_ = pose.homogeneous_matrix();
+    viewMatrix_ = pose.homogeneous_matrix() * viewFrameGL;
 }
 
 void View3DObj::look_at(const Vector3& target)
@@ -22,13 +28,7 @@ void View3DObj::look_at(const Vector3& target)
 void View3DObj::look_at(const Vector3& target, const Vector3& position,
                         const Vector3& up)
 {
-    Mat4 glView;
-    glView << 1,0, 0,0,
-              0,0,-1,0,
-              0,1, 0,0,
-              0,0, 0,1;
-    viewMatrix_ = rtac::geometry::look_at(target, position, up).homogeneous_matrix();
-    viewMatrix_ = viewMatrix_ * glView;
+    this->set_pose(rtac::geometry::look_at(target, position, up));
 }
 
 View3DObj::Mat4 View3DObj::view_matrix() const
@@ -38,7 +38,7 @@ View3DObj::Mat4 View3DObj::view_matrix() const
 
 View3DObj::Pose View3DObj::pose() const
 {
-    return Pose::from_homogeneous_matrix(viewMatrix_);
+    return Pose::from_homogeneous_matrix(viewMatrix_ * viewFrameGL.inverse());
 }
 
 }; //namespace display

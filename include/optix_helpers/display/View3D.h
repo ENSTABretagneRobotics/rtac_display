@@ -20,6 +20,8 @@ class View3DObj : public ViewObj
     using Pose    = rtac::types::Pose<float>;
     using Vector3 = rtac::types::Vector3<float>;
 
+    static const Mat4 viewFrameGL;
+
     protected:
 
     Mat4 viewMatrix_;

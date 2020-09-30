@@ -13,6 +13,7 @@ out vec3 c;
 void main()
 {
     gl_Position = view*vec4(point, 1.0f);
+    gl_Position.z = 1.0f;
     c = color;
 }
 )", "vertex");
