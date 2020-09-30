@@ -17,6 +17,7 @@ list(APPEND optix_helpers_display_PUBLIC_HEADERS
     include/optix_helpers/display/PinholeView.h
     include/optix_helpers/display/Renderer.h
     include/optix_helpers/display/ImageRenderer.h
+    include/optix_helpers/display/MeshRenderer.h
     include/optix_helpers/display/Display.h
     include/optix_helpers/display/RenderBufferGL.h
 )
@@ -29,6 +30,7 @@ add_library(optix_helpers_display SHARED
     src/PinholeView.cpp
     src/Renderer.cpp
     src/ImageRenderer.cpp
+    src/MeshRenderer.cpp
     src/Display.cpp
     src/RenderBufferGL.cpp
 )
