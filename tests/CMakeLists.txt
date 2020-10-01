@@ -4,7 +4,8 @@ list(APPEND test_names
     base_test
     animation_test
     render3d_test
-    mesh_test
+    # mesh_test
+    pointcloud_test
 )
 list(APPEND test_deps
     optix_helpers

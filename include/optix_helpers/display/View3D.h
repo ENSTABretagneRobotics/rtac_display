@@ -16,7 +16,7 @@ class View3DObj : public ViewObj
     public:
 
     using Mat4    = ViewObj::Mat4;
-    using Shape   = ViewObj::Mat4;
+    using Shape   = ViewObj::Shape;
     using Pose    = rtac::types::Pose<float>;
     using Vector3 = rtac::types::Vector3<float>;
 
