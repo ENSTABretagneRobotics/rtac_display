@@ -7,8 +7,10 @@ using namespace std;
 using FrameCounter = rtac::misc::FrameCounter;
 
 #include <rtac_base/types/Pose.h>
+#include <rtac_base/types/PointCloud.h>
 using Pose = rtac::types::Pose<float>;
 using Quaternion = rtac::types::Quaternion<float>;
+using PointCloud = rtac::types::PointCloud<>;
 
 #include <optix_helpers/display/Display.h>
 #include <optix_helpers/display/PinholeView.h>
@@ -27,6 +29,9 @@ int main()
     renderer->set_view(view3d);
     display.add_renderer(renderer);
     
+    auto pcRenderer = PointCloudRenderer::New(view3d);
+    display.add_renderer(pcRenderer);
+
     std::vector<float> cubePoints({-1,-1,-1,
                                     1,-1,-1,
                                     1, 1,-1,
@@ -35,10 +40,19 @@ int main()
                                     1,-1, 1,
                                     1, 1, 1,
                                    -1, 1, 1});
-                                    
-    auto pcRenderer = PointCloudRenderer::New(view3d);
-    pcRenderer->set_points(8, cubePoints.data());
-    display.add_renderer(pcRenderer);
+    //pcRenderer->set_points(8, cubePoints.data());
+    PointCloud pc(8);
+    pc[0] = PointCloud::PointType({-1,-1,-1});
+    pc[1] = PointCloud::PointType({ 1,-1,-1});
+    pc[2] = PointCloud::PointType({ 1, 1,-1});
+    pc[3] = PointCloud::PointType({-1, 1,-1});
+    pc[4] = PointCloud::PointType({-1,-1, 1});
+    pc[5] = PointCloud::PointType({ 1,-1, 1});
+    pc[6] = PointCloud::PointType({ 1, 1, 1});
+    pc[7] = PointCloud::PointType({-1, 1, 1});
+    cout << pc << endl;
+    pcRenderer->set_points(pc);
+
 
     float dangle = 0.01;
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));

@@ -5,6 +5,8 @@
 #include <array>
 #include <algorithm>
 
+#include <rtac_base/types/PointCloud.h>
+
 #include <optix_helpers/Handle.h>
 #include <optix_helpers/Source.h>
 
@@ -43,6 +45,8 @@ class PointCloudRendererObj : public RendererObj
                           const Color& color = {0.7,0.7,1.0});
     ~PointCloudRendererObj();
     
+    template <typename PointCloudT>
+    void set_points(const rtac::types::PointCloud<PointCloudT>& pc);
     void set_points(size_t numPoints, const float* data);
     void set_points(const RenderBufferGL& buffer);
     void set_color(const Color& color);
@@ -51,6 +55,24 @@ class PointCloudRendererObj : public RendererObj
 };
 using PointCloudRenderer = Handle<PointCloudRendererObj>;
 
+// implementation
+template <typename PointCloudT>
+void PointCloudRendererObj::set_points(const rtac::types::PointCloud<PointCloudT>& pc)
+{
+    this->allocate_points(pc.size());
+    glBindBuffer(GL_ARRAY_BUFFER, points_);
+    auto deviceData = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+    int i = 0;
+    for(auto& point : pc) {
+        deviceData[i]     = point.x;
+        deviceData[i + 1] = point.y;
+        deviceData[i + 2] = point.z;
+        i += 3;
+    }
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    numPoints_ = pc.size();
+}
 
 }; //namespace display
 }; //namespace optix_helpers
