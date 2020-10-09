@@ -105,7 +105,7 @@ void PointCloudRendererObj::draw()
 
     GLfloat pointSize;
     glGetFloatv(GL_POINT_SIZE, &pointSize);
-    glPointSize(3);
+    glPointSize(1);
 
     glUseProgram(renderProgram_);
     
