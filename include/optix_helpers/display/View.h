@@ -32,6 +32,8 @@ class ViewObj
     ViewObj(const Mat4& mat = Mat4::Identity());
     
     void set_screen_size(const Shape& screen);
+
+    Mat4 projection_matrix() const;
     virtual Mat4 view_matrix() const;
 };
 using View = Handle<ViewObj>;

@@ -17,6 +17,11 @@ void ViewObj::set_screen_size(const Shape& screen)
     this->update_projection();
 }
 
+ViewObj::Mat4 ViewObj::projection_matrix() const
+{
+    return projectionMatrix_;
+}
+
 ViewObj::Mat4 ViewObj::view_matrix() const
 {
     return projectionMatrix_;

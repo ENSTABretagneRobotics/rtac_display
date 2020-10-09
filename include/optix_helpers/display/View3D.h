@@ -39,6 +39,7 @@ class View3DObj : public ViewObj
                  const Vector3& up = {0.0f,0.0f,1.0f});
                  
 
+    Mat4 raw_view_matrix() const;
     virtual Mat4 view_matrix() const;
     Pose pose() const;
 };

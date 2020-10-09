@@ -31,6 +31,11 @@ void View3DObj::look_at(const Vector3& target, const Vector3& position,
     this->set_pose(rtac::geometry::look_at(target, position, up));
 }
 
+View3DObj::Mat4 View3DObj::raw_view_matrix() const
+{
+    return viewMatrix_.inverse();
+}
+
 View3DObj::Mat4 View3DObj::view_matrix() const
 {
     return projectionMatrix_ * viewMatrix_.inverse();
