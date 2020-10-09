@@ -87,7 +87,7 @@ void Display::draw()
     }
 
     glViewport(0,0,wSize.width,wSize.height);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     for(auto renderer : renderers_) {
         if(renderer) {
