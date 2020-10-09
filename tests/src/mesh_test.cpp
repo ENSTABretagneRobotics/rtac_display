@@ -32,6 +32,7 @@ int main()
 
     auto meshRenderer = MeshRenderer::New(view3d);
     meshRenderer->set_mesh(Mesh::cube(0.5));
+    meshRenderer->set_pose(Pose({0,0,3}));
     display.add_renderer(meshRenderer);
 
     float dangle = 0.001;

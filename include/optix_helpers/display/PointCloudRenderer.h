@@ -33,7 +33,7 @@ class PointCloudRendererObj : public RendererObj
     
     size_t numPoints_;
     GLuint points_;
-    Pose   position_;
+    Pose   pose_;
     Color  color_;
     
     void allocate_points(size_t numPoints);
@@ -49,6 +49,7 @@ class PointCloudRendererObj : public RendererObj
     void set_points(const rtac::types::PointCloud<PointCloudT>& pc);
     void set_points(size_t numPoints, const float* data);
     void set_points(const RenderBufferGL& buffer);
+    void set_pose(const Pose& pose);
     void set_color(const Color& color);
 
     virtual void draw();

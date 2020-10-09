@@ -15,6 +15,7 @@ class MeshRendererObj : public RendererObj
     
     using Mat4 = View3DObj::Mat4;
     using Mesh = rtac::types::Mesh<float,uint32_t,3>;
+    using Pose    = View3DObj::Pose;
     using Color   = std::array<float,3>;
 
     protected:
@@ -25,6 +26,7 @@ class MeshRendererObj : public RendererObj
     size_t numPoints_;
     GLuint points_;
     GLuint normals_;
+    Pose   pose_;
     Color  color_;
 
     protected:
@@ -38,6 +40,7 @@ class MeshRendererObj : public RendererObj
                     const Color& color = {1.0,1.0,1.0});
 
     void set_mesh(const Mesh& mesh);
+    void set_pose(const Pose& pose);
     void set_color(const Color& color);
 
     virtual void draw();

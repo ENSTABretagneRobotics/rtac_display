@@ -52,6 +52,7 @@ int main()
     pc[7] = PointCloud::PointType({-1, 1, 1});
     cout << pc << endl;
     pcRenderer->set_points(pc);
+    pcRenderer->set_pose(Pose({0,2,0}));
 
 
     float dangle = 0.01;

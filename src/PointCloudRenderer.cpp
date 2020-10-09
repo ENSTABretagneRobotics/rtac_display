@@ -35,7 +35,7 @@ PointCloudRendererObj::PointCloudRendererObj(const View3D& view, const Color& co
     RendererObj(vertexShader, fragmentShader, view),
     numPoints_(0),
     points_(0),
-    position_(Pose()),
+    pose_(Pose()),
     color_(color)
 {
     std::cout << "Request : " << color[0] << ", " << color[1] << ", " << color[2] << std::endl;
@@ -89,6 +89,11 @@ void PointCloudRendererObj::set_points(const RenderBufferGL& buffer)
     }
 }
 
+void PointCloudRendererObj::set_pose(const Pose& pose)
+{
+    pose_ = pose;
+}
+
 void PointCloudRendererObj::set_color(const Color& color)
 {
     color_[0] = std::max(0.0f, std::min(1.0f, color[0]));
@@ -101,7 +106,7 @@ void PointCloudRendererObj::draw()
     if(points_ == 0 || numPoints_ == 0)
         return;
     
-    Mat4 view = view_->view_matrix() * position_.homogeneous_matrix();
+    Mat4 view = view_->view_matrix() * pose_.homogeneous_matrix();
 
     GLfloat pointSize;
     glGetFloatv(GL_POINT_SIZE, &pointSize);

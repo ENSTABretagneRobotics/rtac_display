@@ -114,6 +114,11 @@ void MeshRendererObj::set_mesh(const Mesh& mesh)
     numPoints_ = 9*mesh.num_faces();
 }
 
+void MeshRendererObj::set_pose(const Pose& pose)
+{
+    pose_ = pose;
+}
+
 void MeshRendererObj::set_color(const Color& color)
 {
     color_[0] = std::max(0.0f, std::min(1.0f, color[0]));
@@ -142,8 +147,9 @@ void MeshRendererObj::draw()
     glEnableVertexAttribArray(1);
     
     auto view = view_.downcast<View3DObj>();
+    Mat4 viewMatrix = view->raw_view_matrix() * pose_.homogeneous_matrix();
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),
-        1, GL_FALSE, view->raw_view_matrix().data());
+        1, GL_FALSE, viewMatrix.data());
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "projection"),
         1, GL_FALSE, view->projection_matrix().data());
     glUniform3fv(glGetUniformLocation(renderProgram_, "color"),
