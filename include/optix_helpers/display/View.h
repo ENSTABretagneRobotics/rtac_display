@@ -13,6 +13,9 @@ namespace optix_helpers { namespace display {
 class ViewObj
 {
     public:
+    
+    // Alignment issue (caused by integration of pcl, activation of vectorization)
+    //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     using Mat4  = rtac::types::Matrix4<float>;
     using Shape = rtac::types::Shape<size_t>;

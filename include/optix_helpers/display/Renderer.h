@@ -31,7 +31,9 @@ class RendererObj
 
     RendererObj(const Source& vertexShader = vertexShader,
                 const Source& fragmentShader = fragmentShader,
-                const View& view = View::New());
+                // Had to remove this because of eigen alignment issues. To be investigated
+                //const View& view = View::New());
+                const View& view = View());
     
     virtual void draw();
     void set_view(const View& view) const;

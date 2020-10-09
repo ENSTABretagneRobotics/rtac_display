@@ -12,6 +12,9 @@ class PinholeViewObj : public View3DObj
 {
     public:
 
+    // Alignment issue (caused by integration of pcl, activation of vectorization)
+    //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     using Mat4    = View3DObj::Mat4;
     using Shape   = View3DObj::Mat4;
     using Pose    = View3DObj::Pose;

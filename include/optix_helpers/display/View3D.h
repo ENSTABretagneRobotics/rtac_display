@@ -15,6 +15,9 @@ class View3DObj : public ViewObj
 {
     public:
 
+    // Alignment issue (caused by integration of pcl, activation of vectorization)
+    //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     using Mat4    = ViewObj::Mat4;
     using Shape   = ViewObj::Shape;
     using Pose    = rtac::types::Pose<float>;
