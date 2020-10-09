@@ -38,7 +38,7 @@ add_library(optix_helpers_display SHARED
 )
 set_target_properties(optix_helpers_display PROPERTIES 
     PUBLIC_HEADER "${optix_helpers_display_PUBLIC_HEADERS}"
-    # INSTALL_RPATH_USE_LINK_PATH True
+    INSTALL_RPATH_USE_LINK_PATH True
 )
 target_include_directories(optix_helpers_display PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
