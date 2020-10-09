@@ -1,14 +1,17 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <thread>
 using namespace std;
 
 #include <rtac_base/misc.h>
 using FrameCounter = rtac::misc::FrameCounter;
 
 #include <rtac_base/types/Pose.h>
+#include <rtac_base/types/Mesh.h>
 using Pose = rtac::types::Pose<float>;
 using Quaternion = rtac::types::Quaternion<float>;
+using Mesh = rtac::types::Mesh<float, uint32_t, 3>;
 
 #include <optix_helpers/display/Display.h>
 #include <optix_helpers/display/PinholeView.h>
@@ -28,7 +31,8 @@ int main()
     display.add_renderer(renderer);
 
     auto meshRenderer = MeshRenderer::New(view3d);
-    //display.add_renderer(meshRenderer);
+    meshRenderer->set_mesh(Mesh::cube(0.5));
+    display.add_renderer(meshRenderer);
 
     float dangle = 0.001;
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));
@@ -39,7 +43,8 @@ int main()
         
         display.draw();
         
-        cout << counter;
+        //cout << counter;
+        this_thread::sleep_for(10ms);
     }
     cout << endl;
 
