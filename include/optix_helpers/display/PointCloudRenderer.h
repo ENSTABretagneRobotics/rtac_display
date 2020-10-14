@@ -49,6 +49,8 @@ class PointCloudRendererObj : public RendererObj
     void set_points(const rtac::types::PointCloud<PointCloudT>& pc);
     void set_points(size_t numPoints, const float* data);
     void set_points(const RenderBufferGL& buffer);
+    template <typename Derived>
+    void set_points(const Eigen::DenseBase<Derived>& points);
     void set_pose(const Pose& pose);
     void set_color(const Color& color);
 
@@ -73,6 +75,28 @@ void PointCloudRendererObj::set_points(const rtac::types::PointCloud<PointCloudT
     glUnmapBuffer(GL_ARRAY_BUFFER);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     numPoints_ = pc.size();
+}
+
+template <typename Derived>
+void PointCloudRendererObj::set_points(const Eigen::DenseBase<Derived>& points)
+{
+    //expects points on rows.
+    if(points.cols() != 3) {
+        throw std::runtime_error("PointCloudRenderer.set_points : Wrong matrix shape");
+    }
+    size_t numPoints = points.rows();
+
+    this->allocate_points(numPoints);
+    glBindBuffer(GL_ARRAY_BUFFER, points_);
+    auto deviceData = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+    for(int i = 0; i < numPoints; i++) {
+        deviceData[3*i]     = points(i,0);
+        deviceData[3*i + 1] = points(i,1);
+        deviceData[3*i + 2] = points(i,2);
+    }
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    numPoints_ = numPoints;
 }
 
 }; //namespace display
