@@ -30,6 +30,7 @@ int main()
 
     scene.view()->look_at({0.0,0.0,0.0}, { 2.0, 5.0, 4.0});
     float dangle = 0.001;
+    //float dangle = 0.003;
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));
     
     auto imageRenderer = ImageRenderer::New();
@@ -39,7 +40,7 @@ int main()
     auto view3d = PinholeView::New();
     view3d->look_at({0,0,0}, {5,4,3});
     renderer->set_view(view3d);
-    display.add_renderer(renderer);
+    //display.add_renderer(renderer);
     
     FrameCounter counter;
     while(!display.should_close()) {

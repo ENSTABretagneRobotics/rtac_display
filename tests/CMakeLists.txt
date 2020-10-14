@@ -2,6 +2,7 @@ project(optix_display_test VERSION 0.1)
 
 list(APPEND test_names
     base_test
+    view_test
     animation_test
     render3d_test
     mesh_test

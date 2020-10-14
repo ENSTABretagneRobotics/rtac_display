@@ -15,6 +15,7 @@ list(APPEND optix_helpers_display_PUBLIC_HEADERS
     include/optix_helpers/display/ImageView.h
     include/optix_helpers/display/View3D.h
     include/optix_helpers/display/PinholeView.h
+    include/optix_helpers/display/OrthoView.h
     include/optix_helpers/display/Renderer.h
     include/optix_helpers/display/ImageRenderer.h
     include/optix_helpers/display/PointCloudRenderer.h
@@ -29,6 +30,7 @@ add_library(optix_helpers_display SHARED
     src/ImageView.cpp
     src/View3D.cpp
     src/PinholeView.cpp
+    src/OrthoView.cpp
     src/Renderer.cpp
     src/ImageRenderer.cpp
     src/PointCloudRenderer.cpp
