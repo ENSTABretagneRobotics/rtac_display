@@ -5,11 +5,11 @@ using namespace std;
 #include <rtac_base/types/Mesh.h>
 using Mesh = rtac::types::Mesh<float, uint32_t, 3>;
 
-#include <optix_helpers/display/Display.h>
-#include <optix_helpers/display/MeshRenderer.h>
-#include <optix_helpers/display/OrthoView.h>
-#include <optix_helpers/display/PinholeView.h>
-using namespace optix_helpers::display;
+#include <rtac_display/Display.h>
+#include <rtac_display/MeshRenderer.h>
+#include <rtac_display/OrthoView.h>
+#include <rtac_display/PinholeView.h>
+using namespace rtac::display;
 using Bounds = OrthoView::Bounds;
 using Pose   = OrthoView::Pose;
 

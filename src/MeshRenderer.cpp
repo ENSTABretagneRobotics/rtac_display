@@ -1,6 +1,6 @@
-#include <optix_helpers/display/MeshRenderer.h>
+#include <rtac_display/MeshRenderer.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 const std::string MeshRenderer::vertexShader = std::string( R"(
 #version 430 core
@@ -174,6 +174,6 @@ void MeshRenderer::draw()
 }
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 
 

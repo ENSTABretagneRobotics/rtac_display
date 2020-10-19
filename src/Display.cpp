@@ -1,6 +1,6 @@
-#include <optix_helpers/display/Display.h>
+#include <rtac_display/Display.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 Display::Display(int width, int height, const std::string& title) :
     window_(NULL)
@@ -99,6 +99,6 @@ void Display::draw()
 }
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 
 

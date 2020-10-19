@@ -1,6 +1,6 @@
-#include <optix_helpers/display/utils.h>
+#include <rtac_display/utils.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 bool checkGLError(const std::string& location)
 {
@@ -90,4 +90,4 @@ GLuint create_render_program(const std::string& vertexShaderSource,
     return programId;
 }
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac

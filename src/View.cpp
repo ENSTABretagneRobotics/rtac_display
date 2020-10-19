@@ -1,6 +1,6 @@
-#include <optix_helpers/display/View.h>
+#include <rtac_display/View.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 View::Ptr View::New(const Mat4& mat)
 {
@@ -32,5 +32,5 @@ View::Mat4 View::view_matrix() const
 }
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 

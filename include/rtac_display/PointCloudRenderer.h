@@ -1,5 +1,5 @@
-#ifndef _DEF_OPTIX_HELPERS_DISPLAY_POINTCLOUD_RENDERER_H_
-#define _DEF_OPTIX_HELPERS_DISPLAY_POINTCLOUD_RENDERER_H_
+#ifndef _DEF_RTAC_DISPLAY_POINTCLOUD_RENDERER_H_
+#define _DEF_RTAC_DISPLAY_POINTCLOUD_RENDERER_H_
 
 #include <iostream>
 #include <array>
@@ -7,11 +7,11 @@
 
 #include <rtac_base/types/PointCloud.h>
 
-#include <optix_helpers/display/Handle.h>
-#include <optix_helpers/display/Renderer.h>
-#include <optix_helpers/display/View3D.h>
+#include <rtac_display/Handle.h>
+#include <rtac_display/Renderer.h>
+#include <rtac_display/View3D.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 
 class PointCloudRenderer : public Renderer
@@ -101,6 +101,6 @@ void PointCloudRenderer::set_points(const Eigen::DenseBase<Derived>& points)
 }
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 
-#endif //_DEF_OPTIX_HELPERS_DISPLAY_POINTCLOUD_RENDERER_H_
+#endif //_DEF_RTAC_DISPLAY_POINTCLOUD_RENDERER_H_

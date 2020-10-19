@@ -1,6 +1,6 @@
-#include <optix_helpers/display/View3D.h>
+#include <rtac_display/View3D.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 using namespace rtac::types::indexing;
 
@@ -52,5 +52,5 @@ View3D::Pose View3D::pose() const
 }
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 

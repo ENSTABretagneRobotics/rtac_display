@@ -1,12 +1,13 @@
-#ifndef _DEF_OPTIX_HELPERS_DISPLAY_PINHOLE_VIEW_H_
-#define _DEF_OPTIX_HELPERS_DISPLAY_PINHOLE_VIEW_H_
+#ifndef _DEF_RTAC_DISPLAY_PINHOLE_VIEW_H_
+#define _DEF_RTAC_DISPLAY_PINHOLE_VIEW_H_
 
 #include <iostream>
+#include <cmath>
 
-#include <optix_helpers/display/Handle.h>
-#include <optix_helpers/display/View3D.h>
+#include <rtac_display/Handle.h>
+#include <rtac_display/View3D.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 class PinholeView : public View3D
 {
@@ -45,6 +46,6 @@ class PinholeView : public View3D
 };
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 
-#endif //_DEF_OPTIX_HELPERS_DISPLAY_PINHOLE_VIEW_H_
+#endif //_DEF_RTAC_DISPLAY_PINHOLE_VIEW_H_

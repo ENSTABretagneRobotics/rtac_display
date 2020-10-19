@@ -1,8 +1,6 @@
-#include <optix_helpers/display/PinholeView.h>
+#include <rtac_display/PinholeView.h>
 
-#include <cmath>
-
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 PinholeView::Ptr PinholeView::New(float fovy, const Pose& pose,
                                   float zNear, float zFar)
@@ -50,5 +48,5 @@ float PinholeView::fovy() const
 }
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 

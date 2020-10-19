@@ -2,8 +2,8 @@
 #include <thread>
 using namespace std;
 
-#include <optix_helpers/display/Display.h>
-using namespace optix_helpers::display;
+#include <rtac_display/Display.h>
+using namespace rtac::display;
 
 int main()
 {

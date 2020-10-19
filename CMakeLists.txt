@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(optix_display VERSION 0.1)
+project(rtac_display VERSION 0.1)
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
@@ -7,22 +7,22 @@ find_package(glfw3 REQUIRED)
 
 find_package(rtac_base REQUIRED)
 
-list(APPEND optix_helpers_display_PUBLIC_HEADERS
-    include/optix_helpers/display/Handle.h
-    include/optix_helpers/display/utils.h
-    include/optix_helpers/display/View.h
-    include/optix_helpers/display/ImageView.h
-    include/optix_helpers/display/View3D.h
-    include/optix_helpers/display/PinholeView.h
-    include/optix_helpers/display/OrthoView.h
-    include/optix_helpers/display/Renderer.h
-    include/optix_helpers/display/ImageRenderer.h
-    include/optix_helpers/display/PointCloudRenderer.h
-    include/optix_helpers/display/MeshRenderer.h
-    include/optix_helpers/display/Display.h
+list(APPEND rtac_display_PUBLIC_HEADERS
+    include/rtac_display/Handle.h
+    include/rtac_display/utils.h
+    include/rtac_display/View.h
+    include/rtac_display/ImageView.h
+    include/rtac_display/View3D.h
+    include/rtac_display/PinholeView.h
+    include/rtac_display/OrthoView.h
+    include/rtac_display/Renderer.h
+    include/rtac_display/ImageRenderer.h
+    include/rtac_display/PointCloudRenderer.h
+    include/rtac_display/MeshRenderer.h
+    include/rtac_display/Display.h
 )
 
-add_library(optix_helpers_display SHARED
+add_library(rtac_display SHARED
     src/utils.cpp
     src/View.cpp
     src/ImageView.cpp
@@ -35,15 +35,15 @@ add_library(optix_helpers_display SHARED
     src/MeshRenderer.cpp
     src/Display.cpp
 )
-set_target_properties(optix_helpers_display PROPERTIES 
-    PUBLIC_HEADER "${optix_helpers_display_PUBLIC_HEADERS}"
+set_target_properties(rtac_display PROPERTIES 
+    PUBLIC_HEADER "${rtac_display_PUBLIC_HEADERS}"
     INSTALL_RPATH_USE_LINK_PATH True
 )
-target_include_directories(optix_helpers_display PUBLIC
+target_include_directories(rtac_display PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(optix_helpers_display PUBLIC
+target_link_libraries(rtac_display PUBLIC
     OpenGL::GL
     OpenGL::GLU
     GLEW::GLEW
@@ -54,4 +54,4 @@ target_link_libraries(optix_helpers_display PUBLIC
 add_subdirectory(tests)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/installation.cmake)
-install_target(optix_helpers_display)
+install_target(rtac_display)

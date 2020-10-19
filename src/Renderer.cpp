@@ -1,6 +1,6 @@
-#include <optix_helpers/display/Renderer.h>
+#include <rtac_display/Renderer.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 const std::string Renderer::vertexShader = std::string( R"(
 #version 430 core
@@ -92,5 +92,5 @@ View::Ptr Renderer::view() const
 }
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 

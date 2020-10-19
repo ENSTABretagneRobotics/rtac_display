@@ -7,7 +7,7 @@ list(APPEND test_names
     pointcloud_test
 )
 list(APPEND test_deps
-    optix_helpers_display
+    rtac_display
 )
 
 foreach(name ${test_names})

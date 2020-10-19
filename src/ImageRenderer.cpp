@@ -1,6 +1,6 @@
-#include <optix_helpers/display/ImageRenderer.h>
+#include <rtac_display/ImageRenderer.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 const std::string ImageRenderer::vertexShader = std::string( R"(
 #version 430 core
@@ -122,5 +122,5 @@ void ImageRenderer::draw()
 }
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 

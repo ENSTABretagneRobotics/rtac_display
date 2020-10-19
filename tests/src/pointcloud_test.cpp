@@ -12,10 +12,10 @@ using Pose = rtac::types::Pose<float>;
 using Quaternion = rtac::types::Quaternion<float>;
 using PointCloud = rtac::types::PointCloud<>;
 
-#include <optix_helpers/display/Display.h>
-#include <optix_helpers/display/PinholeView.h>
-#include <optix_helpers/display/PointCloudRenderer.h>
-using namespace optix_helpers::display;
+#include <rtac_display/Display.h>
+#include <rtac_display/PinholeView.h>
+#include <rtac_display/PointCloudRenderer.h>
+using namespace rtac::display;
 
 int main()
 {

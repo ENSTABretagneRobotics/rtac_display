@@ -1,6 +1,6 @@
-#include <optix_helpers/display/PointCloudRenderer.h>
+#include <rtac_display/PointCloudRenderer.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 const std::string PointCloudRenderer::vertexShader = std::string( R"(
 #version 430 core
@@ -148,5 +148,5 @@ void PointCloudRenderer::draw()
 }
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 

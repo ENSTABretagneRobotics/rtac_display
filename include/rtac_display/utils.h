@@ -1,5 +1,5 @@
-#ifndef _DEF_OPTIX_HELPES_DISPLAY_UTILS_H_
-#define _DEF_OPTIX_HELPES_DISPLAY_UTILS_H_
+#ifndef _DEF_RTAC_DISPLAY_UTILS_H_
+#define _DEF_RTAC_DISPLAY_UTILS_H_
 
 #include <iostream>
 #include <memory>
@@ -8,7 +8,7 @@
 //#define GL3_PROTOTYPES 1
 #include <GL/gl.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 bool checkGLError(const std::string& location = "");
 
@@ -18,7 +18,7 @@ GLuint create_render_program(const std::string& vertexShaderSource,
                              const std::string& fragmentShaderSource);
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 
 
-#endif //_DEF_OPTIX_HELPES_DISPLAY_UTILS_H_
+#endif //_DEF_RTAC_DISPLAY_UTILS_H_

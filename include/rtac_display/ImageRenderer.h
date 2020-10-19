@@ -1,11 +1,11 @@
-#ifndef _DEF_OPTIX_HELPERS_DISPLAY_IMAGE_RENDERER_H_
-#define _DEF_OPTIX_HELPERS_DISPLAY_IMAGE_RENDERER_H_
+#ifndef _DEF_RTAC_DISPLAY_IMAGE_RENDERER_H_
+#define _DEF_RTAC_DISPLAY_IMAGE_RENDERER_H_
 
-#include <optix_helpers/display/Handle.h>
-#include <optix_helpers/display/Renderer.h>
-#include <optix_helpers/display/ImageView.h>
+#include <rtac_display/Handle.h>
+#include <rtac_display/Renderer.h>
+#include <rtac_display/ImageView.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 class ImageRenderer : public Renderer
 {
@@ -42,6 +42,6 @@ class ImageRenderer : public Renderer
 };
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 
-#endif //_DEF_OPTIX_HELPERS_DISPLAY_IMAGE_RENDERER_H_
+#endif //_DEF_RTAC_DISPLAY_IMAGE_RENDERER_H_

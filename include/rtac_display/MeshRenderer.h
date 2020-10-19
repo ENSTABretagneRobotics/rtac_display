@@ -1,13 +1,13 @@
-#ifndef _DEF_OPTIX_HELPERS_DISPLAY_MESH_RENDERER_H_
-#define _DEF_OPTIX_HELPERS_DISPLAY_MESH_RENDERER_H_
+#ifndef _DEF_RTAC_DISPLAY_MESH_RENDERER_H_
+#define _DEF_RTAC_DISPLAY_MESH_RENDERER_H_
 
 #include <rtac_base/types/Mesh.h>
 
-#include <optix_helpers/display/Handle.h>
-#include <optix_helpers/display/Renderer.h>
-#include <optix_helpers/display/View3D.h>
+#include <rtac_display/Handle.h>
+#include <rtac_display/Renderer.h>
+#include <rtac_display/View3D.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 class MeshRenderer : public Renderer
 {
@@ -52,6 +52,6 @@ class MeshRenderer : public Renderer
 };
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 
-#endif //_DEF_OPTIX_HELPERS_DISPLAY_MESH_RENDERER_H_
+#endif //_DEF_RTAC_DISPLAY_MESH_RENDERER_H_

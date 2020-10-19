@@ -1,6 +1,6 @@
-#include <optix_helpers/display/OrthoView.h>
+#include <rtac_display/OrthoView.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 OrthoView::Ptr OrthoView::New(const Bounds& bounds,
                               const Pose& pose,
@@ -52,5 +52,5 @@ OrthoView::Bounds OrthoView::bounds() const
 }
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 

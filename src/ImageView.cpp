@@ -1,6 +1,6 @@
-#include <optix_helpers/display/ImageView.h>
+#include <rtac_display/ImageView.h>
 
-namespace optix_helpers { namespace display {
+namespace rtac { namespace display {
 
 
 ImageView::Ptr ImageView::New(const Shape& image)
@@ -36,5 +36,5 @@ ImageView::Shape ImageView::image_shape() const
 }
 
 }; //namespace display
-}; //namespace optix_helpers
+}; //namespace rtac
 
