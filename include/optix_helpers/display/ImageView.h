@@ -5,16 +5,20 @@
 
 #include <optix_helpers/Handle.h>
 
+#include <optix_helpers/display/Handle.h>
 #include <optix_helpers/display/View.h>
 
 namespace optix_helpers { namespace display {
 
-class ImageViewObj : public ViewObj
+class ImageView : public View
 {
     public:
 
-    using Mat4  = ViewObj::Mat4;
-    using Shape = ViewObj::Shape;
+    using Ptr      = Handle<ImageView>;
+    using ConstPtr = Handle<const ImageView>;
+
+    using Mat4  = View::Mat4;
+    using Shape = View::Shape;
 
     protected:
 
@@ -22,15 +26,15 @@ class ImageViewObj : public ViewObj
 
     public:
 
-    ImageViewObj(const Shape& image = {1,1});
+    static Ptr New(const Shape& image = {1,1});
+
+    ImageView(const Shape& image = {1,1});
     
     virtual void update_projection();
     void set_image_shape(const Shape& image);
 
     Shape image_shape() const;
 };
-
-using ImageView = Handle<ImageViewObj>;
 
 }; //namespace display
 }; //namespace optix_helpers

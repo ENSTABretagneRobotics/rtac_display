@@ -2,7 +2,7 @@
 
 namespace optix_helpers { namespace display {
 
-const std::string RendererObj::vertexShader = std::string( R"(
+const std::string Renderer::vertexShader = std::string( R"(
 #version 430 core
 
 in vec3 point;
@@ -18,7 +18,7 @@ void main()
 }
 )");
 
-const std::string RendererObj::fragmentShader = std::string(R"(
+const std::string Renderer::fragmentShader = std::string(R"(
 #version 430 core
 
 in vec3 c;
@@ -29,13 +29,21 @@ void main()
     outColor = vec4(c, 1.0f);
 }
 )");
-RendererObj::RendererObj(const std::string& vertexShader, const std::string& fragmentShader,
-                         const View& view) :
+
+Renderer::Ptr Renderer::New(const std::string& vertexShader,
+                            const std::string& fragmentShader,
+                            const View::Ptr& view)
+{
+    return Ptr(new Renderer(vertexShader, fragmentShader, view));
+}
+
+Renderer::Renderer(const std::string& vertexShader, const std::string& fragmentShader,
+                   const View::Ptr& view) :
     renderProgram_(create_render_program(vertexShader, fragmentShader)),
     view_(view)
 {}
 
-void RendererObj::draw()
+void Renderer::draw()
 {
     float vertices[] = {0,0,0,
                         1,0,0,
@@ -73,12 +81,12 @@ void RendererObj::draw()
     glLineWidth(lineWidth);
 }
 
-void RendererObj::set_view(const View& view) const
+void Renderer::set_view(const View::Ptr& view) const
 {
     view_ = view;
 }
 
-View RendererObj::view() const
+View::Ptr Renderer::view() const
 {
     return view_;
 }

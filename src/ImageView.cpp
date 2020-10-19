@@ -3,11 +3,16 @@
 namespace optix_helpers { namespace display {
 
 
-ImageViewObj::ImageViewObj(const Shape& image) :
+ImageView::Ptr ImageView::New(const Shape& image)
+{
+    return Ptr(new ImageView(image));
+}
+
+ImageView::ImageView(const Shape& image) :
     image_(image)
 {}
 
-void ImageViewObj::update_projection()
+void ImageView::update_projection()
 {
     projectionMatrix_ = Mat4::Identity();
     
@@ -20,12 +25,12 @@ void ImageViewObj::update_projection()
     }
 }
 
-void ImageViewObj::set_image_shape(const Shape& image)
+void ImageView::set_image_shape(const Shape& image)
 {
     image_ = image;
 }
 
-ImageViewObj::Shape ImageViewObj::image_shape() const
+ImageView::Shape ImageView::image_shape() const
 {
     return image_;
 }

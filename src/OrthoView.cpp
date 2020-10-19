@@ -1,13 +1,18 @@
 #include <optix_helpers/display/OrthoView.h>
 
-#include <cmath>
-
 namespace optix_helpers { namespace display {
 
-OrthoViewObj::OrthoViewObj(const Bounds& bounds,
+OrthoView::Ptr OrthoView::New(const Bounds& bounds,
+                              const Pose& pose,
+                              float zNear, float zFar)
+{
+    return Ptr(new OrthoView(bounds, pose, zNear, zFar));
+}
+
+OrthoView::OrthoView(const Bounds& bounds,
                            const Pose& pose,
                            float zNear, float zFar) :
-    View3DObj(pose),
+    View3D(pose),
     bounds_(bounds),
     zNear_(zNear),
     zFar_(zFar)
@@ -15,7 +20,7 @@ OrthoViewObj::OrthoViewObj(const Bounds& bounds,
     this->update_projection();
 }
 
-void OrthoViewObj::update_projection()
+void OrthoView::update_projection()
 {
     projectionMatrix_ = Mat4::Identity();
 
@@ -28,20 +33,20 @@ void OrthoViewObj::update_projection()
     projectionMatrix_(2,3) = projectionMatrix_(2,2)*zNear_ - 1.0f;
 }
 
-void OrthoViewObj::set_bounds(const Bounds& bounds)
+void OrthoView::set_bounds(const Bounds& bounds)
 {
     bounds_ = bounds;
     this->update_projection();
 }
 
-void OrthoViewObj::set_range(float zNear, float zFar)
+void OrthoView::set_range(float zNear, float zFar)
 {
     zNear_ = zNear;
     zFar_  = zFar;
     this->update_projection();
 }
 
-OrthoViewObj::Bounds OrthoViewObj::bounds() const
+OrthoView::Bounds OrthoView::bounds() const
 {
     return bounds_;
 }

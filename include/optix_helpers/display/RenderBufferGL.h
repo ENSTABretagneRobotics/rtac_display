@@ -32,7 +32,7 @@ class RenderBufferGLObj : public RenderBufferObj
     GLuint gl_id() const;
 };
 
-using RenderBufferGL = Handle<RenderBufferGLObj>;
+using RenderBufferGL = optix_helpers::Handle<RenderBufferGLObj>;
 //class RenderBufferGL : public Handle<RenderBufferGLObj>
 //{
 //    public:

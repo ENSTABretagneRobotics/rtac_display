@@ -4,9 +4,15 @@
 
 namespace optix_helpers { namespace display {
 
-PinholeViewObj::PinholeViewObj(float fovy, const Pose& pose,
+PinholeView::Ptr PinholeView::New(float fovy, const Pose& pose,
+                                  float zNear, float zFar)
+{
+    return Ptr(new PinholeView(fovy, pose, zNear, zFar));
+}
+
+PinholeView::PinholeView(float fovy, const Pose& pose,
                                float zNear, float zFar) :
-    View3DObj(pose),
+    View3D(pose),
     fovy_(fovy),
     zNear_(zNear),
     zFar_(zFar)
@@ -14,7 +20,7 @@ PinholeViewObj::PinholeViewObj(float fovy, const Pose& pose,
     this->update_projection();
 }
 
-void PinholeViewObj::update_projection()
+void PinholeView::update_projection()
 {
     projectionMatrix_ = Mat4::Zero();
 
@@ -25,20 +31,20 @@ void PinholeViewObj::update_projection()
     projectionMatrix_(3,2) = -1.0f;
 }
 
-void PinholeViewObj::set_fovy(float fovy)
+void PinholeView::set_fovy(float fovy)
 {
     fovy_ = fovy;
     this->update_projection();
 }
 
-void PinholeViewObj::set_range(float zNear, float zFar)
+void PinholeView::set_range(float zNear, float zFar)
 {
     zNear_ = zNear;
     zFar_  = zFar;
     this->update_projection();
 }
 
-float PinholeViewObj::fovy() const
+float PinholeView::fovy() const
 {
     return fovy_;
 }

@@ -10,8 +10,8 @@ using Mesh = rtac::types::Mesh<float, uint32_t, 3>;
 #include <optix_helpers/display/OrthoView.h>
 #include <optix_helpers/display/PinholeView.h>
 using namespace optix_helpers::display;
-using Bounds = OrthoViewObj::Bounds;
-using Pose   = OrthoViewObj::Pose;
+using Bounds = OrthoView::Bounds;
+using Pose   = OrthoView::Pose;
 
 int main()
 {

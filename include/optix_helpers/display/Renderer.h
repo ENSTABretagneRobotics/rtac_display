@@ -5,42 +5,48 @@
 //#define GL3_PROTOTYPES 1
 #include <GL/gl.h>
 
-#include <optix_helpers/Handle.h>
-
+#include <optix_helpers/display/Handle.h>
 #include <optix_helpers/display/utils.h>
 #include <optix_helpers/display/View.h>
 
 namespace optix_helpers { namespace display {
 
-class RendererObj
+class Renderer
 {
     public:
 
-    using Shape = ViewObj::Shape;
+    using Ptr      = Handle<Renderer>;
+    using ConstPtr = Handle<const Renderer>;
+
+    using Shape = View::Shape;
 
     static const std::string vertexShader;
     static const std::string fragmentShader;
 
     protected:
     
-    GLuint renderProgram_;
-    mutable View   view_;
+    GLuint  renderProgram_;
+    mutable View::Ptr   view_;
 
     public:
 
-    RendererObj(const std::string& vertexShader = vertexShader,
-                const std::string& fragmentShader = fragmentShader,
-                // Had to remove this because of eigen alignment issues. To be investigated
-                //const View& view = View::New());
-                const View& view = View());
+    static Ptr New(const std::string& vertexShader = vertexShader,
+                   const std::string& fragmentShader = fragmentShader,
+                   // Had to remove this because of eigen alignment issues. To be investigated
+                   //const View::Ptr& view = View::New());
+                   const View::Ptr& view = View::New());
+
+    Renderer(const std::string& vertexShader = vertexShader,
+             const std::string& fragmentShader = fragmentShader,
+             // Had to remove this because of eigen alignment issues. To be investigated
+             //const Viewi::Ptr& view = View::New());
+             const View::Ptr& view = View::New());
     
     virtual void draw();
-    void set_view(const View& view) const;
+    void set_view(const View::Ptr& view) const;
 
-    View view() const;
+    View::Ptr view() const;
 };
-
-using Renderer = Handle<RendererObj>;
 
 }; //namespace display
 }; //namespace optix_helpers

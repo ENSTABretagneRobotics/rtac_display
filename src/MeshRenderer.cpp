@@ -2,7 +2,7 @@
 
 namespace optix_helpers { namespace display {
 
-const std::string MeshRendererObj::vertexShader = std::string( R"(
+const std::string MeshRenderer::vertexShader = std::string( R"(
 #version 430 core
 
 in vec3 point;
@@ -23,7 +23,7 @@ void main()
 }
 )");
 
-const std::string MeshRendererObj::fragmentShader = std::string(R"(
+const std::string MeshRenderer::fragmentShader = std::string(R"(
 #version 430 core
 
 in vec3 c;
@@ -35,8 +35,13 @@ void main()
 }
 )");
 
-MeshRendererObj::MeshRendererObj(const View3D& view, const Color& color) :
-    RendererObj(vertexShader, fragmentShader, view),
+MeshRenderer::Ptr MeshRenderer::New(const View3D::Ptr& view, const Color& color)
+{
+    return Ptr(new MeshRenderer(view, color));
+}
+
+MeshRenderer::MeshRenderer(const View3D::Ptr& view, const Color& color) :
+    Renderer(vertexShader, fragmentShader, view),
     numPoints_(0),
     points_(0),
     normals_(0),
@@ -44,7 +49,7 @@ MeshRendererObj::MeshRendererObj(const View3D& view, const Color& color) :
 {
 }
 
-void MeshRendererObj::allocate_points(size_t numPoints)
+void MeshRenderer::allocate_points(size_t numPoints)
 {
     if(!points_) {
         glGenBuffers(1, &points_);
@@ -62,7 +67,7 @@ void MeshRendererObj::allocate_points(size_t numPoints)
     }
 }
 
-void MeshRendererObj::delete_points()
+void MeshRenderer::delete_points()
 {
     if(points_ > 0) {
         glDeleteBuffers(1, &points_);
@@ -75,7 +80,7 @@ void MeshRendererObj::delete_points()
     numPoints_ = 0;
 }
 
-void MeshRendererObj::set_mesh(const Mesh& mesh)
+void MeshRenderer::set_mesh(const Mesh& mesh)
 {
     using namespace rtac::types;
     using namespace rtac::types::indexing;
@@ -114,19 +119,19 @@ void MeshRendererObj::set_mesh(const Mesh& mesh)
     numPoints_ = 9*mesh.num_faces();
 }
 
-void MeshRendererObj::set_pose(const Pose& pose)
+void MeshRenderer::set_pose(const Pose& pose)
 {
     pose_ = pose;
 }
 
-void MeshRendererObj::set_color(const Color& color)
+void MeshRenderer::set_color(const Color& color)
 {
     color_[0] = std::max(0.0f, std::min(1.0f, color[0]));
     color_[1] = std::max(0.0f, std::min(1.0f, color[1]));
     color_[2] = std::max(0.0f, std::min(1.0f, color[2]));
 }
 
-void MeshRendererObj::draw()
+void MeshRenderer::draw()
 {
     if(points_ == 0 || normals_ == 0|| numPoints_ == 0)
         return;
@@ -146,7 +151,8 @@ void MeshRendererObj::draw()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(1);
     
-    auto view = view_.downcast<View3DObj>();
+    //auto view = view_.downcast<View3D>();
+    auto view = std::dynamic_pointer_cast<View3D>(view_);
     Mat4 viewMatrix = view->raw_view_matrix() * pose_.homogeneous_matrix();
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),
         1, GL_FALSE, viewMatrix.data());

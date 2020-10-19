@@ -3,22 +3,25 @@
 
 #include <iostream>
 
-#include <optix_helpers/Handle.h>
+#include <optix_helpers/display/Handle.h>
 #include <optix_helpers/display/View3D.h>
 
 namespace optix_helpers { namespace display {
 
-class PinholeViewObj : public View3DObj
+class PinholeView : public View3D
 {
     public:
 
     // Alignment issue (caused by integration of pcl, activation of vectorization)
     //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    using Mat4    = View3DObj::Mat4;
-    using Shape   = View3DObj::Mat4;
-    using Pose    = View3DObj::Pose;
-    using Vector3 = View3DObj::Vector3;
+    using Ptr      = Handle<PinholeView>;
+    using ConstPtr = Handle<const PinholeView>;
+
+    using Mat4    = View3D::Mat4;
+    using Shape   = View3D::Mat4;
+    using Pose    = View3D::Pose;
+    using Vector3 = View3D::Vector3;
 
     protected:
 
@@ -29,15 +32,17 @@ class PinholeViewObj : public View3DObj
 
     public:
     
-    PinholeViewObj(float fovy = 90.0f, const Pose& pose = Pose(),
+    static Ptr New(float fovy = 90.0f, const Pose& pose = Pose(),
                    float zNear = 0.1f, float zFar = 1000.0f);
+
+    PinholeView(float fovy = 90.0f, const Pose& pose = Pose(),
+                float zNear = 0.1f, float zFar = 1000.0f);
 
     void set_fovy(float fovy);
     void set_range(float zNear, float zFar);
 
     float fovy() const;
 };
-using PinholeView = Handle<PinholeViewObj>;
 
 }; //namespace display
 }; //namespace optix_helpers

@@ -2,7 +2,7 @@
 
 namespace optix_helpers { namespace display {
 
-const std::string ImageRendererObj::vertexShader = std::string( R"(
+const std::string ImageRenderer::vertexShader = std::string( R"(
 #version 430 core
 
 in vec2 point;
@@ -19,7 +19,7 @@ void main()
 }
 )");
 
-const std::string ImageRendererObj::fragmentShader = std::string(R"(
+const std::string ImageRenderer::fragmentShader = std::string(R"(
 #version 430 core
 
 in vec2 uv;
@@ -33,20 +33,25 @@ void main()
 }
 )");
 
-ImageRendererObj::ImageRendererObj() :
-    RendererObj(vertexShader, fragmentShader, ImageView::New()),
+ImageRenderer::Ptr ImageRenderer::New()
+{
+    return Ptr(new ImageRenderer());
+}
+
+ImageRenderer::ImageRenderer() :
+    Renderer(vertexShader, fragmentShader, ImageView::New()),
     texId_(0),
-    imageView_(std::dynamic_pointer_cast<ImageViewObj>(view_.ptr()))
+    imageView_(std::dynamic_pointer_cast<ImageView>(view_))
 {
     this->init_texture();
 }
 
-ImageRendererObj::~ImageRendererObj()
+ImageRenderer::~ImageRenderer()
 {
     glDeleteTextures(1, &texId_);
 }
 
-void ImageRendererObj::init_texture()
+void ImageRenderer::init_texture()
 {
     if(!texId_)
         glGenTextures(1, &texId_);
@@ -63,7 +68,7 @@ void ImageRendererObj::init_texture()
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void ImageRendererObj::set_image(const Shape& imageSize, GLuint bufferId)
+void ImageRenderer::set_image(const Shape& imageSize, GLuint bufferId)
 {
     // only for RGB data
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, bufferId);
@@ -76,12 +81,12 @@ void ImageRendererObj::set_image(const Shape& imageSize, GLuint bufferId)
     imageView_->set_image_shape(imageSize);
 }
 
-void ImageRendererObj::set_image(const RenderBufferGL& buffer)
+void ImageRenderer::set_image(const RenderBufferGL& buffer)
 {
     this->set_image(buffer->shape(), buffer->gl_id());
 }
 
-void ImageRendererObj::draw()
+void ImageRenderer::draw()
 {
     float vertices[] = {-1.0,-1.0,
                          1.0,-1.0,

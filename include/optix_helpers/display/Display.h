@@ -27,9 +27,9 @@ class Display
     public:
 
     using Window    = std::shared_ptr<GLFWwindow>;
-    using Shape     = ViewObj::Shape;
-    using Views     = std::vector<View>;
-    using Renderers = std::vector<Renderer>;
+    using Shape     = View::Shape;
+    using Views     = std::vector<View::Ptr>;
+    using Renderers = std::vector<Renderer::Ptr>;
 
     protected:
     
@@ -47,8 +47,8 @@ class Display
     int should_close() const;
     void wait_for_close() const;
     
-    void add_view(const View& view);
-    void add_renderer(const Renderer& renderer);
+    void add_view(const View::Ptr& view);
+    void add_renderer(const Renderer::Ptr& renderer);
     void draw();
 };
 

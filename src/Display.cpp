@@ -60,18 +60,18 @@ void Display::wait_for_close() const
         std::this_thread::sleep_for(100ms);
     }
 }
-void Display::add_view(const View& view)
+
+void Display::add_view(const View::Ptr& view)
 {
     for(auto v : views_) {
-        if(v.is(view)) {
+        if(view.get() == view.get()) {
             return;
         }
     }
     views_.push_back(view);
 }
 
-
-void Display::add_renderer(const Renderer& renderer)
+void Display::add_renderer(const Renderer::Ptr& renderer)
 {
     renderers_.push_back(renderer);
     views_.push_back(renderer->view());

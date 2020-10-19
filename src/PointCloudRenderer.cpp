@@ -2,7 +2,7 @@
 
 namespace optix_helpers { namespace display {
 
-const std::string PointCloudRendererObj::vertexShader = std::string( R"(
+const std::string PointCloudRenderer::vertexShader = std::string( R"(
 #version 430 core
 
 in vec3 point;
@@ -19,7 +19,7 @@ void main()
 }
 )");
 
-const std::string PointCloudRendererObj::fragmentShader = std::string(R"(
+const std::string PointCloudRenderer::fragmentShader = std::string(R"(
 #version 430 core
 
 in vec3 c;
@@ -31,8 +31,13 @@ void main()
 }
 )");
 
-PointCloudRendererObj::PointCloudRendererObj(const View3D& view, const Color& color) :
-    RendererObj(vertexShader, fragmentShader, view),
+PointCloudRenderer::Ptr PointCloudRenderer::New(const View3D::Ptr& view, const Color& color)
+{
+    return Ptr(new PointCloudRenderer(view, color));
+}
+
+PointCloudRenderer::PointCloudRenderer(const View3D::Ptr& view, const Color& color) :
+    Renderer(vertexShader, fragmentShader, view),
     numPoints_(0),
     points_(0),
     pose_(Pose()),
@@ -44,12 +49,12 @@ PointCloudRendererObj::PointCloudRendererObj(const View3D& view, const Color& co
     std::cout << "Color : " << color_[0] << ", " << color_[1] << ", " << color_[2] << std::endl;
 }
 
-PointCloudRendererObj::~PointCloudRendererObj()
+PointCloudRenderer::~PointCloudRenderer()
 {
     this->delete_points();
 }
 
-void PointCloudRendererObj::allocate_points(size_t numPoints)
+void PointCloudRenderer::allocate_points(size_t numPoints)
 {
     if(!points_) {
         glGenBuffers(1, &points_);
@@ -61,7 +66,7 @@ void PointCloudRendererObj::allocate_points(size_t numPoints)
     }
 }
 
-void PointCloudRendererObj::delete_points()
+void PointCloudRenderer::delete_points()
 {
     if(points_ > 0) {
         glDeleteBuffers(1, &points_);
@@ -70,7 +75,7 @@ void PointCloudRendererObj::delete_points()
     numPoints_ = 0;
 }
 
-void PointCloudRendererObj::set_points(size_t numPoints, const float* data)
+void PointCloudRenderer::set_points(size_t numPoints, const float* data)
 {
     this->allocate_points(numPoints);
     glBindBuffer(GL_ARRAY_BUFFER, points_);
@@ -80,7 +85,7 @@ void PointCloudRendererObj::set_points(size_t numPoints, const float* data)
     numPoints_ = numPoints;
 }
 
-void PointCloudRendererObj::set_points(const RenderBufferGL& buffer)
+void PointCloudRenderer::set_points(const RenderBufferGL& buffer)
 {
     if(points_ != buffer->gl_id()) {
         this->delete_points();
@@ -89,19 +94,19 @@ void PointCloudRendererObj::set_points(const RenderBufferGL& buffer)
     }
 }
 
-void PointCloudRendererObj::set_pose(const Pose& pose)
+void PointCloudRenderer::set_pose(const Pose& pose)
 {
     pose_ = pose;
 }
 
-void PointCloudRendererObj::set_color(const Color& color)
+void PointCloudRenderer::set_color(const Color& color)
 {
     color_[0] = std::max(0.0f, std::min(1.0f, color[0]));
     color_[1] = std::max(0.0f, std::min(1.0f, color[1]));
     color_[2] = std::max(0.0f, std::min(1.0f, color[2]));
 }
 
-void PointCloudRendererObj::draw()
+void PointCloudRenderer::draw()
 {
     if(points_ == 0 || numPoints_ == 0)
         return;

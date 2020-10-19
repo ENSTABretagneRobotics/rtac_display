@@ -10,6 +10,7 @@ if(NOT TARGET optix_helpers)
 endif()
 
 list(APPEND optix_helpers_display_PUBLIC_HEADERS
+    include/optix_helpers/display/Handle.h
     include/optix_helpers/display/utils.h
     include/optix_helpers/display/View.h
     include/optix_helpers/display/ImageView.h
