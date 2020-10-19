@@ -37,9 +37,18 @@ class ImageRenderer : public Renderer
     ~ImageRenderer();
     
     void set_image(const Shape& imageSize, GLuint buffer);
+    template <typename BufferT>
+    void set_image(const BufferT& buffer);
     
     virtual void draw();
 };
+
+// Implementation
+template <typename BufferT>
+void ImageRenderer::set_image(const BufferT& buffer)
+{
+    this->set_image(buffer->shape(), buffer->gl_id());
+}
 
 }; //namespace display
 }; //namespace rtac

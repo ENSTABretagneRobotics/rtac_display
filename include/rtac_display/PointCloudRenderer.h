@@ -51,6 +51,8 @@ class PointCloudRenderer : public Renderer
     void set_points(const rtac::types::PointCloud<PointCloudT>& pc);
     void set_points(size_t numPoints, const float* data);
     void set_points(size_t numPoints, GLuint points);
+    template <typename BufferT>
+    void set_points(const BufferT& buffer);
     template <typename Derived>
     void set_points(const Eigen::DenseBase<Derived>& points);
     void set_pose(const Pose& pose);
@@ -76,6 +78,12 @@ void PointCloudRenderer::set_points(const rtac::types::PointCloud<PointCloudT>& 
     glUnmapBuffer(GL_ARRAY_BUFFER);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     numPoints_ = pc.size();
+}
+
+template <typename BufferT>
+void PointCloudRenderer::set_points(const BufferT& buffer)
+{
+    this->set_points(buffer->shape().area(), buffer->gl_id());
 }
 
 template <typename Derived>
