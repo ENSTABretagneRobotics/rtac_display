@@ -8,7 +8,6 @@
 #include <rtac_base/types/PointCloud.h>
 
 #include <optix_helpers/display/Handle.h>
-#include <optix_helpers/display/RenderBufferGL.h>
 #include <optix_helpers/display/Renderer.h>
 #include <optix_helpers/display/View3D.h>
 
@@ -51,7 +50,7 @@ class PointCloudRenderer : public Renderer
     template <typename PointCloudT>
     void set_points(const rtac::types::PointCloud<PointCloudT>& pc);
     void set_points(size_t numPoints, const float* data);
-    void set_points(const RenderBufferGL& buffer);
+    void set_points(size_t numPoints, GLuint points);
     template <typename Derived>
     void set_points(const Eigen::DenseBase<Derived>& points);
     void set_pose(const Pose& pose);

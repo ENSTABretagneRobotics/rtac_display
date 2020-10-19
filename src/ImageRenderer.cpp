@@ -81,11 +81,6 @@ void ImageRenderer::set_image(const Shape& imageSize, GLuint bufferId)
     imageView_->set_image_shape(imageSize);
 }
 
-void ImageRenderer::set_image(const RenderBufferGL& buffer)
-{
-    this->set_image(buffer->shape(), buffer->gl_id());
-}
-
 void ImageRenderer::draw()
 {
     float vertices[] = {-1.0,-1.0,

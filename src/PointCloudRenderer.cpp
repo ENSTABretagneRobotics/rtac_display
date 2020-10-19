@@ -85,12 +85,14 @@ void PointCloudRenderer::set_points(size_t numPoints, const float* data)
     numPoints_ = numPoints;
 }
 
-void PointCloudRenderer::set_points(const RenderBufferGL& buffer)
+void PointCloudRenderer::set_points(size_t numPoints, GLuint points)
 {
-    if(points_ != buffer->gl_id()) {
+    if(points_ != points) {
         this->delete_points();
-        points_ = buffer->gl_id();
-        numPoints_ = buffer->shape().area();
+        //points_ = buffer->gl_id();
+        //numPoints_ = buffer->shape().area();
+        points_    = points;
+        numPoints_ = numPoints;
     }
 }
 

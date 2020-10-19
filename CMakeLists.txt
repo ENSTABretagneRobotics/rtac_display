@@ -5,9 +5,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
 
-if(NOT TARGET optix_helpers)
-    find_package(optix_helpers REQUIRED)
-endif()
+find_package(rtac_base REQUIRED)
 
 list(APPEND optix_helpers_display_PUBLIC_HEADERS
     include/optix_helpers/display/Handle.h
@@ -22,7 +20,6 @@ list(APPEND optix_helpers_display_PUBLIC_HEADERS
     include/optix_helpers/display/PointCloudRenderer.h
     include/optix_helpers/display/MeshRenderer.h
     include/optix_helpers/display/Display.h
-    include/optix_helpers/display/RenderBufferGL.h
 )
 
 add_library(optix_helpers_display SHARED
@@ -37,7 +34,6 @@ add_library(optix_helpers_display SHARED
     src/PointCloudRenderer.cpp
     src/MeshRenderer.cpp
     src/Display.cpp
-    src/RenderBufferGL.cpp
 )
 set_target_properties(optix_helpers_display PROPERTIES 
     PUBLIC_HEADER "${optix_helpers_display_PUBLIC_HEADERS}"
@@ -52,7 +48,7 @@ target_link_libraries(optix_helpers_display PUBLIC
     OpenGL::GLU
     GLEW::GLEW
     glfw
-    optix_helpers
+    rtac_base
 )
 
 add_subdirectory(tests)

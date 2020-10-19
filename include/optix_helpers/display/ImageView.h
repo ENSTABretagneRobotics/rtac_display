@@ -3,8 +3,6 @@
 
 #include <iostream>
 
-#include <optix_helpers/Handle.h>
-
 #include <optix_helpers/display/Handle.h>
 #include <optix_helpers/display/View.h>
 
