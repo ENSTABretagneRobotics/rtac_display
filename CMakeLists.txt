@@ -55,9 +55,7 @@ target_link_libraries(optix_helpers_display PUBLIC
     optix_helpers
 )
 
-if(BUILD_TESTS)
-    add_subdirectory(tests)
-endif()
+add_subdirectory(tests)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/installation.cmake)
 install_target(optix_helpers_display)
