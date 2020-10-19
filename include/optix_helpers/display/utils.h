@@ -2,21 +2,20 @@
 #define _DEF_OPTIX_HELPES_DISPLAY_UTILS_H_
 
 #include <iostream>
+#include <memory>
 
 #include <GL/glew.h>
 //#define GL3_PROTOTYPES 1
 #include <GL/gl.h>
 
-#include <optix_helpers/Source.h>
-
 namespace optix_helpers { namespace display {
 
 bool checkGLError(const std::string& location = "");
 
-GLuint compile_shader(GLenum shaderType, const Source& source);
+GLuint compile_shader(GLenum shaderType, const std::string& source);
 
-GLuint create_render_program(const Source& vertexShaderSource,
-                             const Source& fragmentShaderSource);
+GLuint create_render_program(const std::string& vertexShaderSource,
+                             const std::string& fragmentShaderSource);
 
 }; //namespace display
 }; //namespace optix_helpers

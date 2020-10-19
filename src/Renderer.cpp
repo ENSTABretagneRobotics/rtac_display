@@ -2,7 +2,7 @@
 
 namespace optix_helpers { namespace display {
 
-const Source RendererObj::vertexShader = Source( R"(
+const std::string RendererObj::vertexShader = std::string( R"(
 #version 430 core
 
 in vec3 point;
@@ -16,9 +16,9 @@ void main()
     gl_Position.z = 1.0f;
     c = color;
 }
-)", "vertex");
+)");
 
-const Source RendererObj::fragmentShader = Source(R"(
+const std::string RendererObj::fragmentShader = std::string(R"(
 #version 430 core
 
 in vec3 c;
@@ -28,8 +28,8 @@ void main()
 {
     outColor = vec4(c, 1.0f);
 }
-)", "fragment");
-RendererObj::RendererObj(const Source& vertexShader, const Source& fragmentShader,
+)");
+RendererObj::RendererObj(const std::string& vertexShader, const std::string& fragmentShader,
                          const View& view) :
     renderProgram_(create_render_program(vertexShader, fragmentShader)),
     view_(view)

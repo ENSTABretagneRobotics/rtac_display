@@ -1,8 +1,6 @@
 #ifndef _DEF_OPTIX_HELPERS_DISPLAY_IMAGE_RENDERER_H_
 #define _DEF_OPTIX_HELPERS_DISPLAY_IMAGE_RENDERER_H_
 
-#include <optix_helpers/Source.h>
-
 #include <optix_helpers/display/RenderBufferGL.h>
 #include <optix_helpers/display/Renderer.h>
 #include <optix_helpers/display/ImageView.h>
@@ -20,8 +18,8 @@ class ImageRendererObj : public RendererObj
     using Mat4  = ImageViewObj::Mat4;
     using Shape = ImageViewObj::Shape;
 
-    static const Source vertexShader;
-    static const Source fragmentShader;
+    static const std::string vertexShader;
+    static const std::string fragmentShader;
 
     GLuint texId_;
     ImageView imageView_;

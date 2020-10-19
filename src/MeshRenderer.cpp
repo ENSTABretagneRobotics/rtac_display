@@ -2,7 +2,7 @@
 
 namespace optix_helpers { namespace display {
 
-const Source MeshRendererObj::vertexShader = Source( R"(
+const std::string MeshRendererObj::vertexShader = std::string( R"(
 #version 430 core
 
 in vec3 point;
@@ -21,9 +21,9 @@ void main()
     gl_Position = projection * gl_Position;
     //c = vec3(1.0,1.0,1.0);
 }
-)", "vertex");
+)");
 
-const Source MeshRendererObj::fragmentShader = Source(R"(
+const std::string MeshRendererObj::fragmentShader = std::string(R"(
 #version 430 core
 
 in vec3 c;
@@ -33,7 +33,7 @@ void main()
 {
     outColor = vec4(c, 1.0f);
 }
-)", "fragment");
+)");
 
 MeshRendererObj::MeshRendererObj(const View3D& view, const Color& color) :
     RendererObj(vertexShader, fragmentShader, view),

@@ -16,7 +16,6 @@
 
 #include <GLFW/glfw3.h>
 
-#include <optix_helpers/Source.h>
 #include <optix_helpers/display/utils.h>
 #include <optix_helpers/display/View.h>
 #include <optix_helpers/display/Renderer.h>

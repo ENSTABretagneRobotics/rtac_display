@@ -6,7 +6,6 @@
 #include <GL/gl.h>
 
 #include <optix_helpers/Handle.h>
-#include <optix_helpers/Source.h>
 
 #include <optix_helpers/display/utils.h>
 #include <optix_helpers/display/View.h>
@@ -19,8 +18,8 @@ class RendererObj
 
     using Shape = ViewObj::Shape;
 
-    static const Source vertexShader;
-    static const Source fragmentShader;
+    static const std::string vertexShader;
+    static const std::string fragmentShader;
 
     protected:
     
@@ -29,8 +28,8 @@ class RendererObj
 
     public:
 
-    RendererObj(const Source& vertexShader = vertexShader,
-                const Source& fragmentShader = fragmentShader,
+    RendererObj(const std::string& vertexShader = vertexShader,
+                const std::string& fragmentShader = fragmentShader,
                 // Had to remove this because of eigen alignment issues. To be investigated
                 //const View& view = View::New());
                 const View& view = View());

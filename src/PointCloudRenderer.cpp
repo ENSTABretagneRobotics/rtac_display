@@ -2,7 +2,7 @@
 
 namespace optix_helpers { namespace display {
 
-const Source PointCloudRendererObj::vertexShader = Source( R"(
+const std::string PointCloudRendererObj::vertexShader = std::string( R"(
 #version 430 core
 
 in vec3 point;
@@ -17,9 +17,9 @@ void main()
     gl_Position = view*vec4(point, 1.0f);
     c = color;
 }
-)", "vertex");
+)");
 
-const Source PointCloudRendererObj::fragmentShader = Source(R"(
+const std::string PointCloudRendererObj::fragmentShader = std::string(R"(
 #version 430 core
 
 in vec3 c;
@@ -29,7 +29,7 @@ void main()
 {
     outColor = vec4(c, 1.0f);
 }
-)", "fragment");
+)");
 
 PointCloudRendererObj::PointCloudRendererObj(const View3D& view, const Color& color) :
     RendererObj(vertexShader, fragmentShader, view),

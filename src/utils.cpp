@@ -18,7 +18,7 @@ bool checkGLError(const std::string& location)
     return false;
 }
 
-GLuint compile_shader(GLenum shaderType, const Source& source)
+GLuint compile_shader(GLenum shaderType, const std::string& source)
 {
     GLuint shaderId = glCreateShader(shaderType);
     checkGLError("ShaderId creation failure.");
@@ -26,7 +26,7 @@ GLuint compile_shader(GLenum shaderType, const Source& source)
     if(shaderId == 0)
         throw std::runtime_error("could not create shader");
     
-    const GLchar* sourceStr = static_cast<const GLchar*>(source->source_str());
+    const GLchar* sourceStr = static_cast<const GLchar*>(source.c_str());
     glShaderSource(shaderId, 1, &sourceStr, 0);
     glCompileShader(shaderId);
     checkGLError("Shader compilation failure");
@@ -51,8 +51,8 @@ GLuint compile_shader(GLenum shaderType, const Source& source)
     return shaderId;
 }
 
-GLuint create_render_program(const Source& vertexShaderSource,
-                             const Source& fragmentShaderSource)
+GLuint create_render_program(const std::string& vertexShaderSource,
+                             const std::string& fragmentShaderSource)
 {
     GLuint vertexShader   = compile_shader(GL_VERTEX_SHADER, vertexShaderSource);
     GLuint fragmentShader = compile_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);

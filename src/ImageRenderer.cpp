@@ -2,7 +2,7 @@
 
 namespace optix_helpers { namespace display {
 
-const Source ImageRendererObj::vertexShader = Source( R"(
+const std::string ImageRendererObj::vertexShader = std::string( R"(
 #version 430 core
 
 in vec2 point;
@@ -17,9 +17,9 @@ void main()
     uv.x = 0.5f*(point.x + 1.0f);
     uv.y = 0.5f*(1.0f - point.y);
 }
-)", "vertex");
+)");
 
-const Source ImageRendererObj::fragmentShader = Source(R"(
+const std::string ImageRendererObj::fragmentShader = std::string(R"(
 #version 430 core
 
 in vec2 uv;
@@ -31,7 +31,7 @@ void main()
 {
     outColor = texture(tex, uv);
 }
-)", "fragment");
+)");
 
 ImageRendererObj::ImageRendererObj() :
     RendererObj(vertexShader, fragmentShader, ImageView::New()),

@@ -3,7 +3,6 @@
 
 #include <rtac_base/types/Mesh.h>
 
-#include <optix_helpers/Source.h>
 #include <optix_helpers/display/Renderer.h>
 #include <optix_helpers/display/View3D.h>
 
@@ -20,8 +19,8 @@ class MeshRendererObj : public RendererObj
 
     protected:
 
-    static const Source vertexShader;
-    static const Source fragmentShader;
+    static const std::string vertexShader;
+    static const std::string fragmentShader;
 
     size_t numPoints_;
     GLuint points_;

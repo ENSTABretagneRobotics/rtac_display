@@ -8,7 +8,6 @@
 #include <rtac_base/types/PointCloud.h>
 
 #include <optix_helpers/Handle.h>
-#include <optix_helpers/Source.h>
 
 #include <optix_helpers/display/RenderBufferGL.h>
 #include <optix_helpers/display/Renderer.h>
@@ -26,8 +25,8 @@ class PointCloudRendererObj : public RendererObj
     using Pose    = View3DObj::Pose;
     using Color   = std::array<float,3>;
 
-    static const Source vertexShader;
-    static const Source fragmentShader;
+    static const std::string vertexShader;
+    static const std::string fragmentShader;
 
     protected:
     
