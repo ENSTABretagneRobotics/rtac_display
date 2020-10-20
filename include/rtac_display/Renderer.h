@@ -43,7 +43,7 @@ class Renderer
              const View::Ptr& view = View::New());
     
     virtual void draw();
-    void set_view(const View::Ptr& view) const;
+    virtual void set_view(const View::Ptr& view) const;
 
     View::Ptr view() const;
 };

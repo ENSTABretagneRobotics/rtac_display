@@ -41,7 +41,8 @@ PointCloudRenderer::PointCloudRenderer(const View3D::Ptr& view, const Color& col
     numPoints_(0),
     points_(0),
     pose_(Pose()),
-    color_(color)
+    color_(color),
+    normalsRenderer_(NULL)
 {
     std::cout << "Request : " << color[0] << ", " << color[1] << ", " << color[2] << std::endl;
     std::cout << "Color : " << color_[0] << ", " << color_[1] << ", " << color_[2] << std::endl;
@@ -96,9 +97,41 @@ void PointCloudRenderer::set_points(size_t numPoints, GLuint points)
     }
 }
 
+void PointCloudRenderer::set_normals(size_t numPoints, const float* data,
+                                     bool normalizeNormals)
+{
+    GLuint dnormals;
+    glGenBuffers(1, &dnormals);
+
+    glBindBuffer(GL_ARRAY_BUFFER, dnormals);
+    glBufferData(GL_ARRAY_BUFFER, 3*sizeof(float)*numPoints, data,
+                 GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    this->set_normals(numPoints, dnormals, normalizeNormals);
+}
+
+void PointCloudRenderer::set_normals(size_t numPoints, GLuint normals,
+                                     bool normalizeNormals)
+{
+    if(numPoints != numPoints_)
+        throw std::runtime_error(
+            "PointCloudRendere::set_normals : not as many normals as points.");
+
+    if(!normalsRenderer_) {
+        normalsRenderer_ = NormalsRenderer::New(view_, color_);
+        normalsRenderer_->set_pose(pose_);
+    }
+    
+    normalsRenderer_->set_normals(numPoints_, points_, normals,
+                                  normalizeNormals);
+}
+
 void PointCloudRenderer::set_pose(const Pose& pose)
 {
     pose_ = pose;
+    if(normalsRenderer_)
+        normalsRenderer_->set_pose(pose_);
 }
 
 void PointCloudRenderer::set_color(const Color& color)
@@ -145,6 +178,17 @@ void PointCloudRenderer::draw()
     glUseProgram(0);
 
     glPointSize(pointSize);
+
+    if(normalsRenderer_)
+        normalsRenderer_->draw();
+}
+
+void PointCloudRenderer::set_view(const View::Ptr& view)
+{
+    this->Renderer::set_view(view);
+    if(normalsRenderer_) {
+        normalsRenderer_->set_view(view);
+    }
 }
 
 }; //namespace display

@@ -5,6 +5,7 @@ list(APPEND test_names
     view_test
     mesh_test
     pointcloud_test
+    normals_test
 )
 list(APPEND test_deps
     rtac_display

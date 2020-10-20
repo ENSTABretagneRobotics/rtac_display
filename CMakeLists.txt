@@ -19,6 +19,7 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/ImageRenderer.h
     include/rtac_display/PointCloudRenderer.h
     include/rtac_display/MeshRenderer.h
+    include/rtac_display/NormalsRenderer.h
     include/rtac_display/Display.h
 )
 
@@ -33,6 +34,7 @@ add_library(rtac_display SHARED
     src/ImageRenderer.cpp
     src/PointCloudRenderer.cpp
     src/MeshRenderer.cpp
+    src/NormalsRenderer.cpp
     src/Display.cpp
 )
 set_target_properties(rtac_display PROPERTIES 

@@ -10,6 +10,7 @@
 #include <rtac_display/Handle.h>
 #include <rtac_display/Renderer.h>
 #include <rtac_display/View3D.h>
+#include <rtac_display/NormalsRenderer.h>
 
 namespace rtac { namespace display {
 
@@ -35,7 +36,8 @@ class PointCloudRenderer : public Renderer
     GLuint points_;
     Pose   pose_;
     Color  color_;
-    
+    NormalsRenderer::Ptr normalsRenderer_;
+
     void allocate_points(size_t numPoints);
     void delete_points();
 
@@ -47,18 +49,28 @@ class PointCloudRenderer : public Renderer
                        const Color& color = {0.7,0.7,1.0});
     ~PointCloudRenderer();
     
-    template <typename PointCloudT>
-    void set_points(const rtac::types::PointCloud<PointCloudT>& pc);
     void set_points(size_t numPoints, const float* data);
     void set_points(size_t numPoints, GLuint points);
+
+    // these function use already used points.
+    // a call to set points must have been done beforehand.
+    void set_normals(size_t numPoints, const float* data,
+                     bool normalizeNormals = true);
+    void set_normals(size_t numPoints, GLuint normals,
+                     bool normalizeNormals = true);
+
+    template <typename PointCloudT>
+    void set_points(const rtac::types::PointCloud<PointCloudT>& pc);
     template <typename BufferT>
     void set_points(const BufferT& buffer);
     template <typename Derived>
     void set_points(const Eigen::DenseBase<Derived>& points);
+
     void set_pose(const Pose& pose);
     void set_color(const Color& color);
 
     virtual void draw();
+    virtual void set_view(const View::Ptr& view);
 };
 
 // implementation
