@@ -2,18 +2,18 @@
 
 namespace rtac { namespace display {
 
-bool checkGLError(const std::string& location)
+bool check_gl(const std::string& location)
 {
     GLenum errorCode;
 
     errorCode = glGetError();
     if(errorCode != GL_NO_ERROR)
     {
-        std::cout << "GL error : " << errorCode << ", \"" << gluErrorString(errorCode)
-                  << "\". Tag : " << location << std::endl;
-        return true;
-        //cout << "GL error : " << errorCode << endl;
-        //throw std::runtime_error("GL error : " + std::to_string(errorCode));
+        std::ostringstream oss;
+        oss << "GL error : " << errorCode << ", \"" << gluErrorString(errorCode)
+            << "\". Tag : " << location;
+        //std::cout << oss.str() << std::endl;
+        throw std::runtime_error(oss.str());
     }
     return false;
 }
@@ -21,7 +21,7 @@ bool checkGLError(const std::string& location)
 GLuint compile_shader(GLenum shaderType, const std::string& source)
 {
     GLuint shaderId = glCreateShader(shaderType);
-    checkGLError("ShaderId creation failure.");
+    check_gl("compile_shader, ShaderId creation failure.");
 
     if(shaderId == 0)
         throw std::runtime_error("could not create shader");
@@ -29,7 +29,7 @@ GLuint compile_shader(GLenum shaderType, const std::string& source)
     const GLchar* sourceStr = static_cast<const GLchar*>(source.c_str());
     glShaderSource(shaderId, 1, &sourceStr, 0);
     glCompileShader(shaderId);
-    checkGLError("Shader compilation failure");
+    check_gl("Shader compilation failure");
 
     GLint compilationStatus(0);
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &compilationStatus);
@@ -41,8 +41,8 @@ GLuint compile_shader(GLenum shaderType, const std::string& source)
 
         std::shared_ptr<char> error(new char[errorSize + 1]);
         glGetShaderInfoLog(shaderId, errorSize, &errorSize, error.get());
-        error.get()[errorSize] = '\0';
-        glDeleteShader(shaderId);
+        error.get()[errorSize] = '\0';                  
+        glDeleteShader(shaderId);                       
         shaderId = 0;
 
         throw std::runtime_error("Shader compilation error :\n" + std::string(error.get()));
@@ -58,7 +58,7 @@ GLuint create_render_program(const std::string& vertexShaderSource,
     GLuint fragmentShader = compile_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 
     GLuint programId = glCreateProgram();
-    checkGLError("Program creation failure.");
+    check_gl("Program creation failure.");
 
     if(programId == 0)
         throw std::runtime_error("Could not create program.");
@@ -86,6 +86,40 @@ GLuint create_render_program(const std::string& vertexShaderSource,
     }
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+
+    return programId;
+}
+
+GLuint create_compute_program(const std::string& computeShaderSource)
+{
+    GLuint computeShader = compile_shader(GL_COMPUTE_SHADER, computeShaderSource);
+
+    GLuint programId = glCreateProgram();
+    check_gl("Program creation failure.");
+
+    if(programId == 0)
+        throw std::runtime_error("Could not create program.");
+
+    glAttachShader(programId, computeShader);
+
+    glLinkProgram(programId);
+
+    GLint linkStatus(0);
+    glGetProgramiv(programId, GL_LINK_STATUS, &linkStatus);
+    if(linkStatus != GL_TRUE)
+    {
+        std::cout << "Compute shader :\n" << computeShaderSource << std::endl;
+        GLint errorSize(0);
+        glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &errorSize);
+        std::shared_ptr<char> error(new char[errorSize + 1]);
+        glGetProgramInfoLog(programId, errorSize, &errorSize, error.get());
+        error.get()[errorSize] = '\0';
+        glDeleteProgram(programId);
+        programId = 0;
+
+        throw std::runtime_error("Program link error :\n" + std::string(error.get()));
+    }
+    glDeleteShader(computeShader);
 
     return programId;
 }
