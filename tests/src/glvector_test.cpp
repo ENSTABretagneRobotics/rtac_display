@@ -5,29 +5,35 @@ using namespace std;
 #include <rtac_display/Display.h>
 #include <rtac_display/views/PinholeView.h>
 #include <rtac_display/renderers/PointCloudRenderer.h>
-#include <rtac_display/GLVector.h>
 using namespace rtac::display;
 using Pose       = PinholeView::Pose;
 using Quaternion = Pose::Quaternion;
+
+#include <rtac_display/GLMappedPointer.h>
+#include <rtac_display/GLVector.h>
 
 GLVector<float> load_cube()
 {
     GLVector<float> res(8*3);
     res.bind(GL_ARRAY_BUFFER);
-    auto data = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+    //auto data = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 
-    data[0] = -1; data[1] = -1; data[2] = -1; data += 3;
-    data[0] =  1; data[1] = -1; data[2] = -1; data += 3;
-    data[0] =  1; data[1] =  1; data[2] = -1; data += 3;
-    data[0] = -1; data[1] =  1; data[2] = -1; data += 3;
+    GLMappedPointer<const float*> p(res.gl_id());
+    //GLMappedPointer<float*> p(res.gl_id());
+    auto data = p.get();
 
-    data[0] = -1; data[1] = -1; data[2] = 1; data += 3;
-    data[0] =  1; data[1] = -1; data[2] = 1; data += 3;
-    data[0] =  1; data[1] =  1; data[2] = 1; data += 3;
-    data[0] = -1; data[1] =  1; data[2] = 1;
+    //data[0] = -1; data[1] = -1; data[2] = -1; data += 3;
+    //data[0] =  1; data[1] = -1; data[2] = -1; data += 3;
+    //data[0] =  1; data[1] =  1; data[2] = -1; data += 3;
+    //data[0] = -1; data[1] =  1; data[2] = -1; data += 3;
 
-    glUnmapBuffer(GL_ARRAY_BUFFER);
-    res.unbind(GL_ARRAY_BUFFER);
+    //data[0] = -1; data[1] = -1; data[2] = 1; data += 3;
+    //data[0] =  1; data[1] = -1; data[2] = 1; data += 3;
+    //data[0] =  1; data[1] =  1; data[2] = 1; data += 3;
+    //data[0] = -1; data[1] =  1; data[2] = 1;
+
+    //glUnmapBuffer(GL_ARRAY_BUFFER);
+    //res.unbind(GL_ARRAY_BUFFER);
     return res;
 }
 
