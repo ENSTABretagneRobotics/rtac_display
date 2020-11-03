@@ -21,6 +21,7 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/renderers/MeshRenderer.h
     include/rtac_display/renderers/NormalsRenderer.h
     include/rtac_display/Display.h
+    include/rtac_display/GLVector.h
 )
 
 add_library(rtac_display SHARED
