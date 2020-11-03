@@ -3,8 +3,9 @@
 
 #include <iostream>
 
-#include <rtac_display/Handle.h>
-#include <rtac_display/View.h>
+#include <rtac_base/types/Handle.h>
+
+#include <rtac_display/views/View.h>
 
 namespace rtac { namespace display {
 
@@ -12,8 +13,8 @@ class ImageView : public View
 {
     public:
 
-    using Ptr      = Handle<ImageView>;
-    using ConstPtr = Handle<const ImageView>;
+    using Ptr      = rtac::types::Handle<ImageView>;
+    using ConstPtr = rtac::types::Handle<const ImageView>;
 
     using Mat4  = View::Mat4;
     using Shape = View::Shape;

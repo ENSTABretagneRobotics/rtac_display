@@ -5,9 +5,9 @@
 #include <cmath>
 
 #include <rtac_base/types/Rectangle.h>
+#include <rtac_base/types/Handle.h>
 
-#include <rtac_display/Handle.h>
-#include <rtac_display/View3D.h>
+#include <rtac_display/views/View3D.h>
 
 namespace rtac { namespace display {
 
@@ -18,8 +18,8 @@ class OrthoView : public View3D
     // Alignment issue (caused by integration of pcl, activation of vectorization)
     //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    using Ptr      = Handle<OrthoView>;
-    using ConstPtr = Handle<const OrthoView>;
+    using Ptr      = rtac::types::Handle<OrthoView>;
+    using ConstPtr = rtac::types::Handle<const OrthoView>;
 
     using Mat4    = View3D::Mat4;
     using Shape   = View3D::Mat4;

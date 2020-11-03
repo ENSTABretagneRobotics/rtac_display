@@ -6,9 +6,9 @@ using namespace std;
 using Mesh = rtac::types::Mesh<float, uint32_t, 3>;
 
 #include <rtac_display/Display.h>
-#include <rtac_display/MeshRenderer.h>
-#include <rtac_display/OrthoView.h>
-#include <rtac_display/PinholeView.h>
+#include <rtac_display/renderers/MeshRenderer.h>
+#include <rtac_display/views/OrthoView.h>
+#include <rtac_display/views/PinholeView.h>
 using namespace rtac::display;
 using Bounds = OrthoView::Bounds;
 using Pose   = OrthoView::Pose;

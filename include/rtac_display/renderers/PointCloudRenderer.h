@@ -5,12 +5,12 @@
 #include <array>
 #include <algorithm>
 
+#include <rtac_base/types/Handle.h>
 #include <rtac_base/types/PointCloud.h>
 
-#include <rtac_display/Handle.h>
-#include <rtac_display/Renderer.h>
-#include <rtac_display/View3D.h>
-#include <rtac_display/NormalsRenderer.h>
+#include <rtac_display/renderers/Renderer.h>
+#include <rtac_display/views/View3D.h>
+#include <rtac_display/renderers/NormalsRenderer.h>
 
 namespace rtac { namespace display {
 
@@ -19,8 +19,8 @@ class PointCloudRenderer : public Renderer
 {
     public:
 
-    using Ptr      = std::shared_ptr<PointCloudRenderer>;
-    using ConstPtr = std::shared_ptr<const PointCloudRenderer>;
+    using Ptr      = rtac::types::Handle<PointCloudRenderer>;
+    using ConstPtr = rtac::types::Handle<const PointCloudRenderer>;
 
     using Mat4    = View3D::Mat4;
     using Shape   = View3D::Shape;

@@ -3,13 +3,13 @@
 
 #include <iostream>
 
+#include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Pose.h>
 
-#include <rtac_display/Handle.h>
 #include <rtac_display/utils.h>
-#include <rtac_display/Renderer.h>
-#include <rtac_display/View.h>
-#include <rtac_display/View3D.h>
+#include <rtac_display/renderers/Renderer.h>
+#include <rtac_display/views/View.h>
+#include <rtac_display/views/View3D.h>
 
 namespace rtac { namespace display {
 
@@ -17,8 +17,8 @@ class NormalsRenderer : public Renderer
 {
     public:
 
-    using Ptr      = Handle<NormalsRenderer>;
-    using ConstPtr = Handle<const NormalsRenderer>;
+    using Ptr      = rtac::types::Handle<NormalsRenderer>;
+    using ConstPtr = rtac::types::Handle<const NormalsRenderer>;
 
     using Mat4     = View3D::Mat4;
     using Pose     = View3D::Pose;

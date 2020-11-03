@@ -17,8 +17,8 @@
 #include <GLFW/glfw3.h>
 
 #include <rtac_display/utils.h>
-#include <rtac_display/View.h>
-#include <rtac_display/Renderer.h>
+#include <rtac_display/views/View.h>
+#include <rtac_display/renderers/Renderer.h>
 
 namespace rtac { namespace display {
 

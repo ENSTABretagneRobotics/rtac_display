@@ -5,9 +5,10 @@
 //#define GL3_PROTOTYPES 1
 #include <GL/gl.h>
 
-#include <rtac_display/Handle.h>
+#include <rtac_base/types/Handle.h>
+
 #include <rtac_display/utils.h>
-#include <rtac_display/View.h>
+#include <rtac_display/views/View.h>
 
 namespace rtac { namespace display {
 
@@ -15,8 +16,8 @@ class Renderer
 {
     public:
 
-    using Ptr      = Handle<Renderer>;
-    using ConstPtr = Handle<const Renderer>;
+    using Ptr      = rtac::types::Handle<Renderer>;
+    using ConstPtr = rtac::types::Handle<const Renderer>;
 
     using Shape = View::Shape;
 

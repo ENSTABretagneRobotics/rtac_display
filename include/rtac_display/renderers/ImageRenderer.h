@@ -1,9 +1,10 @@
 #ifndef _DEF_RTAC_DISPLAY_IMAGE_RENDERER_H_
 #define _DEF_RTAC_DISPLAY_IMAGE_RENDERER_H_
 
-#include <rtac_display/Handle.h>
-#include <rtac_display/Renderer.h>
-#include <rtac_display/ImageView.h>
+#include <rtac_base/types/Handle.h>
+
+#include <rtac_display/renderers/Renderer.h>
+#include <rtac_display/views/ImageView.h>
 
 namespace rtac { namespace display {
 
@@ -15,8 +16,8 @@ class ImageRenderer : public Renderer
 
     public:
 
-    using Ptr      = Handle<ImageRenderer>;
-    using ConstPtr = Handle<const ImageRenderer>;
+    using Ptr      = rtac::types::Handle<ImageRenderer>;
+    using ConstPtr = rtac::types::Handle<const ImageRenderer>;
 
     using Mat4  = ImageView::Mat4;
     using Shape = ImageView::Shape;

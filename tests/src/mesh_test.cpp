@@ -14,8 +14,8 @@ using Quaternion = rtac::types::Quaternion<float>;
 using Mesh = rtac::types::Mesh<float, uint32_t, 3>;
 
 #include <rtac_display/Display.h>
-#include <rtac_display/PinholeView.h>
-#include <rtac_display/MeshRenderer.h>
+#include <rtac_display/views/PinholeView.h>
+#include <rtac_display/renderers/MeshRenderer.h>
 using namespace rtac::display;
 
 int main()

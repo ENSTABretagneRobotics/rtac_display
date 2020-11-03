@@ -13,9 +13,9 @@ using Quaternion = rtac::types::Quaternion<float>;
 using PointCloud = rtac::types::PointCloud<>;
 
 #include <rtac_display/Display.h>
-#include <rtac_display/PinholeView.h>
-#include <rtac_display/PointCloudRenderer.h>
-#include <rtac_display/NormalsRenderer.h>
+#include <rtac_display/views/PinholeView.h>
+#include <rtac_display/renderers/PointCloudRenderer.h>
+#include <rtac_display/renderers/NormalsRenderer.h>
 using namespace rtac::display;
 
 GLuint build_normals()

@@ -3,11 +3,11 @@
 
 #include <iostream>
 
+#include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Pose.h>
 #include <rtac_base/geometry.h>
 
-#include <rtac_display/Handle.h>
-#include <rtac_display/View.h>
+#include <rtac_display/views/View.h>
 
 namespace rtac { namespace display {
 
@@ -18,8 +18,8 @@ class View3D : public View
     // Alignment issue (caused by integration of pcl, activation of vectorization)
     //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    using Ptr      = Handle<View3D>;
-    using ConstPtr = Handle<const View3D>;
+    using Ptr      = rtac::types::Handle<View3D>;
+    using ConstPtr = rtac::types::Handle<const View3D>;
 
     using Mat4    = View::Mat4;
     using Shape   = View::Shape;

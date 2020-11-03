@@ -5,8 +5,7 @@
 
 #include <rtac_base/types/common.h>
 #include <rtac_base/types/Shape.h>
-
-#include <rtac_display/Handle.h>
+#include <rtac_base/types/Handle.h>
 
 namespace rtac { namespace display {
 
@@ -17,8 +16,8 @@ class View
     // Alignment issue (caused by integration of pcl, activation of vectorization)
     //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    using Ptr      = Handle<View>;
-    using ConstPtr = Handle<const View>;
+    using Ptr      = rtac::types::Handle<View>;
+    using ConstPtr = rtac::types::Handle<const View>;
 
     using Mat4  = rtac::types::Matrix4<float>;
     using Shape = rtac::types::Shape<size_t>;

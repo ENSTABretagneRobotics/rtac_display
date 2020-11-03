@@ -13,8 +13,8 @@ using Quaternion = rtac::types::Quaternion<float>;
 using PointCloud = rtac::types::PointCloud<>;
 
 #include <rtac_display/Display.h>
-#include <rtac_display/PinholeView.h>
-#include <rtac_display/PointCloudRenderer.h>
+#include <rtac_display/views/PinholeView.h>
+#include <rtac_display/renderers/PointCloudRenderer.h>
 using namespace rtac::display;
 
 int main()
