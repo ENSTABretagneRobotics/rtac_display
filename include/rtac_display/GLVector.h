@@ -5,7 +5,10 @@
 //#define GL3_PROTOTYPES 1
 #include <GL/gl.h>
 
+#include <rtac_base/cuda/DeviceVector.h>
+
 #include <rtac_display/utils.h>
+#include <rtac_display/cuda/utils.h>
 
 namespace rtac { namespace display {
 
@@ -36,11 +39,18 @@ class GLVector
     GLVector();
     GLVector(size_t size);
     GLVector(const GLVector<T>& other);
+    GLVector(const rtac::cuda::DeviceVector<T>& other);
+    GLVector(const rtac::cuda::HostVector<T>& other);
     GLVector(const std::vector<T>& other);
     ~GLVector();
     
     GLVector& operator=(const GLVector<T>& other);
+    GLVector& operator=(const rtac::cuda::DeviceVector<T>& other);
+    GLVector& operator=(const rtac::cuda::HostVector<T>& other);
     GLVector& operator=(const std::vector<T>& other);
+
+    rtac::cuda::DeviceVector<T>& copy_to_cuda(rtac::cuda::DeviceVector<T>& other) const;
+    rtac::cuda::DeviceVector<T>  copy_to_cuda() const;
 
     void resize(size_t size);
     size_t size() const;
@@ -84,6 +94,20 @@ GLVector<T>::GLVector(const GLVector<T>& other) :
 }
 
 template <typename T>
+GLVector<T>::GLVector(const rtac::cuda::DeviceVector<T>& other) :
+    GLVector(other.size())
+{
+    *this = other;
+}
+
+template <typename T>
+GLVector<T>::GLVector(const rtac::cuda::HostVector<T>& other) :
+    GLVector(other.size())
+{
+    *this = other;
+}
+
+template <typename T>
 GLVector<T>::GLVector(const std::vector<T>& other) :
     GLVector(other.size())
 {
@@ -100,6 +124,37 @@ template <typename T>
 GLVector<T>& GLVector<T>::operator=(const GLVector<T>& other)
 {
     this->resize(other.size());
+
+    other.bind(GL_COPY_READ_BUFFER);
+    this->bind(GL_COPY_WRITE_BUFFER);
+
+    glCopyBufferSubData(GL_COPY_READ_BUFFER,
+                        GL_COPY_WRITE_BUFFER,
+                        0, 0, this->size()*sizeof(T));
+
+    this->unbind(GL_COPY_WRITE_BUFFER);
+    other.unbind(GL_COPY_READ_BUFFER);
+
+    return *this;
+}
+
+template <typename T>
+GLVector<T>& GLVector<T>::operator=(const rtac::cuda::DeviceVector<T>& other)
+{
+    this->resize(other.size());
+    cuda::copy_to_gl(this->gl_id(), other.data(), this->size()*sizeof(T));
+    return *this;
+}
+
+template <typename T>
+GLVector<T>& GLVector<T>::operator=(const rtac::cuda::HostVector<T>& other)
+{
+    this->resize(other.size());
+    this->bind(GL_ARRAY_BUFFER);
+    
+    glBufferSubData(GL_ARRAY_BUFFER, 0, this->size()*sizeof(T), other.data());
+
+    this->unbind(GL_ARRAY_BUFFER);
     return *this;
 }
 
@@ -107,7 +162,27 @@ template <typename T>
 GLVector<T>& GLVector<T>::operator=(const std::vector<T>& other)
 {
     this->resize(other.size());
+    this->bind(GL_ARRAY_BUFFER);
+    
+    glBufferSubData(GL_ARRAY_BUFFER, 0, this->size()*sizeof(T), other.data());
+
+    this->unbind(GL_ARRAY_BUFFER);
     return *this;
+}
+
+template <typename T>
+rtac::cuda::DeviceVector<T>& GLVector<T>::copy_to_cuda(rtac::cuda::DeviceVector<T>& other) const
+{
+    other.resize(this->size());
+    cuda::copy_from_gl(other.data(), this->gl_id(), this->size()*sizeof(T));
+    return other;
+}
+
+template <typename T>
+rtac::cuda::DeviceVector<T> GLVector<T>::copy_to_cuda() const
+{
+    rtac::cuda::DeviceVector<T> res(this->size());
+    return this->copy_to_cuda(res);
 }
 
 template <typename T>

@@ -2,6 +2,9 @@
 #include <thread>
 using namespace std;
 
+#include <rtac_base/cuda/DeviceVector.h>
+using namespace rtac::cuda;
+
 #include <rtac_display/Display.h>
 #include <rtac_display/views/PinholeView.h>
 #include <rtac_display/renderers/PointCloudRenderer.h>
@@ -14,27 +17,47 @@ using Quaternion = Pose::Quaternion;
 
 GLVector<float> load_cube()
 {
-    GLVector<float> res(8*3);
-    res.bind(GL_ARRAY_BUFFER);
-    //auto data = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+    //GLVector<float> res(8*3);
+    //res.bind(GL_ARRAY_BUFFER);
+    ////auto data = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 
-    GLMappedPointer<const float*> p(res.gl_id());
-    //GLMappedPointer<float*> p(res.gl_id());
-    auto data = p.get();
+    //GLMappedPointer<const float*> p(res.gl_id());
+    ////GLMappedPointer<float*> p(res.gl_id());
+    //auto data = p.get();
 
-    //data[0] = -1; data[1] = -1; data[2] = -1; data += 3;
-    //data[0] =  1; data[1] = -1; data[2] = -1; data += 3;
-    //data[0] =  1; data[1] =  1; data[2] = -1; data += 3;
-    //data[0] = -1; data[1] =  1; data[2] = -1; data += 3;
+    ////data[0] = -1; data[1] = -1; data[2] = -1; data += 3;
+    ////data[0] =  1; data[1] = -1; data[2] = -1; data += 3;
+    ////data[0] =  1; data[1] =  1; data[2] = -1; data += 3;
+    ////data[0] = -1; data[1] =  1; data[2] = -1; data += 3;
 
-    //data[0] = -1; data[1] = -1; data[2] = 1; data += 3;
-    //data[0] =  1; data[1] = -1; data[2] = 1; data += 3;
-    //data[0] =  1; data[1] =  1; data[2] = 1; data += 3;
-    //data[0] = -1; data[1] =  1; data[2] = 1;
+    ////data[0] = -1; data[1] = -1; data[2] = 1; data += 3;
+    ////data[0] =  1; data[1] = -1; data[2] = 1; data += 3;
+    ////data[0] =  1; data[1] =  1; data[2] = 1; data += 3;
+    ////data[0] = -1; data[1] =  1; data[2] = 1;
 
-    //glUnmapBuffer(GL_ARRAY_BUFFER);
-    //res.unbind(GL_ARRAY_BUFFER);
-    return res;
+    ////glUnmapBuffer(GL_ARRAY_BUFFER);
+    ////res.unbind(GL_ARRAY_BUFFER);
+    //return res;
+
+    std::vector<float> v(8*3);
+    auto data = v.data();
+
+    data[0] = -1; data[1] = -1; data[2] = -1; data += 3;
+    data[0] =  1; data[1] = -1; data[2] = -1; data += 3;
+    data[0] =  1; data[1] =  1; data[2] = -1; data += 3;
+    data[0] = -1; data[1] =  1; data[2] = -1; data += 3;
+
+    data[0] = -1; data[1] = -1; data[2] = 1; data += 3;
+    data[0] =  1; data[1] = -1; data[2] = 1; data += 3;
+    data[0] =  1; data[1] =  1; data[2] = 1; data += 3;
+    data[0] = -1; data[1] =  1; data[2] = 1;
+
+    DeviceVector<float> vd0(v);
+    GLVector<float> vgl0(vd0);
+    
+    auto vd1 = vgl0.copy_to_cuda();
+
+    return GLVector<float>(vd1);
 }
 
 int main()

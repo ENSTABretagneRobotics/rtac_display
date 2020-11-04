@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(rtac_display VERSION 0.1)
 
+option(WITH_CUDA "enable cuda related code" ON)
+
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
@@ -23,8 +25,7 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/Display.h
     include/rtac_display/GLVector.h
 )
-
-add_library(rtac_display SHARED
+list(APPEND rtac_display_SOURCES
     src/utils.cpp
     src/views/View.cpp
     src/views/ImageView.cpp
@@ -38,6 +39,17 @@ add_library(rtac_display SHARED
     src/renderers/NormalsRenderer.cpp
     src/Display.cpp
 )
+if(${WITH_CUDA})
+    enable_language(CUDA)
+    find_package(rtac_cuda REQUIRED)
+    list(APPEND rtac_display_PUBLIC_HEADERS
+        include/rtac_display/cuda/utils.h
+    )
+    list(APPEND rtac_display_SOURCES
+        src/cuda/utils.cu
+    )
+endif()
+add_library(rtac_display SHARED ${rtac_display_SOURCES})
 set_target_properties(rtac_display PROPERTIES 
     PUBLIC_HEADER "${rtac_display_PUBLIC_HEADERS}"
     INSTALL_RPATH_USE_LINK_PATH True
@@ -53,6 +65,13 @@ target_link_libraries(rtac_display PUBLIC
     glfw
     rtac_base
 )
+if(${WITH_CUDA})
+    target_compile_options(rtac_display PUBLIC
+        $<$<COMPILE_LANGUAGE:CUDA>:-gencode arch=compute_61,code=sm_61>
+    )
+    target_link_libraries(rtac_display PUBLIC rtac_cuda)
+endif()
+
 
 add_subdirectory(tests)
 
