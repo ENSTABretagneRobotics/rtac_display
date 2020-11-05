@@ -1,4 +1,4 @@
-#include <rtac_display/PinholeView.h>
+#include <rtac_display/views/PinholeView.h>
 
 namespace rtac { namespace display {
 

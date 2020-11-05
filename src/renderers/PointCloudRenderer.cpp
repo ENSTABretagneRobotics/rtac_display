@@ -1,4 +1,4 @@
-#include <rtac_display/PointCloudRenderer.h>
+#include <rtac_display/renderers/PointCloudRenderer.h>
 
 namespace rtac { namespace display {
 

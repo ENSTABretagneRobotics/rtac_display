@@ -1,4 +1,4 @@
-#include <rtac_display/NormalsRenderer.h>
+#include <rtac_display/renderers/NormalsRenderer.h>
 
 namespace rtac { namespace display {
 

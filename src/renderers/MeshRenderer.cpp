@@ -1,4 +1,4 @@
-#include <rtac_display/MeshRenderer.h>
+#include <rtac_display/renderers/MeshRenderer.h>
 
 namespace rtac { namespace display {
 

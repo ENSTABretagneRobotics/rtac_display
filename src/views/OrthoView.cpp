@@ -1,4 +1,4 @@
-#include <rtac_display/OrthoView.h>
+#include <rtac_display/views/OrthoView.h>
 
 namespace rtac { namespace display {
 

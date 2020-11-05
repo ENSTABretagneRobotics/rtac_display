@@ -1,4 +1,4 @@
-#include <rtac_display/View.h>
+#include <rtac_display/views/View.h>
 
 namespace rtac { namespace display {
 

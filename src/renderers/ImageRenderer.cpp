@@ -1,4 +1,4 @@
-#include <rtac_display/ImageRenderer.h>
+#include <rtac_display/renderers/ImageRenderer.h>
 
 namespace rtac { namespace display {
 
