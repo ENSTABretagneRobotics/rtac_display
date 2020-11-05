@@ -69,10 +69,12 @@ if(${WITH_CUDA})
         $<$<COMPILE_LANGUAGE:CUDA>:-gencode arch=compute_61,code=sm_61>
     )
     target_link_libraries(rtac_display PUBLIC rtac_cuda)
+    list(APPEND CONFIG_COMMANDS "find_package(rtac_cuda REQUIRED)")
 endif()
 
 
 add_subdirectory(tests)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/installation.cmake)
-install_target(rtac_display)
+rtac_install_target(rtac_display
+    ADDITIONAL_CONFIG_COMMANDS ${CONFIG_COMMANDS}
+)
