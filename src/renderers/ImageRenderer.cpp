@@ -81,6 +81,19 @@ void ImageRenderer::set_image(const Shape& imageSize, GLuint bufferId)
     imageView_->set_image_shape(imageSize);
 }
 
+void ImageRenderer::set_image(const Shape& imageSize, const uint8_t* data)
+{
+    // ensuring no buffer bound to GL_PIXEL_UNPACK_BUFFER for data to be read
+    // from CPU side memory.
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, texId_);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageSize.width, imageSize.height,
+        0, GL_RED, GL_UNSIGNED_BYTE, data);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    imageView_->set_image_shape(imageSize);
+}
+
 void ImageRenderer::draw()
 {
     float vertices[] = {-1.0,-1.0,
