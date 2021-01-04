@@ -69,9 +69,6 @@ target_link_libraries(rtac_display PUBLIC
     rtac_base
 )
 if(${WITH_CUDA})
-    target_compile_options(rtac_display PUBLIC
-        $<$<COMPILE_LANGUAGE:CUDA>:-gencode arch=compute_61,code=sm_61>
-    )
     target_link_libraries(rtac_display PUBLIC rtac_cuda)
     list(APPEND CONFIG_COMMANDS "find_package(rtac_cuda REQUIRED)")
 endif()
