@@ -7,7 +7,9 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
 
-find_package(rtac_base REQUIRED)
+if(NOT TARGET rtac_base)
+    find_package(rtac_base REQUIRED)
+endif()
 
 list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/utils.h
