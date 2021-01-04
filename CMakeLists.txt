@@ -42,7 +42,9 @@ list(APPEND rtac_display_SOURCES
 )
 if(${WITH_CUDA})
     enable_language(CUDA)
-    find_package(rtac_cuda REQUIRED)
+    if(NOT TARGET rtac_cuda)
+        find_package(rtac_cuda REQUIRED)
+    endif()
     list(APPEND rtac_display_PUBLIC_HEADERS
         include/rtac_display/cuda/utils.h
     )
