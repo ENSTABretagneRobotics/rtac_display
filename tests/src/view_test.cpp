@@ -3,7 +3,7 @@
 using namespace std;
 
 #include <rtac_base/types/Mesh.h>
-using Mesh = rtac::types::Mesh<float, uint32_t, 3>;
+using Mesh = rtac::types::Mesh<>;
 
 #include <rtac_display/Display.h>
 #include <rtac_display/renderers/MeshRenderer.h>

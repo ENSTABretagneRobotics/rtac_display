@@ -1,6 +1,7 @@
 #ifndef _DEF_RTAC_DISPLAY_MESH_RENDERER_H_
 #define _DEF_RTAC_DISPLAY_MESH_RENDERER_H_
 
+#include <rtac_base/types/common.h>
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Mesh.h>
 
@@ -17,7 +18,7 @@ class MeshRenderer : public Renderer
     using ConstPtr = rtac::types::Handle<const MeshRenderer>;
     
     using Mat4  = View3D::Mat4;
-    using Mesh  = rtac::types::Mesh<float,uint32_t,3>;
+    using Mesh  = rtac::types::Mesh<>;
     using Pose  = View3D::Pose;
     using Color = std::array<float,3>;
 

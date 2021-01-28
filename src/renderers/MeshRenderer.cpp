@@ -87,19 +87,16 @@ void MeshRenderer::set_mesh(const Mesh& mesh)
 
     this->allocate_points(3*mesh.num_faces());
     
-    Map<const Matrix<float>>    mPoints = mesh.points();
-    Map<const Matrix<uint32_t>> mFaces  = mesh.faces();
-
     glBindBuffer(GL_ARRAY_BUFFER, points_);
     auto points  = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
     glBindBuffer(GL_ARRAY_BUFFER, normals_);
     auto normals = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 
     for(int nf = 0; nf < mesh.num_faces(); nf++) {
-        Vector3<uint32_t> f = mFaces(nf, all);
-        Vector3<float> p0 = mPoints(f(0), all);
-        Vector3<float> p1 = mPoints(f(1), all);
-        Vector3<float> p2 = mPoints(f(2), all);
+        auto f = mesh.face(nf);
+        Map<const Vector3<float>> p0(reinterpret_cast<const float*>(&mesh.point(f.x)));
+        Map<const Vector3<float>> p1(reinterpret_cast<const float*>(&mesh.point(f.y)));
+        Map<const Vector3<float>> p2(reinterpret_cast<const float*>(&mesh.point(f.z)));
         Vector3<float> n = ((p1 - p0).cross(p2 - p0)).normalized();
         
         int i = 9*nf;

@@ -54,7 +54,7 @@ if(${WITH_CUDA})
 endif()
 add_library(rtac_display SHARED ${rtac_display_SOURCES})
 set_target_properties(rtac_display PROPERTIES 
-    PUBLIC_HEADER "${rtac_display_PUBLIC_HEADERS}"
+    RTAC_PUBLIC_HEADERS "${rtac_display_PUBLIC_HEADERS}"
     INSTALL_RPATH_USE_LINK_PATH True
 )
 target_include_directories(rtac_display PUBLIC

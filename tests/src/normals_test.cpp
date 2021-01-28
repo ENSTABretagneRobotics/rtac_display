@@ -3,8 +3,8 @@
 #include <thread>
 using namespace std;
 
-#include <rtac_base/misc.h>
-using FrameCounter = rtac::misc::FrameCounter;
+#include <rtac_base/time.h>
+using FrameCounter = rtac::time::FrameCounter;
 
 #include <rtac_base/types/Pose.h>
 #include <rtac_base/types/PointCloud.h>
