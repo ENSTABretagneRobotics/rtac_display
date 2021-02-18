@@ -120,7 +120,7 @@ GLVector<T>::GLVector() :
     size_(0),
     mappedPtr_(nullptr)
    
-#ifdef RTAC_CUDA_DISPLAY
+#ifdef RTAC_DISPLAY_CUDA
     ,
     cudaResource_(nullptr),
     cudaDevicePtr_(nullptr)
