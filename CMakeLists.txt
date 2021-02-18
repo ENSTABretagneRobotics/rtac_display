@@ -45,12 +45,6 @@ if(${WITH_CUDA})
     if(NOT TARGET rtac_cuda)
         find_package(rtac_cuda REQUIRED)
     endif()
-    list(APPEND rtac_display_PUBLIC_HEADERS
-        include/rtac_display/cuda/utils.h
-    )
-    list(APPEND rtac_display_SOURCES
-        src/cuda/utils.cu
-    )
 endif()
 add_library(rtac_display SHARED ${rtac_display_SOURCES})
 set_target_properties(rtac_display PROPERTIES 

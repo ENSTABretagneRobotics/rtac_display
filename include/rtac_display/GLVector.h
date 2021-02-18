@@ -12,7 +12,6 @@
 #include <cuda_gl_interop.h>
 
 #include <rtac_display/utils.h>
-#include <rtac_display/cuda/utils.h>
 
 namespace rtac { namespace display {
 
