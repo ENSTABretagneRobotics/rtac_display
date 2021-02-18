@@ -11,11 +11,11 @@ void copy_to_gl(GLuint bufferId, const void* cudaDevicePtr, size_t byteCount)
     void* GLdevicePtr = NULL;
     size_t accessibleSize = 0;
 
-    rtac::cuda::check_error( cudaGraphicsGLRegisterBuffer(
+    CUDA_CHECK( cudaGraphicsGLRegisterBuffer(
         &cudaResource, bufferId, cudaGraphicsRegisterFlagsWriteDiscard));
-    rtac::cuda::check_error( cudaGraphicsMapResources(1, &cudaResource));
+    CUDA_CHECK( cudaGraphicsMapResources(1, &cudaResource));
     
-    rtac::cuda::check_error( cudaGraphicsResourceGetMappedPointer(
+    CUDA_CHECK( cudaGraphicsResourceGetMappedPointer(
         &GLdevicePtr, &accessibleSize, cudaResource));
     
     if(accessibleSize < byteCount) {
@@ -25,11 +25,11 @@ void copy_to_gl(GLuint bufferId, const void* cudaDevicePtr, size_t byteCount)
         throw std::runtime_error(oss.str());
     }
 
-    rtac::cuda::check_error(cudaMemcpy(GLdevicePtr, cudaDevicePtr, byteCount,
+    CUDA_CHECK(cudaMemcpy(GLdevicePtr, cudaDevicePtr, byteCount,
                               cudaMemcpyDeviceToDevice));
 
-    rtac::cuda::check_error( cudaGraphicsUnmapResources(1, &cudaResource));
-    rtac::cuda::check_error( cudaGraphicsUnregisterResource(cudaResource));
+    CUDA_CHECK( cudaGraphicsUnmapResources(1, &cudaResource));
+    CUDA_CHECK( cudaGraphicsUnregisterResource(cudaResource));
 }
 
 void copy_from_gl(void* cudaDevicePtr, GLuint bufferId, size_t byteCount)
@@ -38,11 +38,11 @@ void copy_from_gl(void* cudaDevicePtr, GLuint bufferId, size_t byteCount)
     void* GLdevicePtr = NULL;
     size_t accessibleSize = 0;
 
-    rtac::cuda::check_error( cudaGraphicsGLRegisterBuffer(
+    CUDA_CHECK( cudaGraphicsGLRegisterBuffer(
         &cudaResource, bufferId, cudaGraphicsRegisterFlagsWriteDiscard));
-    rtac::cuda::check_error( cudaGraphicsMapResources(1, &cudaResource));
+    CUDA_CHECK( cudaGraphicsMapResources(1, &cudaResource));
     
-    rtac::cuda::check_error( cudaGraphicsResourceGetMappedPointer(
+    CUDA_CHECK( cudaGraphicsResourceGetMappedPointer(
         &GLdevicePtr, &accessibleSize, cudaResource));
     
     if(accessibleSize < byteCount) {
@@ -52,11 +52,11 @@ void copy_from_gl(void* cudaDevicePtr, GLuint bufferId, size_t byteCount)
         throw std::runtime_error(oss.str());
     }
 
-    rtac::cuda::check_error(cudaMemcpy(cudaDevicePtr, GLdevicePtr, byteCount,
+    CUDA_CHECK(cudaMemcpy(cudaDevicePtr, GLdevicePtr, byteCount,
                               cudaMemcpyDeviceToDevice));
 
-    rtac::cuda::check_error( cudaGraphicsUnmapResources(1, &cudaResource));
-    rtac::cuda::check_error( cudaGraphicsUnregisterResource(cudaResource));
+    CUDA_CHECK( cudaGraphicsUnmapResources(1, &cudaResource));
+    CUDA_CHECK( cudaGraphicsUnregisterResource(cudaResource));
 }
 
 }; //namespace cuda
