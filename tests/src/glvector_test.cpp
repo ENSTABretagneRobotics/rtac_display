@@ -3,6 +3,7 @@
 using namespace std;
 
 #include <rtac_base/cuda/DeviceVector.h>
+#include <rtac_base/cuda/HostVector.h>
 using namespace rtac::cuda;
 
 #include <rtac_display/Display.h>
@@ -34,7 +35,15 @@ GLVector<float> load_cube_map()
 
         //cout << v << endl; // should fail successfully because v already mapped. OK.
     }
-    cout << v << endl; // should work OK
+    cout << "GL data mapped to host : " << v << endl; // should work OK
+
+    // Testing cuda interop
+    DeviceVector<float> cudaVector(v.size());
+    {
+        auto data = v.map_cuda();
+        CUDA_CHECK( cudaMemcpy(cudaVector.data(), data, sizeof(float)*cudaVector.size(), cudaMemcpyDeviceToDevice) );
+    }
+    cout << "GL data mapped to CUDA : " << cudaVector << endl;
 
     return v;
 }
@@ -78,7 +87,6 @@ int main()
 
     //auto cube = load_cube_bulk();
     auto cube = load_cube_map();
-    cout << cube << endl;
     pcRenderer->set_points(cube.size(), cube.gl_id());
 
     float dangle = 0.01;

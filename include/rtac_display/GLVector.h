@@ -6,7 +6,10 @@
 #include <GL/gl.h>
 
 #include <rtac_base/types/MappedPointer.h>
+
 #include <rtac_base/cuda/DeviceVector.h>
+#include <cuda_runtime.h>
+#include <cuda_gl_interop.h>
 
 #include <rtac_display/utils.h>
 #include <rtac_display/cuda/utils.h>
@@ -26,9 +29,6 @@ class GLVector
     using const_pointer   = const value_type*;
     using iterator        = pointer;
     using const_iterator  = const_pointer;
-
-    using MappedPointer      = rtac::types::MappedPointer<GLVector<T>>;
-    using ConstMappedPointer = rtac::types::MappedPointer<const GLVector<T>>;
 
     protected:
 
@@ -68,7 +68,7 @@ class GLVector
     void bind(GLenum target = GL_ARRAY_BUFFER) const; 
     void unbind(GLenum target = GL_ARRAY_BUFFER) const;
 
-    // Mapping Functions
+    // Mapping Functions for host access (CPU) to device data (GPU-OpenGL)
     protected:
 
     T*       do_map();
@@ -77,9 +77,28 @@ class GLVector
 
     public:
 
+    using MappedPointer      = rtac::types::MappedPointer<GLVector<T>>;
+    using ConstMappedPointer = rtac::types::MappedPointer<const GLVector<T>>;
+
     MappedPointer      map(bool writeOnly = false);
     ConstMappedPointer map() const;
     void               unmap() const;
+
+    // Mapping Functions for device CUDA access (GPU-CUDA) to device data
+    // (GPU-OpenGL).
+    protected:
+
+    mutable cudaGraphicsResource* cudaResource_;
+    mutable T*                    cudaDevicePtr_;
+
+    const T* do_map_cuda() const;
+    T*       do_map_cuda();
+    
+    public:
+
+    MappedPointer      map_cuda();
+    ConstMappedPointer map_cuda() const;
+    void unmap_cuda() const;
 };
 
 // implementation
@@ -87,7 +106,9 @@ template <typename T>
 GLVector<T>::GLVector() :
     bufferId_(0),
     size_(0),
-    mappedPtr_(nullptr)
+    mappedPtr_(nullptr),
+    cudaResource_(nullptr),
+    cudaDevicePtr_(nullptr)
 {}
 
 template <typename T>
@@ -265,6 +286,9 @@ void GLVector<T>::unbind(GLenum target) const
 template <typename T>
 T* GLVector<T>::do_map()
 {
+    if(mappedPtr_)
+        throw std::runtime_error("GLVector already mapped. Cannot map a second time.");
+
     glBindBuffer(GL_ARRAY_BUFFER, bufferId_);
     check_gl("GLVector : could not bind buffer for mapping.");
     mappedPtr_ = static_cast<T*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE));
@@ -276,6 +300,9 @@ T* GLVector<T>::do_map()
 template <typename T>
 T* GLVector<T>::do_map_write_only()
 {
+    if(mappedPtr_)
+        throw std::runtime_error("GLVector already mapped. Cannot map a second time.");
+
     glBindBuffer(GL_ARRAY_BUFFER, bufferId_);
     check_gl("GLVector : could not bind buffer for mapping.");
     mappedPtr_ = static_cast<T*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
@@ -288,6 +315,9 @@ T* GLVector<T>::do_map_write_only()
 template <typename T>
 const T* GLVector<T>::do_map() const
 {
+    if(mappedPtr_)
+        throw std::runtime_error("GLVector already mapped. Cannot map a second time.");
+
     glBindBuffer(GL_ARRAY_BUFFER, bufferId_);
     check_gl("GLVector : could not bind buffer for mapping.");
     mappedPtr_ = static_cast<T*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
@@ -299,9 +329,6 @@ const T* GLVector<T>::do_map() const
 template <typename T>
 typename GLVector<T>::MappedPointer GLVector<T>::map(bool writeOnly)
 {
-    if(mappedPtr_)
-        throw std::runtime_error("GLVector already mapped. Cannot map a second time.");
-
     if(writeOnly) {
         return MappedPointer(this,
                              &GLVector<T>::do_map_write_only,
@@ -317,9 +344,6 @@ typename GLVector<T>::MappedPointer GLVector<T>::map(bool writeOnly)
 template <typename T>
 typename GLVector<T>::ConstMappedPointer GLVector<T>::map() const
 {
-    if(mappedPtr_)
-        throw std::runtime_error("GLVector already mapped. Cannot map a second time.");
-
     return ConstMappedPointer(this,
                               &GLVector<T>::do_map,
                               &GLVector<T>::unmap);
@@ -328,12 +352,97 @@ typename GLVector<T>::ConstMappedPointer GLVector<T>::map() const
 template <typename T>
 void GLVector<T>::unmap() const
 {
+    if(!mappedPtr_)
+        throw std::runtime_error(
+            "GLVector not mapped. Cannot unmap (this error is sign of a hidden issue)");
+
     glBindBuffer(GL_ARRAY_BUFFER, bufferId_);
     check_gl("GLVector : could not bind buffer for unmapping.");
     glUnmapBuffer(GL_ARRAY_BUFFER);
     check_gl("GLVector : could not  unmap.");
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     mappedPtr_ = nullptr;
+}
+
+template <typename T>
+const T* GLVector<T>::do_map_cuda() const
+{
+    if(cudaDevicePtr_)
+        throw std::runtime_error("GLVector already mapped on CUDA. Cannot map a second time.");
+
+    CUDA_CHECK( cudaGraphicsGLRegisterBuffer(
+        &cudaResource_, bufferId_, cudaGraphicsRegisterFlagsReadOnly) );
+    CUDA_CHECK( cudaGraphicsMapResources(1, &cudaResource_) );
+    
+    size_t accessibleSize = 0;
+    CUDA_CHECK( cudaGraphicsResourceGetMappedPointer(
+        &cudaDevicePtr_, &accessibleSize, cudaResource_) );
+
+    if(accessibleSize < this->size()*sizeof(T)) {
+        std::ostringstream oss;
+        oss << "Discrepancy between mapped size of GL buffer "
+            << "and expected buffer size (expected : "
+            << this->size()*sizeof(T) << ", got " << accessibleSize
+            << "). Cannot map GLVector on CUDA pointer.";
+        throw std::runtime_error(oss.str());
+    }
+
+    return cudaDevicePtr_;
+}
+
+template <typename T>
+T* GLVector<T>::do_map_cuda()
+{
+    if(cudaDevicePtr_)
+        throw std::runtime_error("GLVector already mapped on CUDA. Cannot map a second time.");
+
+    CUDA_CHECK( cudaGraphicsGLRegisterBuffer(
+        &cudaResource_, bufferId_, cudaGraphicsRegisterFlagsWriteDiscard) );
+    CUDA_CHECK( cudaGraphicsMapResources(1, &cudaResource_) );
+    
+    size_t accessibleSize = 0;
+    CUDA_CHECK( cudaGraphicsResourceGetMappedPointer(
+        reinterpret_cast<void**>(&cudaDevicePtr_), &accessibleSize, cudaResource_) );
+
+    if(accessibleSize < this->size()*sizeof(T)) {
+        std::ostringstream oss;
+        oss << "Discrepancy between mapped size of GL buffer "
+            << "and expected buffer size (expected : "
+            << this->size()*sizeof(T) << ", got " << accessibleSize
+            << "). Cannot map GLVector on CUDA pointer.";
+        throw std::runtime_error(oss.str());
+    }
+
+    return cudaDevicePtr_;
+}
+
+template <typename T>
+typename GLVector<T>::MappedPointer GLVector<T>::map_cuda()
+{
+    return MappedPointer(this,
+                         &GLVector<T>::do_map_cuda,
+                         &GLVector<T>::unmap_cuda);
+}
+
+template <typename T>
+typename GLVector<T>::ConstMappedPointer GLVector<T>::map_cuda() const
+{
+    return ConstMappedPointer(this,
+                              &GLVector<T>::do_map_cuda,
+                              &GLVector<T>::unmap_cuda);
+}
+
+template <typename T>
+void GLVector<T>::unmap_cuda() const
+{
+    if(!cudaDevicePtr_)
+        throw std::runtime_error(
+            "GLVector not CUDA-mapped. Cannot unmap (this error is sign of a hidden issue)");
+
+    CUDA_CHECK( cudaGraphicsUnmapResources(1, &cudaResource_) );
+    CUDA_CHECK( cudaGraphicsUnregisterResource(cudaResource_) );
+    cudaDevicePtr_ = nullptr;
+    cudaResource_  = nullptr;
 }
 
 }; //namespace display
