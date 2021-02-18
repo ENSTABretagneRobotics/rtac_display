@@ -44,18 +44,11 @@ class GLVector
     GLVector();
     GLVector(size_t size);
     GLVector(const GLVector<T>& other);
-    GLVector(const rtac::cuda::DeviceVector<T>& other);
-    GLVector(const rtac::cuda::HostVector<T>& other);
     GLVector(const std::vector<T>& other);
     ~GLVector();
     
     GLVector& operator=(const GLVector<T>& other);
-    GLVector& operator=(const rtac::cuda::DeviceVector<T>& other);
-    GLVector& operator=(const rtac::cuda::HostVector<T>& other);
     GLVector& operator=(const std::vector<T>& other);
-
-    rtac::cuda::DeviceVector<T>& copy_to_cuda(rtac::cuda::DeviceVector<T>& other) const;
-    rtac::cuda::DeviceVector<T>  copy_to_cuda() const;
 
     void resize(size_t size);
     size_t size() const;
@@ -67,6 +60,10 @@ class GLVector
     // work needed here
     void bind(GLenum target = GL_ARRAY_BUFFER) const; 
     void unbind(GLenum target = GL_ARRAY_BUFFER) const;
+    
+    // BELOW HERE IS MORE ADVANCED USAGE ////////////////////////
+    // (interop with CUDA and host memory mapping functions).
+    // BELOW HERE IS MORE ADVANCED USAGE ////////////////////////
 
     // Mapping Functions for host access (CPU) to device data (GPU-OpenGL)
     protected:
@@ -99,6 +96,16 @@ class GLVector
     MappedPointer      map_cuda();
     ConstMappedPointer map_cuda() const;
     void unmap_cuda() const;
+    
+    // CUDA helpers
+    GLVector(const rtac::cuda::DeviceVector<T>& other);
+    GLVector(const rtac::cuda::HostVector<T>& other);
+
+    GLVector& operator=(const rtac::cuda::DeviceVector<T>& other);
+    GLVector& operator=(const rtac::cuda::HostVector<T>& other);
+
+    rtac::cuda::DeviceVector<T>& to_device_vector(rtac::cuda::DeviceVector<T>& other) const;
+    rtac::cuda::DeviceVector<T>  to_device_vector() const;
 };
 
 // implementation
@@ -120,20 +127,6 @@ GLVector<T>::GLVector(size_t size) :
 
 template <typename T>
 GLVector<T>::GLVector(const GLVector<T>& other) :
-    GLVector(other.size())
-{
-    *this = other;
-}
-
-template <typename T>
-GLVector<T>::GLVector(const rtac::cuda::DeviceVector<T>& other) :
-    GLVector(other.size())
-{
-    *this = other;
-}
-
-template <typename T>
-GLVector<T>::GLVector(const rtac::cuda::HostVector<T>& other) :
     GLVector(other.size())
 {
     *this = other;
@@ -171,26 +164,6 @@ GLVector<T>& GLVector<T>::operator=(const GLVector<T>& other)
 }
 
 template <typename T>
-GLVector<T>& GLVector<T>::operator=(const rtac::cuda::DeviceVector<T>& other)
-{
-    this->resize(other.size());
-    cuda::copy_to_gl(this->gl_id(), other.data(), this->size()*sizeof(T));
-    return *this;
-}
-
-template <typename T>
-GLVector<T>& GLVector<T>::operator=(const rtac::cuda::HostVector<T>& other)
-{
-    this->resize(other.size());
-    this->bind(GL_ARRAY_BUFFER);
-    
-    glBufferSubData(GL_ARRAY_BUFFER, 0, this->size()*sizeof(T), other.data());
-
-    this->unbind(GL_ARRAY_BUFFER);
-    return *this;
-}
-
-template <typename T>
 GLVector<T>& GLVector<T>::operator=(const std::vector<T>& other)
 {
     this->resize(other.size());
@@ -200,21 +173,6 @@ GLVector<T>& GLVector<T>::operator=(const std::vector<T>& other)
 
     this->unbind(GL_ARRAY_BUFFER);
     return *this;
-}
-
-template <typename T>
-rtac::cuda::DeviceVector<T>& GLVector<T>::copy_to_cuda(rtac::cuda::DeviceVector<T>& other) const
-{
-    other.resize(this->size());
-    cuda::copy_from_gl(other.data(), this->gl_id(), this->size()*sizeof(T));
-    return other;
-}
-
-template <typename T>
-rtac::cuda::DeviceVector<T> GLVector<T>::copy_to_cuda() const
-{
-    rtac::cuda::DeviceVector<T> res(this->size());
-    return this->copy_to_cuda(res);
 }
 
 template <typename T>
@@ -376,7 +334,7 @@ const T* GLVector<T>::do_map_cuda() const
     
     size_t accessibleSize = 0;
     CUDA_CHECK( cudaGraphicsResourceGetMappedPointer(
-        &cudaDevicePtr_, &accessibleSize, cudaResource_) );
+        reinterpret_cast<void**>(&cudaDevicePtr_), &accessibleSize, cudaResource_) );
 
     if(accessibleSize < this->size()*sizeof(T)) {
         std::ostringstream oss;
@@ -443,6 +401,61 @@ void GLVector<T>::unmap_cuda() const
     CUDA_CHECK( cudaGraphicsUnregisterResource(cudaResource_) );
     cudaDevicePtr_ = nullptr;
     cudaResource_  = nullptr;
+}
+
+// CUDA helpers implementations
+template <typename T>
+GLVector<T>::GLVector(const rtac::cuda::DeviceVector<T>& other) :
+    GLVector(other.size())
+{
+    *this = other;
+}
+
+template <typename T>
+GLVector<T>::GLVector(const rtac::cuda::HostVector<T>& other) :
+    GLVector(other.size())
+{
+    *this = other;
+}
+
+template <typename T>
+GLVector<T>& GLVector<T>::operator=(const rtac::cuda::DeviceVector<T>& other)
+{
+    this->resize(other.size());
+    auto devicePtr = this->map_cuda();
+    CUDA_CHECK( cudaMemcpy(devicePtr, other.data(), this->size()*sizeof(T),
+                           cudaMemcpyDeviceToDevice) );
+    return *this;
+}
+
+template <typename T>
+GLVector<T>& GLVector<T>::operator=(const rtac::cuda::HostVector<T>& other)
+{
+    this->resize(other.size());
+    this->bind(GL_ARRAY_BUFFER);
+    
+    glBufferSubData(GL_ARRAY_BUFFER, 0, this->size()*sizeof(T), other.data());
+
+    this->unbind(GL_ARRAY_BUFFER);
+    return *this;
+}
+
+template <typename T>
+rtac::cuda::DeviceVector<T>&
+GLVector<T>::to_device_vector(rtac::cuda::DeviceVector<T>& other) const
+{
+    other.resize(this->size());
+    auto devicePtr = this->map_cuda();
+    CUDA_CHECK( cudaMemcpy(other.data(), devicePtr, other.size()*sizeof(T),
+                           cudaMemcpyDeviceToDevice) );
+    return other;
+}
+
+template <typename T>
+rtac::cuda::DeviceVector<T> GLVector<T>::to_device_vector() const
+{
+    rtac::cuda::DeviceVector<T> res(this->size());
+    return this->to_device_vector(res);
 }
 
 }; //namespace display

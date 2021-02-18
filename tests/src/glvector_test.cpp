@@ -66,7 +66,7 @@ GLVector<float> load_cube_bulk()
     DeviceVector<float> vd0(v);
     GLVector<float> vgl0(vd0);
     
-    auto vd1 = vgl0.copy_to_cuda();
+    auto vd1 = vgl0.to_device_vector();
 
     return GLVector<float>(vd1);
 }
@@ -85,8 +85,8 @@ int main()
     auto pcRenderer = PointCloudRenderer::New(view);
     display.add_renderer(pcRenderer);
 
-    //auto cube = load_cube_bulk();
-    auto cube = load_cube_map();
+    auto cube = load_cube_bulk();
+    //auto cube = load_cube_map();
     pcRenderer->set_points(cube.size(), cube.gl_id());
 
     float dangle = 0.01;
