@@ -37,7 +37,8 @@ class ImageRenderer : public Renderer
     ImageRenderer();
     ~ImageRenderer();
     
-    void set_image(const Shape& imageSize, GLuint buffer);
+    void set_image(const Shape& imageSize, GLuint buffer,
+                   GLenum type = GL_FLOAT);
     void set_image(const Shape& imageSize, const uint8_t* data);
     template <typename BufferT>
     void set_image(const BufferT& buffer);

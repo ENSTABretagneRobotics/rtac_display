@@ -68,13 +68,14 @@ void ImageRenderer::init_texture()
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void ImageRenderer::set_image(const Shape& imageSize, GLuint bufferId)
+void ImageRenderer::set_image(const Shape& imageSize, GLuint bufferId, GLenum type)
 {
     // only for RGB data
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, bufferId);
     glBindTexture(GL_TEXTURE_2D, texId_);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageSize.width, imageSize.height,
-        0, GL_RGB, GL_FLOAT, 0);
+        0, GL_RGB, type, 0);
+    check_gl("ImageRenderer::set_image texImage");
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
