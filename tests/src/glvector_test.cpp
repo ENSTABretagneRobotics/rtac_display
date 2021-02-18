@@ -12,33 +12,35 @@ using namespace rtac::display;
 using Pose       = PinholeView::Pose;
 using Quaternion = Pose::Quaternion;
 
-#include <rtac_display/GLMappedPointer.h>
 #include <rtac_display/GLVector.h>
 
-GLVector<float> load_cube()
+GLVector<float> load_cube_map()
 {
-    //GLVector<float> res(8*3);
-    //res.bind(GL_ARRAY_BUFFER);
-    ////auto data = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+    GLVector<float> v(8*3);
 
-    //GLMappedPointer<const float*> p(res.gl_id());
-    ////GLMappedPointer<float*> p(res.gl_id());
-    //auto data = p.get();
+    {
+        auto mappedPtr = v.map(true);
+        float* data = mappedPtr;
 
-    ////data[0] = -1; data[1] = -1; data[2] = -1; data += 3;
-    ////data[0] =  1; data[1] = -1; data[2] = -1; data += 3;
-    ////data[0] =  1; data[1] =  1; data[2] = -1; data += 3;
-    ////data[0] = -1; data[1] =  1; data[2] = -1; data += 3;
+        data[0] = -1; data[1] = -1; data[2] = -1; data += 3;
+        data[0] =  1; data[1] = -1; data[2] = -1; data += 3;
+        data[0] =  1; data[1] =  1; data[2] = -1; data += 3;
+        data[0] = -1; data[1] =  1; data[2] = -1; data += 3;
 
-    ////data[0] = -1; data[1] = -1; data[2] = 1; data += 3;
-    ////data[0] =  1; data[1] = -1; data[2] = 1; data += 3;
-    ////data[0] =  1; data[1] =  1; data[2] = 1; data += 3;
-    ////data[0] = -1; data[1] =  1; data[2] = 1;
+        data[0] = -1; data[1] = -1; data[2] = 1; data += 3;
+        data[0] =  1; data[1] = -1; data[2] = 1; data += 3;
+        data[0] =  1; data[1] =  1; data[2] = 1; data += 3;
+        data[0] = -1; data[1] =  1; data[2] = 1;
 
-    ////glUnmapBuffer(GL_ARRAY_BUFFER);
-    ////res.unbind(GL_ARRAY_BUFFER);
-    //return res;
+        //cout << v << endl; // should fail successfully because v already mapped. OK.
+    }
+    cout << v << endl; // should work OK
 
+    return v;
+}
+
+GLVector<float> load_cube_bulk()
+{
     std::vector<float> v(8*3);
     auto data = v.data();
 
@@ -74,7 +76,9 @@ int main()
     auto pcRenderer = PointCloudRenderer::New(view);
     display.add_renderer(pcRenderer);
 
-    auto cube = load_cube();
+    //auto cube = load_cube_bulk();
+    auto cube = load_cube_map();
+    cout << cube << endl;
     pcRenderer->set_points(cube.size(), cube.gl_id());
 
     float dangle = 0.01;

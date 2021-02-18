@@ -5,6 +5,7 @@
 //#define GL3_PROTOTYPES 1
 #include <GL/gl.h>
 
+#include <rtac_base/types/MappedPointer.h>
 #include <rtac_base/cuda/DeviceVector.h>
 
 #include <rtac_display/utils.h>
@@ -26,10 +27,14 @@ class GLVector
     using iterator        = pointer;
     using const_iterator  = const_pointer;
 
+    using MappedPointer      = rtac::types::MappedPointer<GLVector<T>>;
+    using ConstMappedPointer = rtac::types::MappedPointer<const GLVector<T>>;
+
     protected:
 
     GLuint bufferId_;
     size_t size_;
+    mutable T*     mappedPtr_;
 
     void allocate(size_t size);
     void free();
@@ -56,27 +61,33 @@ class GLVector
     size_t size() const;
     size_t capacity() const;
 
-    //pointer       data();
-    //const_pointer data() const;
-
-    //iterator begin();
-    //iterator end();
-    //const_iterator begin() const;
-    //const_iterator end() const;
-
     // not really const but no other way with OpenGL interface
     GLuint gl_id() const;
 
     // work needed here
     void bind(GLenum target = GL_ARRAY_BUFFER) const; 
     void unbind(GLenum target = GL_ARRAY_BUFFER) const;
+
+    // Mapping Functions
+    protected:
+
+    T*       do_map();
+    T*       do_map_write_only();
+    const T* do_map() const;
+
+    public:
+
+    MappedPointer      map(bool writeOnly = false);
+    ConstMappedPointer map() const;
+    void               unmap() const;
 };
 
 // implementation
 template <typename T>
 GLVector<T>::GLVector() :
     bufferId_(0),
-    size_(0)
+    size_(0),
+    mappedPtr_(nullptr)
 {}
 
 template <typename T>
@@ -230,42 +241,6 @@ size_t GLVector<T>::capacity() const
     return capa / sizeof(T);
 }
 
-//template <typename T> typename GLVector<T>::
-//pointer GLVector<T>::data()
-//{
-//    return data_;
-//}
-//
-//template <typename T> typename GLVector<T>::
-//const_pointer GLVector<T>::data() const
-//{
-//    return data_;
-//}
-//
-//template <typename T> typename GLVector<T>::
-//iterator GLVector<T>::begin()
-//{
-//    return data_;
-//}
-//
-//template <typename T> typename GLVector<T>::
-//iterator GLVector<T>::end()
-//{
-//    return data_ + size_;
-//}
-//
-//template <typename T> typename GLVector<T>::
-//const_iterator GLVector<T>::begin() const
-//{
-//    return data_;
-//}
-//
-//template <typename T> typename GLVector<T>::
-//const_iterator GLVector<T>::end() const
-//{
-//    return data_ + size_;
-//}
-
 template <typename T>
 GLuint GLVector<T>::gl_id() const
 {
@@ -286,7 +261,106 @@ void GLVector<T>::unbind(GLenum target) const
     check_gl("GLVector::unbind : could not unbind buffer (invalid target).");
 }
 
+// Mapping functions
+template <typename T>
+T* GLVector<T>::do_map()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, bufferId_);
+    check_gl("GLVector : could not bind buffer for mapping.");
+    mappedPtr_ = static_cast<T*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE));
+    check_gl("GLVector : could not map.");
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    return mappedPtr_;
+}
+
+template <typename T>
+T* GLVector<T>::do_map_write_only()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, bufferId_);
+    check_gl("GLVector : could not bind buffer for mapping.");
+    mappedPtr_ = static_cast<T*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+    check_gl("GLVector : could not map.");
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    return mappedPtr_;
+}
+
+
+template <typename T>
+const T* GLVector<T>::do_map() const
+{
+    glBindBuffer(GL_ARRAY_BUFFER, bufferId_);
+    check_gl("GLVector : could not bind buffer for mapping.");
+    mappedPtr_ = static_cast<T*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
+    check_gl("GLVector : could not map.");
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    return mappedPtr_;
+}
+
+template <typename T>
+typename GLVector<T>::MappedPointer GLVector<T>::map(bool writeOnly)
+{
+    if(mappedPtr_)
+        throw std::runtime_error("GLVector already mapped. Cannot map a second time.");
+
+    if(writeOnly) {
+        return MappedPointer(this,
+                             &GLVector<T>::do_map_write_only,
+                             &GLVector<T>::unmap);
+    }
+    else {
+        return MappedPointer(this,
+                             &GLVector<T>::do_map,
+                             &GLVector<T>::unmap);
+    }
+}
+
+template <typename T>
+typename GLVector<T>::ConstMappedPointer GLVector<T>::map() const
+{
+    if(mappedPtr_)
+        throw std::runtime_error("GLVector already mapped. Cannot map a second time.");
+
+    return ConstMappedPointer(this,
+                              &GLVector<T>::do_map,
+                              &GLVector<T>::unmap);
+}
+
+template <typename T>
+void GLVector<T>::unmap() const
+{
+    glBindBuffer(GL_ARRAY_BUFFER, bufferId_);
+    check_gl("GLVector : could not bind buffer for unmapping.");
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    check_gl("GLVector : could not  unmap.");
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    mappedPtr_ = nullptr;
+}
+
 }; //namespace display
 }; //namespace rtac
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const rtac::display::GLVector<T>& v)
+{
+    os << "(";
+    auto data = v.map();
+    if(v.size() <= 16) {
+        os << data[0];
+        for(int i = 1; i < v.size(); i++) {
+            os << " " << data[i];
+        }
+    }
+    else {
+        for(int i = 0; i < 3; i++) {
+            os << data[i] << " ";
+        }
+        os << "...";
+        for(int i = v.size() - 3; i < v.size(); i++) {
+            os << " " << data[i];
+        }
+    }
+    os << ")";
+    return os;
+}
 
 #endif //_DEF_RTAC_BASE_DISPLAY_GL_VECTOR_H_
