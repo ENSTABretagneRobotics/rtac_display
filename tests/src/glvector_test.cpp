@@ -2,10 +2,6 @@
 #include <thread>
 using namespace std;
 
-#include <rtac_base/cuda/DeviceVector.h>
-#include <rtac_base/cuda/HostVector.h>
-using namespace rtac::cuda;
-
 #include <rtac_display/Display.h>
 #include <rtac_display/views/PinholeView.h>
 #include <rtac_display/renderers/PointCloudRenderer.h>
@@ -15,10 +11,15 @@ using Quaternion = Pose::Quaternion;
 
 #include <rtac_display/GLVector.h>
 
+#ifdef RTAC_DISPLAY_CUDA
+
+#include <rtac_base/cuda/DeviceVector.h>
+#include <rtac_base/cuda/HostVector.h>
+using namespace rtac::cuda;
+
 GLVector<float> load_cube_map()
 {
     GLVector<float> v(8*3);
-
     {
         auto mappedPtr = v.map(true);
         float* data = mappedPtr;
@@ -48,6 +49,8 @@ GLVector<float> load_cube_map()
     return v;
 }
 
+#endif
+
 GLVector<float> load_cube_bulk()
 {
     std::vector<float> v(8*3);
@@ -62,13 +65,17 @@ GLVector<float> load_cube_bulk()
     data[0] =  1; data[1] = -1; data[2] = 1; data += 3;
     data[0] =  1; data[1] =  1; data[2] = 1; data += 3;
     data[0] = -1; data[1] =  1; data[2] = 1;
-
-    DeviceVector<float> vd0(v);
-    GLVector<float> vgl0(vd0);
     
-    auto vd1 = vgl0.to_device_vector();
+    #ifdef RTAC_DISPLAY_CUDA
+        DeviceVector<float> vd0(v);
+        GLVector<float> vgl0(vd0);
+        
+        auto vd1 = vgl0.to_device_vector();
 
-    return GLVector<float>(vd1);
+        return GLVector<float>(vd1);
+    #else
+        return GLVector<float>(v);
+    #endif
 }
 
 int main()

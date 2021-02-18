@@ -7,9 +7,12 @@
 
 #include <rtac_base/types/MappedPointer.h>
 
-#include <rtac_base/cuda/DeviceVector.h>
-#include <cuda_runtime.h>
-#include <cuda_gl_interop.h>
+#ifdef RTAC_DISPLAY_CUDA // CUDA support is optional
+    #include <cuda_runtime.h>
+    #include <cuda_gl_interop.h>
+    #include <rtac_base/cuda/DeviceVector.h>
+    #include <rtac_base/cuda/HostVector.h>
+#endif
 
 #include <rtac_display/utils.h>
 
@@ -79,7 +82,8 @@ class GLVector
     MappedPointer      map(bool writeOnly = false);
     ConstMappedPointer map() const;
     void               unmap() const;
-
+    
+    #ifdef RTAC_DISPLAY_CUDA
     // Mapping Functions for device CUDA access (GPU-CUDA) to device data
     // (GPU-OpenGL).
     protected:
@@ -105,6 +109,8 @@ class GLVector
 
     rtac::cuda::DeviceVector<T>& to_device_vector(rtac::cuda::DeviceVector<T>& other) const;
     rtac::cuda::DeviceVector<T>  to_device_vector() const;
+
+    #endif
 };
 
 // implementation
@@ -112,9 +118,13 @@ template <typename T>
 GLVector<T>::GLVector() :
     bufferId_(0),
     size_(0),
-    mappedPtr_(nullptr),
+    mappedPtr_(nullptr)
+   
+#ifdef RTAC_CUDA_DISPLAY
+    ,
     cudaResource_(nullptr),
     cudaDevicePtr_(nullptr)
+#endif
 {}
 
 template <typename T>
@@ -321,6 +331,8 @@ void GLVector<T>::unmap() const
     mappedPtr_ = nullptr;
 }
 
+// BELOW HERE ARE CUDA SPECIFIC FUNCTIONALITIES
+#ifdef RTAC_DISPLAY_CUDA
 template <typename T>
 const T* GLVector<T>::do_map_cuda() const
 {
@@ -456,6 +468,7 @@ rtac::cuda::DeviceVector<T> GLVector<T>::to_device_vector() const
     rtac::cuda::DeviceVector<T> res(this->size());
     return this->to_device_vector(res);
 }
+#endif
 
 }; //namespace display
 }; //namespace rtac
