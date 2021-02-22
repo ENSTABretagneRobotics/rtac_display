@@ -31,9 +31,9 @@ void View3D::look_at(const Vector3& target)
 }
 
 void View3D::look_at(const Vector3& target, const Vector3& position,
-                        const Vector3& up)
+                     const Vector3& up)
 {
-    this->set_pose(rtac::geometry::look_at(target, position, up));
+    this->set_pose(Pose().look_at(target, position, up));
 }
 
 View3D::Mat4 View3D::raw_view_matrix() const
