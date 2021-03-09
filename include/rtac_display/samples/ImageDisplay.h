@@ -21,7 +21,25 @@ class ImageDisplay : public Display
 
     ImageRenderer::Ptr      renderer();
     ImageRenderer::ConstPtr renderer() const;
+
+    template <typename T>
+    void set_image(const Shape& imageSize, const T* data);
+    template <typename T>
+    void set_image(const Shape& imageSize, const GLVector<T>& data);
 };
+
+template <typename T>
+void ImageDisplay::set_image(const Shape& imageSize, const T* data)
+{
+    renderer_->set_image(imageSize, data);
+}
+
+template <typename T>
+void ImageDisplay::set_image(const Shape& imageSize, const GLVector<T>& data)
+{
+    renderer_->set_image(imageSize, data);
+}
+
 
 }; //namespace samples
 }; //namespace display

@@ -90,10 +90,9 @@ int main()
     auto data1 = image_data_rgb(W,H);
     auto data2 = image_data_rgbf(W,H);
 
-    display.renderer()->set_rgb_image({W,H}, data0.data());
-    display.renderer()->set_image({W,H}, data0.data());
-    display.renderer()->set_image({W,H}, data1.data());
-    display.renderer()->set_image({W,H}, data2.data());
+    display.set_image({W,H}, data0.data());
+    display.set_image({W,H}, data1.data());
+    display.set_image({W,H}, data2.data());
     GLVector<Color<float>> data3(data2);
     display.renderer()->set_image({W,H}, data3);
 
