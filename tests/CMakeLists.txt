@@ -6,6 +6,7 @@ list(APPEND test_names
     pointcloud_test.cpp
     normals_test.cpp
     glvector_test.cpp
+    imagedisplay_test.cpp
 )
 list(APPEND test_deps
     rtac_display

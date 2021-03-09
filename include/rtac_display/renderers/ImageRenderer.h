@@ -5,6 +5,7 @@
 
 #include <rtac_display/renderers/Renderer.h>
 #include <rtac_display/views/ImageView.h>
+#include <rtac_display/GLVector.h>
 
 namespace rtac { namespace display {
 
@@ -37,20 +38,56 @@ class ImageRenderer : public Renderer
     ImageRenderer();
     ~ImageRenderer();
     
-    void set_image(const Shape& imageSize, GLuint buffer,
-                   GLenum type = GL_FLOAT);
-    void set_image(const Shape& imageSize, const uint8_t* data);
-    template <typename BufferT>
-    void set_image(const BufferT& buffer);
-    
     virtual void draw();
+    
+    // Setting image from client memory
+    void set_image(const Shape& imageSize, const void* data,
+                   GLenum format, GLenum type);
+    //void set_image(const Shape& imageSize, const void* data); // legacy
+    void set_gray_image(const Shape& imageSize, const void* data);
+    void set_rgb_image(const Shape& imageSize, const void* data);
+
+    void set_image(const Shape& imageSize, GLuint buffer,
+                   GLenum format = GL_RGB, GLenum type = GL_FLOAT);
+    
+    template <typename T>
+    static void infer_format(GLenum& format, GLenum& type);
+    template <typename T>
+    void set_image(const Shape& imageSize, const T* data);
+    template <typename T>
+    void set_image(const Shape& imageSize, const GLVector<T>& data);
 };
 
 // Implementation
-template <typename BufferT>
-void ImageRenderer::set_image(const BufferT& buffer)
+template <typename T>
+void ImageRenderer::infer_format(GLenum& format, GLenum& type)
 {
-    this->set_image(buffer->shape(), buffer->gl_id());
+    std::cerr << "Caution ImageRenderer::infer_format<T> : "
+              << "trying to infer data type from T. "
+              << "using defaults GL_RED and GL_UNSIGNED_BYTE. "
+              << "You should specialize ImageRenderer::infer_format "
+              << "for your own types." << std::endl;
+    format = GL_RED;
+    type   = GL_UNSIGNED_BYTE;
+}
+
+template <typename T>
+void ImageRenderer::set_image(const Shape& imageSize, const T* data)
+{
+    GLenum format, type;
+    ImageRenderer::infer_format<T>(format, type);
+    this->set_image(imageSize, data, format, type);
+}
+
+template <typename T>
+void ImageRenderer::set_image(const Shape& imageSize, const GLVector<T>& data)
+{
+    GLenum format, type;
+    if(data.size() < imageSize.area()) {
+        throw std::runtime_error("GLVector not big enough for image");
+    }
+    ImageRenderer::infer_format<T>(format, type);
+    this->set_image(imageSize, data.gl_id(), format, type);
 }
 
 }; //namespace display

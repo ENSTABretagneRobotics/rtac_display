@@ -58,41 +58,14 @@ void ImageRenderer::init_texture()
 
     glBindTexture(GL_TEXTURE_2D, texId_);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     //glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void ImageRenderer::set_image(const Shape& imageSize, GLuint bufferId, GLenum type)
-{
-    // only for RGB data
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, bufferId);
-    glBindTexture(GL_TEXTURE_2D, texId_);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageSize.width, imageSize.height,
-        0, GL_RGB, type, 0);
-    check_gl("ImageRenderer::set_image texImage");
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-
-    imageView_->set_image_shape(imageSize);
-}
-
-void ImageRenderer::set_image(const Shape& imageSize, const uint8_t* data)
-{
-    // ensuring no buffer bound to GL_PIXEL_UNPACK_BUFFER for data to be read
-    // from CPU side memory.
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-    glBindTexture(GL_TEXTURE_2D, texId_);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageSize.width, imageSize.height,
-        0, GL_RED, GL_UNSIGNED_BYTE, data);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    imageView_->set_image_shape(imageSize);
 }
 
 void ImageRenderer::draw()
@@ -133,6 +106,50 @@ void ImageRenderer::draw()
     glDisableVertexAttribArray(0);
 
     glUseProgram(0);
+}
+
+void ImageRenderer::set_image(const Shape& imageSize, const void* data,
+                              GLenum format, GLenum type)
+{
+    // ensuring no buffer bound to GL_PIXEL_UNPACK_BUFFER for data to be read
+    // from CPU side memory.
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, texId_);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageSize.width, imageSize.height,
+        0, format, type, data);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    imageView_->set_image_shape(imageSize);
+}
+
+//void ImageRenderer::set_image(const Shape& imageSize, const void* data)
+//{
+//    this->set_gray_image(imageSize, data);
+//}
+//
+void ImageRenderer::set_gray_image(const Shape& imageSize, const void* data)
+{
+    this->set_image(imageSize, data, GL_RED, GL_UNSIGNED_BYTE);
+}
+
+void ImageRenderer::set_rgb_image(const Shape& imageSize, const void* data)
+{
+    this->set_image(imageSize, data, GL_RGB, GL_UNSIGNED_BYTE);
+}
+
+void ImageRenderer::set_image(const Shape& imageSize, GLuint bufferId,
+                              GLenum format, GLenum type)
+{
+    // only for RGB data
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, bufferId);
+    glBindTexture(GL_TEXTURE_2D, texId_);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageSize.width, imageSize.height,
+        0, format, type, 0);
+    check_gl("ImageRenderer::set_image texImage");
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+    imageView_->set_image_shape(imageSize);
 }
 
 }; //namespace display
