@@ -50,11 +50,12 @@ class Display
 
     Shape window_shape() const;
     int should_close() const;
+    int should_close(bool draw);
     void wait_for_close() const;
     
     void add_view(const View::Ptr& view);
     void add_renderer(const Renderer::Ptr& renderer);
-    void draw();
+    virtual void draw();
 
     void enable_frame_counter();
     void disable_frame_counter();

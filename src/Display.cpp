@@ -54,6 +54,13 @@ int Display::should_close() const
     return glfwWindowShouldClose(window_.get()) > 0;
 }
 
+int Display::should_close(bool draw)
+{
+    glfwPollEvents();
+    if(draw) this->draw();
+    return glfwWindowShouldClose(window_.get()) > 0;
+}
+
 void Display::wait_for_close() const
 {
     using namespace std;
