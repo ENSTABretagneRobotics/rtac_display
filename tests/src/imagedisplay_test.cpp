@@ -12,14 +12,14 @@ struct Color {
 };
 
 template <>
-void ImageRenderer::infer_format<Color<uint8_t>>(GLenum& format, GLenum& type) {
+void rtac::display::infer_gl_format<Color<uint8_t>>(GLenum& format, GLenum& type) {
     cout << "Using RGB uint8_t" << endl;
     format = GL_RGB;
     type   = GL_UNSIGNED_BYTE;
 }
 
 template <>
-void ImageRenderer::infer_format<Color<float>>(GLenum& format, GLenum& type) {
+void rtac::display::infer_gl_format<Color<float>>(GLenum& format, GLenum& type) {
     cout << "Using RGB float" << endl;
     format = GL_RGB;
     type   = GL_FLOAT;

@@ -20,6 +20,18 @@ GLuint create_render_program(const std::string& vertexShaderSource,
 
 GLuint create_compute_program(const std::string& computeShaderSource);
 
+template <typename T>
+void infer_gl_format(GLenum& format, GLenum& type)
+{
+    std::cerr << "Caution infer_gl_format<T> : "
+              << "trying to infer data type from T. "
+              << "using defaults GL_RED and GL_UNSIGNED_BYTE. "
+              << "You should specialize ImageRenderer::infer_format "
+              << "for your own types." << std::endl;
+    format = GL_RED;
+    type   = GL_UNSIGNED_BYTE;
+}
+
 }; //namespace display
 }; //namespace rtac
 
