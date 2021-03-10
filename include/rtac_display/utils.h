@@ -21,7 +21,7 @@ GLuint create_render_program(const std::string& vertexShaderSource,
 GLuint create_compute_program(const std::string& computeShaderSource);
 
 template <typename T>
-void infer_gl_format(GLenum& format, GLenum& type)
+inline void infer_gl_format(GLenum& format, GLenum& type)
 {
     std::cerr << "Caution infer_gl_format<T> : "
               << "trying to infer data type from T. "
