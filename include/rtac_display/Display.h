@@ -50,7 +50,7 @@ class Display
 
     Shape window_shape() const;
     int should_close() const;
-    int should_close(bool draw);
+    int is_drawing();
     void wait_for_close() const;
     
     void add_view(const View::Ptr& view);
