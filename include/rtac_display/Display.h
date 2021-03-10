@@ -16,6 +16,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include <rtac_base/time.h>
+
 #include <rtac_display/utils.h>
 #include <rtac_display/views/View.h>
 #include <rtac_display/renderers/Renderer.h>
@@ -36,6 +38,9 @@ class Display
     Window    window_;
     Views     views_;
     Renderers renderers_;
+    
+    rtac::time::FrameCounter frameCounter_;
+    bool frameCounterEnabled_;
 
     public:
 
@@ -50,6 +55,9 @@ class Display
     void add_view(const View::Ptr& view);
     void add_renderer(const Renderer::Ptr& renderer);
     void draw();
+
+    void enable_frame_counter();
+    void disable_frame_counter();
 };
 
 }; //namespace display

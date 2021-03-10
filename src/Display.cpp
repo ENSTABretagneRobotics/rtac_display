@@ -3,7 +3,8 @@
 namespace rtac { namespace display {
 
 Display::Display(int width, int height, const std::string& title) :
-    window_(NULL)
+    window_(NULL),
+    frameCounterEnabled_(true)
 {
     if(!glfwInit()) {
         throw std::runtime_error("GLFW initialization failure.");
@@ -96,6 +97,20 @@ void Display::draw()
     }
 
     glfwSwapBuffers(window_.get());
+
+    if(frameCounterEnabled_) {
+        std::cout << frameCounter_;
+    }
+}
+
+void Display::enable_frame_counter()
+{
+    frameCounterEnabled_ = true;
+}
+
+void Display::disable_frame_counter()
+{
+    frameCounterEnabled_ = false;
 }
 
 }; //namespace display
