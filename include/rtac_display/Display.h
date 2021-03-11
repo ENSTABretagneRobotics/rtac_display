@@ -59,6 +59,8 @@ class Display
 
     void enable_frame_counter();
     void disable_frame_counter();
+    void limit_frame_rate(double fps);
+    void free_frame_rate();
 };
 
 }; //namespace display

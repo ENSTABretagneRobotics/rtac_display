@@ -120,6 +120,16 @@ void Display::disable_frame_counter()
     frameCounterEnabled_ = false;
 }
 
+void Display::limit_frame_rate(double fps)
+{
+    frameCounter_.limit_frame_rate(fps);
+}
+
+void Display::free_frame_rate()
+{
+    frameCounter_.free_frame_rate();
+}
+
 }; //namespace display
 }; //namespace rtac
 
