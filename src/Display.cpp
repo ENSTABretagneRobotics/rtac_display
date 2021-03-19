@@ -32,56 +32,13 @@ Display::Display(int width, int height, const std::string& title) :
 
     glViewport(0.0,0.0,width,height);
 
-    // // Making this the user pointer for callback related features.
-    // GLFW_CHECK( glfwSetWindowUserPointer(window_.get(), this) );
-
-    // Adding all callback handler for now (dynamic ones later)
-    GLFW_CHECK( glfwSetKeyCallback(window_.get(),         &Display::key_callback) );
-    GLFW_CHECK( glfwSetCursorPosCallback(window_.get(),   &Display::mouse_position_callback) );
-    GLFW_CHECK( glfwSetMouseButtonCallback(window_.get(), &Display::mouse_button_callback) );
-    GLFW_CHECK( glfwSetScrollCallback(window_.get(),      &Display::scroll_callback) );
+    // Making this the user pointer for callback related features.
+    GLFW_CHECK( glfwSetWindowUserPointer(window_.get(), this) );
 }
 
 void Display::terminate()
 {
     glfwTerminate();
-}
-
-void Display::key_callback(GLFWwindow* window, int key, int scancode, int action, int modes)
-{
-    std::cout << "Got keyboard key : "
-              << key << " " << scancode << " " << modes << " " << action
-              << std::endl << std::flush;
-    auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
-    if(!display)
-        return;
-}
-
-void Display::mouse_position_callback(GLFWwindow* window, double x, double y)
-{
-    std::cout << "Got mouse position event : " << std::setprecision(3) 
-              << x << " " << y << std::endl << std::flush;
-    auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
-    if(!display)
-        return;
-}
-
-void Display::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{
-    std::cout << "Got mouse button event : "
-              << button << " " << action << " " << mods << std::endl << std::flush;
-    auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
-    if(!display)
-        return;
-}
-
-void Display::scroll_callback(GLFWwindow* window, double x, double y)
-{
-    std::cout << "Got scroll event : " << std::setprecision(3) 
-              << x << " " << y << std::endl << std::flush;
-    auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
-    if(!display)
-        return;
 }
 
 Display::Shape Display::window_shape() const
@@ -174,6 +131,107 @@ void Display::limit_frame_rate(double fps)
 void Display::free_frame_rate()
 {
     frameCounter_.free_frame_rate();
+}
+
+void Display::key_callback(GLFWwindow* window, int key, int scancode, int action, int modes)
+{
+    auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
+    if(!display) {
+        std::cerr << "Got event but user data not set in GLFWwindow. "
+                  << "Cannot transfer events" << std::endl;
+        return;
+    }
+    display->keyCallbacks_.call(key, scancode, action, modes);
+}
+
+void Display::mouse_position_callback(GLFWwindow* window, double x, double y)
+{
+    auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
+    if(!display) {
+        std::cerr << "Got event but user data not set in GLFWwindow. "
+                  << "Cannot transfer events" << std::endl;
+        return;
+    }
+    display->mousePositionCallbacks_.call(x, y);
+}
+
+void Display::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
+    if(!display) {
+        std::cerr << "Got event but user data not set in GLFWwindow. "
+                  << "Cannot transfer events" << std::endl;
+        return;
+    }
+    display->mouseButtonCallbacks_.call(button, action, mods);
+}
+
+void Display::scroll_callback(GLFWwindow* window, double x, double y)
+{
+    auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
+    if(!display) {
+        std::cerr << "Got event but user data not set in GLFWwindow. "
+                  << "Cannot transfer events" << std::endl;
+        return;
+    }
+    display->scrollCallbacks_.call(x, y);
+}
+
+unsigned int Display::add_key_callback(const KeyCallbackT& callback)
+{
+    // Adding all callback handler for now (dynamic ones later)
+    GLFW_CHECK( glfwSetKeyCallback(window_.get(), &Display::key_callback) );
+    return keyCallbacks_.add_callback(callback);
+}
+
+unsigned int Display::add_mouse_position_callback(const MousePositionCallbackT& callback)
+{
+    GLFW_CHECK( glfwSetCursorPosCallback(window_.get(), &Display::mouse_position_callback) );
+    return mousePositionCallbacks_.add_callback(callback);
+}
+
+unsigned int Display::add_mouse_button_callback(const MouseButtonCallbackT& callback)
+{
+    GLFW_CHECK( glfwSetMouseButtonCallback(window_.get(), &Display::mouse_button_callback) );
+    return mouseButtonCallbacks_.add_callback(callback);
+}
+
+unsigned int Display::add_scroll_callback(const ScrollCallbackT& callback)
+{
+    GLFW_CHECK( glfwSetScrollCallback(window_.get(), &Display::scroll_callback) );
+    return scrollCallbacks_.add_callback(callback);
+}
+
+void Display::add_event_handler(const EventHandler::Ptr& eventHandler)
+{
+    if(eventHandler->uses_keyboard()) {
+        this->add_key_callback(std::bind(&EventHandler::key_callback,
+                                         eventHandler.get(), 
+                                         std::placeholders::_1,
+                                         std::placeholders::_2,
+                                         std::placeholders::_3,
+                                         std::placeholders::_4));
+    }
+    if(eventHandler->uses_mouse_position()) {
+        this->add_mouse_position_callback(std::bind(&EventHandler::mouse_position_callback,
+                                                    eventHandler.get(), 
+                                                    std::placeholders::_1,
+                                                    std::placeholders::_2));
+    }
+    if(eventHandler->uses_mouse_button()) {
+        this->add_mouse_button_callback(std::bind(&EventHandler::mouse_button_callback,
+                                                  eventHandler.get(), 
+                                                  std::placeholders::_1,
+                                                  std::placeholders::_2,
+                                                  std::placeholders::_3));
+    }
+    if(eventHandler->uses_scroll()) {
+        this->add_scroll_callback(std::bind(&EventHandler::scroll_callback,
+                                            eventHandler.get(), 
+                                            std::placeholders::_1,
+                                            std::placeholders::_2));
+    }
+    eventHandler->set_window(window_);
 }
 
 }; //namespace display

@@ -16,6 +16,7 @@ using Mesh = rtac::types::Mesh<>;
 #include <rtac_display/Display.h>
 #include <rtac_display/views/PinholeView.h>
 #include <rtac_display/renderers/MeshRenderer.h>
+#include <rtac_display/samples/OrbitControls.h>
 using namespace rtac::display;
 
 int main()
@@ -36,11 +37,14 @@ int main()
     meshRenderer->set_pose(Pose({0,0,3}));
     display.add_renderer(meshRenderer);
 
+    auto controls = samples::OrbitControls::Create(view3d);
+    display.add_event_handler(controls);
+
     float dangle = 0.001;
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));
     
     while(!display.should_close()) {
-        view3d->set_pose(R * view3d->pose());
+        //view3d->set_pose(R * view3d->pose());
         
         display.draw();
         

@@ -25,8 +25,10 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/renderers/NormalsRenderer.h
     include/rtac_display/Display.h
     include/rtac_display/GLVector.h
+    include/rtac_display/EventHandler.h
 
     include/rtac_display/samples/ImageDisplay.h
+    include/rtac_display/samples/OrbitControls.h
 )
 list(APPEND rtac_display_SOURCES
     src/utils.cpp
@@ -41,8 +43,10 @@ list(APPEND rtac_display_SOURCES
     src/renderers/MeshRenderer.cpp
     src/renderers/NormalsRenderer.cpp
     src/Display.cpp
+    src/EventHandler.cpp
 
     src/samples/ImageDisplay.cpp
+    src/samples/OrbitControls.cpp
 )
 if(${WITH_CUDA})
     enable_language(CUDA)
