@@ -38,7 +38,7 @@ void View3D::look_at(const Vector3& target, const Vector3& position,
 
 View3D::Mat4 View3D::raw_view_matrix() const
 {
-    return viewMatrix_.inverse();
+    return viewMatrix_;
 }
 
 View3D::Mat4 View3D::view_matrix() const
@@ -49,6 +49,11 @@ View3D::Mat4 View3D::view_matrix() const
 View3D::Pose View3D::pose() const
 {
     return Pose::from_homogeneous_matrix(viewMatrix_ * viewFrameGL.inverse());
+}
+
+void View3D::set_raw_view(const Mat4& viewMatrix)
+{
+    viewMatrix_ = viewMatrix;
 }
 
 }; //namespace display

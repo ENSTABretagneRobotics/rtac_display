@@ -42,11 +42,12 @@ class View3D : public View
     void look_at(const Vector3& target);
     void look_at(const Vector3& target, const Vector3& position,
                  const Vector3& up = {0.0f,0.0f,1.0f});
-                 
 
     Mat4 raw_view_matrix() const;
     virtual Mat4 view_matrix() const;
     Pose pose() const;
+
+    void set_raw_view(const Mat4& viewMatrix);
 };
 
 }; //namespace display

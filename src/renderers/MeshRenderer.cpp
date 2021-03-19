@@ -150,7 +150,7 @@ void MeshRenderer::draw()
     
     //auto view = view_.downcast<View3D>();
     auto view = std::dynamic_pointer_cast<View3D>(view_);
-    Mat4 viewMatrix = view->raw_view_matrix() * pose_.homogeneous_matrix();
+    Mat4 viewMatrix = (view->raw_view_matrix().inverse()) * pose_.homogeneous_matrix();
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),
         1, GL_FALSE, viewMatrix.data());
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "projection"),
