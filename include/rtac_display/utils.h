@@ -9,6 +9,21 @@
 //#define GL3_PROTOTYPES 1
 #include <GL/gl.h>
 
+#include <GLFW/glfw3.h>
+
+#define GLFW_CHECK( call )                                              \
+    do {                                                                \
+        call;                                                           \
+        unsigned int err = glfwGetError(NULL);                          \
+        if(err != GLFW_NO_ERROR) {                                      \
+            std::ostringstream oss;                                     \
+            oss << "GLFW call '" << #call << "' failed '"               \
+                << "' (code:" << err << ")\n"                           \
+                << __FILE__ << ":" << __LINE__ << "\n";                 \
+            throw std::runtime_error(oss.str());                        \
+        }                                                               \
+    } while(0)                                                          \
+
 namespace rtac { namespace display {
 
 bool check_gl(const std::string& location = "");

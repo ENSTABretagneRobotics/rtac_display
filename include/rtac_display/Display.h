@@ -2,6 +2,7 @@
 #define _DEF_RTAC_DISPLAY_H_
 
 #include <iostream>
+#include <iomanip>
 #include <memory>
 #include <thread>
 #include <vector>
@@ -32,6 +33,11 @@ class Display
     using Shape     = View::Shape;
     using Views     = std::vector<View::Ptr>;
     using Renderers = std::vector<Renderer::Ptr>;
+
+    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int modes);
+    static void mouse_position_callback(GLFWwindow* window, double x, double y);
+    static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+    static void scroll_callback(GLFWwindow* window, double x, double y);
 
     protected:
     

@@ -31,11 +31,57 @@ Display::Display(int width, int height, const std::string& title) :
     glfwSwapInterval(0);
 
     glViewport(0.0,0.0,width,height);
+
+    // // Making this the user pointer for callback related features.
+    // GLFW_CHECK( glfwSetWindowUserPointer(window_.get(), this) );
+
+    // Adding all callback handler for now (dynamic ones later)
+    GLFW_CHECK( glfwSetKeyCallback(window_.get(),         &Display::key_callback) );
+    GLFW_CHECK( glfwSetCursorPosCallback(window_.get(),   &Display::mouse_position_callback) );
+    GLFW_CHECK( glfwSetMouseButtonCallback(window_.get(), &Display::mouse_button_callback) );
+    GLFW_CHECK( glfwSetScrollCallback(window_.get(),      &Display::scroll_callback) );
 }
 
 void Display::terminate()
 {
     glfwTerminate();
+}
+
+void Display::key_callback(GLFWwindow* window, int key, int scancode, int action, int modes)
+{
+    std::cout << "Got keyboard key : "
+              << key << " " << scancode << " " << modes << " " << action
+              << std::endl << std::flush;
+    auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
+    if(!display)
+        return;
+}
+
+void Display::mouse_position_callback(GLFWwindow* window, double x, double y)
+{
+    std::cout << "Got mouse position event : " << std::setprecision(3) 
+              << x << " " << y << std::endl << std::flush;
+    auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
+    if(!display)
+        return;
+}
+
+void Display::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    std::cout << "Got mouse button event : "
+              << button << " " << action << " " << mods << std::endl << std::flush;
+    auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
+    if(!display)
+        return;
+}
+
+void Display::scroll_callback(GLFWwindow* window, double x, double y)
+{
+    std::cout << "Got scroll event : " << std::setprecision(3) 
+              << x << " " << y << std::endl << std::flush;
+    auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
+    if(!display)
+        return;
 }
 
 Display::Shape Display::window_shape() const
