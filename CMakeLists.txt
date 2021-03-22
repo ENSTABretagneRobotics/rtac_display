@@ -29,6 +29,7 @@ list(APPEND rtac_display_PUBLIC_HEADERS
 
     include/rtac_display/samples/ImageDisplay.h
     include/rtac_display/samples/OrbitControls.h
+    include/rtac_display/samples/Display3D.h
 )
 list(APPEND rtac_display_SOURCES
     src/utils.cpp
@@ -47,6 +48,7 @@ list(APPEND rtac_display_SOURCES
 
     src/samples/ImageDisplay.cpp
     src/samples/OrbitControls.cpp
+    src/samples/Display3D.cpp
 )
 if(${WITH_CUDA})
     enable_language(CUDA)
