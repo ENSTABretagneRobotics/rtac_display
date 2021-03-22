@@ -7,16 +7,21 @@ using namespace rtac::types::indexing;
 OrbitControls::OrbitControls(const View3D::Ptr& view,
                              const Vec3& target,
                              const Vec3& up) :
-    EventHandler(false, true, true, false),
+    EventHandler(false, true, true, true),
     view_(view),
     viewFrame_(Mat3::Identity()),
-    locked_(false),
+    orientationLocked_(false),
+    targetLocked_(false),
     target_(target),
-    alpha_(0.005)
+    angleSensitivity_(0.005),
+    zoomSensitivity_(1.1)
 {
     viewFrame_(all,2) = up.normalized();
     viewFrame_(all,0) = geometry::find_orthogonal(up).normalized();
     viewFrame_(all,1) = up.cross(viewFrame_(all,0));
+
+    auto p = view_->pose().translation() - target_;
+    rho_   = p.norm();
 }
 
 OrbitControls::Ptr OrbitControls::Create(const View3D::Ptr& view,
@@ -26,23 +31,22 @@ OrbitControls::Ptr OrbitControls::Create(const View3D::Ptr& view,
     return Ptr(new OrbitControls(view, target, up));
 }
 
-void OrbitControls::lock_view()
+void OrbitControls::update_parameters_from_view()
 {
-    glfwSetInputMode(window_.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    
     auto p = view_->pose().translation() - target_;
 
     rho_   = p.norm();
     phi_   = std::asin(p.normalized().dot(viewFrame_(all,2)));
     theta_ = std::atan2(p.dot(viewFrame_(all,1)), p.dot(viewFrame_(all,0)));
-    
-    locked_ = true;
 }
 
-void OrbitControls::unlock_view()
+void OrbitControls::update_view_from_parameters()
 {
-    glfwSetInputMode(window_.get(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    locked_ = false;
+    Vec3 p = rho_*viewFrame_*Vec3({std::cos(theta_)*std::cos(phi_),
+                                   std::sin(theta_)*std::cos(phi_),
+                                   std::sin(phi_)}) + target_;
+
+    view_->look_at(target_, p, viewFrame_(all,2));
 }
 
 void OrbitControls::mouse_position_callback(double x, double y)
@@ -52,20 +56,34 @@ void OrbitControls::mouse_position_callback(double x, double y)
         return;
     }
 
-    if(!locked_) return;
-
-    MousePosition dmouse = alpha_*(MousePosition({x,y}) - lastMouse_);
+    MousePosition dmouse = MousePosition({x,y}) - lastMouse_;
     lastMouse_ = MousePosition({x,y});
 
-    theta_ -= dmouse[0];
-    phi_   += dmouse[1];
-    phi_ = std::max(std::min(phi_, 1.5f), -1.5f);
+    if(orientationLocked_) {
+        this->update_orientation(dmouse);
+    }
+    else if(targetLocked_) {
+        this->update_target(dmouse);
+    }
+}
 
-    Vec3 p = rho_*viewFrame_*Vec3({std::cos(theta_)*std::cos(phi_),
-                                   std::sin(theta_)*std::cos(phi_),
-                                   std::sin(phi_)}) + target_;
+void OrbitControls::update_orientation(const MousePosition& deltaMouse)
+{
+    theta_ -= angleSensitivity_*deltaMouse[0];
+    phi_   += angleSensitivity_*deltaMouse[1];
+    phi_    = std::max(std::min(phi_, 1.5f), -1.5f);
+    this->update_view_from_parameters();
+}
 
-    view_->look_at(target_, p, viewFrame_(all,2));
+void OrbitControls::update_target(const MousePosition& deltaMouse)
+{
+    Vec3 dx = -view_->raw_view_matrix()(seqN(0,3), 0);
+    Vec3 dy =  view_->raw_view_matrix()(seqN(0,3), 1);
+    Vec3 dz =  view_->raw_view_matrix()(seqN(0,3), 2);
+
+    Vec3 dp = (deltaMouse[0]*dx + deltaMouse[1]*dy) * rho_ / view_->screen_size().height;
+    target_ += dp;
+    view_->look_at(target_, view_->raw_view_matrix()(seqN(0,3),3) + dp, viewFrame_(all,2));
 }
 
 void OrbitControls::mouse_button_callback(int button, int action, int modes)
@@ -76,13 +94,30 @@ void OrbitControls::mouse_button_callback(int button, int action, int modes)
     }
     if(button == GLFW_MOUSE_BUTTON_LEFT) {
         if(action == GLFW_PRESS) {
-            this->lock_view();
+            glfwSetInputMode(window_.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            this->update_parameters_from_view();    
             glfwGetCursorPos(window_.get(), &lastMouse_[0], &lastMouse_[1]);
+            if(glfwGetKey(window_.get(), GLFW_KEY_LEFT_SHIFT))
+                targetLocked_ = true;
+            else
+                orientationLocked_ = true;
         }
         else {
-            this->unlock_view();
+            glfwSetInputMode(window_.get(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            orientationLocked_ = false;
+            targetLocked_ = false;
         }
     }
+}
+
+void OrbitControls::scroll_callback(double x, double y)
+{
+    this->update_parameters_from_view();
+    if(y > 0)
+        rho_ /= std::abs(y)*zoomSensitivity_;
+    else
+        rho_ *= std::abs(y)*zoomSensitivity_;
+    this->update_view_from_parameters();
 }
 
 }; //namespace samples

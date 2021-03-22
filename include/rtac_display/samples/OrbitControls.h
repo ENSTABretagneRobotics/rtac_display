@@ -26,21 +26,27 @@ class OrbitControls : public EventHandler
     
     View3D::Ptr view_;
     Mat3        viewFrame_; // defined by the up_ parameter
-    bool        locked_;
+    bool        orientationLocked_;
+    bool        targetLocked_;
     Vec3        target_;
-    float       alpha_;
+    float       angleSensitivity_;
+    float       zoomSensitivity_;
 
     float rho_;
     float theta_;
     float phi_;
     MousePosition lastMouse_;
 
-    void lock_view();
-    void unlock_view();
+    void update_parameters_from_view();
+    void update_view_from_parameters();
+
+    void update_orientation(const MousePosition& deltaMouse);
+    void update_target(const MousePosition& deltaMouse);
 
     OrbitControls(const View3D::Ptr& view,
                   const Vec3& target = {0,0,0},
                   const Vec3& up = {0,0,1});
+
     public:
 
     static Ptr Create(const View3D::Ptr& view,
@@ -49,6 +55,7 @@ class OrbitControls : public EventHandler
 
     virtual void mouse_position_callback(double x, double y);
     virtual void mouse_button_callback(int button, int action, int modes);
+    virtual void scroll_callback(double x, double y);
 };
 
 }; //namespace samples

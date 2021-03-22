@@ -39,6 +39,8 @@ class View
 
     Mat4 projection_matrix() const;
     virtual Mat4 view_matrix() const;
+
+    Shape screen_size() const;
 };
 
 }; //namespace display

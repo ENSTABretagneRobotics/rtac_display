@@ -31,6 +31,11 @@ View::Mat4 View::view_matrix() const
     return projectionMatrix_;
 }
 
+View::Shape View::screen_size() const
+{
+    return screenSize_;
+}
+
 }; //namespace display
 }; //namespace rtac
 
