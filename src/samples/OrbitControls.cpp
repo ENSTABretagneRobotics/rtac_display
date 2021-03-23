@@ -31,6 +31,13 @@ OrbitControls::Ptr OrbitControls::Create(const View3D::Ptr& view,
     return Ptr(new OrbitControls(view, target, up));
 }
 
+void OrbitControls::look_at(const Vec3& target, const Vec3& position)
+{
+    target_ = target_;
+    this->view_->look_at(target_, position, viewFrame_(all,2));
+    this->update_parameters_from_view();
+}
+
 void OrbitControls::update_parameters_from_view()
 {
     auto p = view_->pose().translation() - target_;

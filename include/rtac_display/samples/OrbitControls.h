@@ -53,6 +53,8 @@ class OrbitControls : public EventHandler
                       const Vec3& target = {0,0,0},
                       const Vec3& up     = {0,0,1});
 
+    void look_at(const Vec3& target, const Vec3& position);
+
     virtual void mouse_position_callback(double x, double y);
     virtual void mouse_button_callback(int button, int action, int modes);
     virtual void scroll_callback(double x, double y);
