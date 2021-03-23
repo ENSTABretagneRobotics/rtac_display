@@ -51,6 +51,7 @@ class GLVector
     
     GLVector& operator=(const GLVector<T>& other);
     GLVector& operator=(const std::vector<T>& other);
+    void set_data(unsigned int size, const T* data);
 
     void resize(size_t size);
     size_t size() const;
@@ -175,13 +176,18 @@ GLVector<T>& GLVector<T>::operator=(const GLVector<T>& other)
 template <typename T>
 GLVector<T>& GLVector<T>::operator=(const std::vector<T>& other)
 {
-    this->resize(other.size());
-    this->bind(GL_ARRAY_BUFFER);
-    
-    glBufferSubData(GL_ARRAY_BUFFER, 0, this->size()*sizeof(T), other.data());
-
-    this->unbind(GL_ARRAY_BUFFER);
+    this->set_data(other.size(), other.data());
     return *this;
+}
+
+template <typename T>
+void GLVector<T>::set_data(unsigned int size, const T* data)
+{
+    this->resize(size);
+
+    this->bind(GL_ARRAY_BUFFER);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, this->size()*sizeof(T), data);
+    this->unbind(GL_ARRAY_BUFFER);
 }
 
 template <typename T>
