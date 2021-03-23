@@ -8,19 +8,18 @@
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/types/PointCloud.h>
 
+#include <rtac_display/GLVector.h>
 #include <rtac_display/renderers/Renderer.h>
 #include <rtac_display/views/View3D.h>
-#include <rtac_display/renderers/NormalsRenderer.h>
 
 namespace rtac { namespace display {
 
-
-class PointCloudRenderer : public Renderer
+class PointCloudRendererBase : public Renderer
 {
     public:
 
-    using Ptr      = rtac::types::Handle<PointCloudRenderer>;
-    using ConstPtr = rtac::types::Handle<const PointCloudRenderer>;
+    using Ptr      = rtac::types::Handle<PointCloudRendererBase>;
+    using ConstPtr = rtac::types::Handle<const PointCloudRendererBase>;
 
     using Mat4    = View3D::Mat4;
     using Shape   = View3D::Shape;
@@ -32,14 +31,37 @@ class PointCloudRenderer : public Renderer
 
     protected:
     
-    size_t numPoints_;
-    GLuint points_;
-    Pose   pose_;
-    Color  color_;
-    NormalsRenderer::Ptr normalsRenderer_;
+    Pose             pose_;
+    Color            color_;
 
-    void allocate_points(size_t numPoints);
-    void delete_points();
+    public:
+
+    PointCloudRendererBase(const View3D::Ptr& view,
+                           const Color& color = {0.7,0.7,1.0});
+
+    void set_pose(const Pose& pose);
+    void set_color(const Color& color);
+};
+
+template <typename PointT>
+class PointCloudRenderer : public PointCloudRendererBase
+{
+    public:
+
+    static_assert(sizeof(PointT) >= 3*sizeof(float),
+                 "PointT must be at least the size of 3 floats");
+
+    using Ptr      = rtac::types::Handle<PointCloudRenderer<PointT>>;
+    using ConstPtr = rtac::types::Handle<const PointCloudRenderer<PointT>>;
+
+    using Mat4    = PointCloudRendererBase::Mat4;
+    using Shape   = PointCloudRendererBase::Shape;
+    using Pose    = PointCloudRendererBase::Pose;
+    using Color   = PointCloudRendererBase::Color;
+
+    protected:
+    
+    GLVector<PointT> points_;
 
     public:
     
@@ -47,59 +69,67 @@ class PointCloudRenderer : public Renderer
                    const Color& color = {0.7,0.7,1.0});
     PointCloudRenderer(const View3D::Ptr& view,
                        const Color& color = {0.7,0.7,1.0});
-    ~PointCloudRenderer();
+
+    GLVector<PointT>& points();
+    const GLVector<PointT>& points() const;
     
-    void set_points(size_t numPoints, const float* data);
-    void set_points(size_t numPoints, GLuint points);
-
-    // these function use already used points.
-    // a call to set points must have been done beforehand.
-    void set_normals(size_t numPoints, const float* data,
-                     bool normalizeNormals = true);
-    void set_normals(size_t numPoints, GLuint normals,
-                     bool normalizeNormals = true);
-
+    void set_points(size_t numPoints, const PointT* data);
     template <typename PointCloudT>
     void set_points(const rtac::types::PointCloud<PointCloudT>& pc);
-    template <typename BufferT>
-    void set_points(const BufferT& buffer);
     template <typename Derived>
     void set_points(const Eigen::DenseBase<Derived>& points);
-
-    void set_pose(const Pose& pose);
-    void set_color(const Color& color);
-
+    
     virtual void draw();
-    virtual void set_view(const View::Ptr& view);
 };
 
 // implementation
-template <typename PointCloudT>
-void PointCloudRenderer::set_points(const rtac::types::PointCloud<PointCloudT>& pc)
+template <typename PointT>
+typename PointCloudRenderer<PointT>::Ptr PointCloudRenderer<PointT>::New(
+    const View3D::Ptr& view, const Color& color)
 {
-    this->allocate_points(pc.size());
-    glBindBuffer(GL_ARRAY_BUFFER, points_);
-    auto deviceData = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+    return Ptr(new PointCloudRenderer<PointT>(view, color));
+}
+
+template <typename PointT>
+PointCloudRenderer<PointT>::PointCloudRenderer(const View3D::Ptr& view,
+                                               const Color& color) :
+    PointCloudRendererBase(view, color)
+{}
+
+template <typename PointT>
+GLVector<PointT>& PointCloudRenderer<PointT>::points()
+{
+    return points_;
+}
+
+template <typename PointT>
+const GLVector<PointT>& PointCloudRenderer<PointT>::points() const
+{
+    return points_;
+}
+
+template <typename PointT>
+void PointCloudRenderer<PointT>::set_points(size_t numPoints, const PointT* data)
+{
+    points_.set_data(numPoints, data);
+}
+
+template <typename PointT> template <typename PointCloudT>
+void PointCloudRenderer<PointT>::set_points(const rtac::types::PointCloud<PointCloudT>& pc)
+{
+    points_.resize(pc.size());
+    auto devicePtr = points_.map();
     int i = 0;
     for(auto& point : pc) {
-        deviceData[i]     = point.x;
-        deviceData[i + 1] = point.y;
-        deviceData[i + 2] = point.z;
-        i += 3;
+        devicePtr[i].x = point.x;
+        devicePtr[i].y = point.y;
+        devicePtr[i].z = point.z;
+        i++;
     }
-    glUnmapBuffer(GL_ARRAY_BUFFER);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    numPoints_ = pc.size();
 }
 
-template <typename BufferT>
-void PointCloudRenderer::set_points(const BufferT& buffer)
-{
-    this->set_points(buffer->shape().area(), buffer->gl_id());
-}
-
-template <typename Derived>
-void PointCloudRenderer::set_points(const Eigen::DenseBase<Derived>& points)
+template <typename PointT> template <typename Derived>
+void PointCloudRenderer<PointT>::set_points(const Eigen::DenseBase<Derived>& points)
 {
     //expects points on rows.
     if(points.cols() != 3) {
@@ -107,17 +137,54 @@ void PointCloudRenderer::set_points(const Eigen::DenseBase<Derived>& points)
     }
     size_t numPoints = points.rows();
 
-    this->allocate_points(numPoints);
-    glBindBuffer(GL_ARRAY_BUFFER, points_);
-    auto deviceData = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+    points_.resize(numPoints);
+    auto devicePtr = points_.map();
     for(int i = 0; i < numPoints; i++) {
-        deviceData[3*i]     = points(i,0);
-        deviceData[3*i + 1] = points(i,1);
-        deviceData[3*i + 2] = points(i,2);
+        devicePtr[i].x = points(i,0);
+        devicePtr[i].y = points(i,1);
+        devicePtr[i].z = points(i,2);
     }
-    glUnmapBuffer(GL_ARRAY_BUFFER);
+}
+
+
+template <typename PointT>
+void PointCloudRenderer<PointT>::draw()
+{
+    if(points_.size() == 0)
+        return;
+    
+    glDisable(GL_DEPTH_TEST);
+    Mat4 view = view_->view_matrix() * pose_.homogeneous_matrix();
+
+    GLfloat pointSize;
+    glGetFloatv(GL_POINT_SIZE, &pointSize);
+    glPointSize(1);
+
+    glUseProgram(renderProgram_);
+    
+    points_.bind(GL_ARRAY_BUFFER);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(PointT), NULL);
+    glEnableVertexAttribArray(0);
+
+    //color_[0] = 1.0;
+    //color_[1] = 0.0;
+    //color_[2] = 0.0;
+
+    glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),
+        1, GL_FALSE, view.data());
+    glUniform3fv(glGetUniformLocation(renderProgram_, "color"),
+        1, color_.data());
+
+    glDrawArrays(GL_POINTS, 0, points_.size());
+    
+    glDisableVertexAttribArray(0);
+
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    numPoints_ = numPoints;
+
+    glUseProgram(0);
+
+    glPointSize(pointSize);
 }
 
 }; //namespace display

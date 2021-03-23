@@ -17,6 +17,13 @@ using PointCloud = rtac::types::PointCloud<>;
 #include <rtac_display/renderers/PointCloudRenderer.h>
 using namespace rtac::display;
 
+struct PointTest {
+    float x;
+    float y;
+    float z;
+    float w;
+};
+
 int main()
 {
     int W = 1920, H = 1080;
@@ -29,7 +36,8 @@ int main()
     renderer->set_view(view3d);
     display.add_renderer(renderer);
     
-    auto pcRenderer = PointCloudRenderer::New(view3d);
+    //auto pcRenderer = PointCloudRenderer<PointCloud::PointType>::New(view3d);
+    auto pcRenderer = PointCloudRenderer<PointTest>::New(view3d);
     display.add_renderer(pcRenderer);
 
     std::vector<float> cubePoints({-1,-1,-1,
