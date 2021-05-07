@@ -74,6 +74,48 @@ void main()
 
 )");
 
+const std::string NormalsRenderer::generateLineDataShader2 = std::string(R"(
+#version 430 core
+
+// here point and normal data are interleaved in input buffer
+
+// cannot use vec3 for alignment issues
+//layout(std430, binding=0) buffer inputData  { vec3 input[]; };
+//layout(std430, binding=2) buffer lines      { vec3 l[]; };
+layout(std430, binding=0) buffer inputData  { float input[]; };
+layout(std430, binding=2) buffer lines      { float l[]; };
+
+layout(location=0) uniform uint numPoints;
+layout(location=1) uniform bool do_normalize;
+
+#define GROUP_SIZE 128
+
+layout (local_size_x = GROUP_SIZE, local_size_y = 1) in;
+
+void main()
+{
+    uint idx = gl_WorkGroupSize.x * gl_WorkGroupID.x + gl_LocalInvocationID.x;
+    for(; idx < numPoints; idx += gl_WorkGroupSize.x * gl_NumWorkGroups.x) {
+        uint i = 6*idx;
+        vec3 p0 = vec3(input[i],   input[i+1], input[i+2]);
+        vec3 n0 = vec3(input[i+3], input[i+4], input[i+5]);
+        if(do_normalize) {
+            n0 = normalize(n0);
+        }
+        vec3 p1 = p0 + n0;
+
+        l[i]     = p0.x;
+        l[i + 1] = p0.y;
+        l[i + 2] = p0.z;
+        l[i + 3] = p1.x;
+        l[i + 4] = p1.y;
+        l[i + 5] = p1.z;
+    }
+}
+
+
+)");
+
 NormalsRenderer::Ptr NormalsRenderer::New(const View::Ptr& view,
                                           const Color& color)
 {
@@ -86,6 +128,7 @@ NormalsRenderer::NormalsRenderer(const View::Ptr& view,
     numPoints_(0),
     displayData_(0),
     generateLineProgram_(create_compute_program(generateLineDataShader)),
+    generateLineProgram2_(create_compute_program(generateLineDataShader2)),
     color_(color)
 {
 }
@@ -141,35 +184,33 @@ void NormalsRenderer::set_normals(size_t numPoints, GLuint points, GLuint normal
 
     glUseProgram(0);
     
-    // legacy (slow) code to upload normals on device
-    //glBindBuffer(GL_ARRAY_BUFFER, points);
-    //auto p = static_cast<const float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
-    //glBindBuffer(GL_ARRAY_BUFFER, normals);
-    //auto n = static_cast<const float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
-    //glBindBuffer(GL_ARRAY_BUFFER, displayData_);
-    //auto l = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-    //
-    //for(int i = 0; i < 3*numPoints; i+=3) {
-    //    std::cout << l[2*i]     << " "  << l[2*i + 1] << " "  << l[2*i + 2] << "\n";
-    //    std::cout << l[2*i + 3] << " "  << l[2*i + 4] << " "  << l[2*i + 5] << "\n" << std::endl;
-    //    l[2*i]     = p[i];
-    //    l[2*i + 1] = p[i + 1];
-    //    l[2*i + 2] = p[i + 2];
-    //    l[2*i + 3] = p[i]     + n[i];
-    //    l[2*i + 4] = p[i + 1] + n[i + 1];
-    //    l[2*i + 5] = p[i + 2] + n[i + 2];
-    //}
-
-    //glUnmapBuffer(GL_ARRAY_BUFFER);
-    //glBindBuffer(GL_ARRAY_BUFFER, normals);
-    //glUnmapBuffer(GL_ARRAY_BUFFER);
-    //glBindBuffer(GL_ARRAY_BUFFER, points);
-    //glUnmapBuffer(GL_ARRAY_BUFFER);
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     numPoints_ = numPoints;
 }
 
+void NormalsRenderer::set_normals(size_t numPoints, GLuint input, bool normalizeNormals)
+{
+    this->allocate_data(numPoints);
+
+    glUseProgram(generateLineProgram2_);
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, input);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, displayData_);
+
+    glUniform1ui(0, numPoints);
+    if(normalizeNormals)
+        glUniform1ui(1, 1);
+    else
+        glUniform1ui(1, 0);
+
+    glDispatchCompute((numPoints / GROUP_SIZE) + 1, 1, 1);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+    glUseProgram(0);
+    
+    numPoints_ = numPoints;
+}
 void NormalsRenderer::set_pose(const Pose& pose)
 {
     pose_ = pose;
@@ -187,7 +228,6 @@ void NormalsRenderer::draw()
     if(displayData_ == 0 || numPoints_ == 0)
         return;
     
-    glDisable(GL_DEPTH_TEST);
     Mat4 view = view_->view_matrix() * pose_.homogeneous_matrix();
 
     glUseProgram(renderProgram_);

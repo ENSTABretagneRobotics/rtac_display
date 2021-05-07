@@ -27,12 +27,14 @@ class NormalsRenderer : public Renderer
     static const std::string vertexShader;
     static const std::string fragmentShader;
     static const std::string generateLineDataShader;
+    static const std::string generateLineDataShader2;
 
     protected:
     
     size_t numPoints_;
     GLuint displayData_; // contains points to draw segments
     GLuint generateLineProgram_;
+    GLuint generateLineProgram2_;
     Pose   pose_;
     Color  color_;
 
@@ -49,6 +51,8 @@ class NormalsRenderer : public Renderer
 
     void set_normals(size_t numPoints, GLuint points, GLuint normals,
                      bool normalizeNormals = true);
+
+    void set_normals(size_t numPoints, GLuint input, bool normalizeNormals = true);
 
     void set_pose(const Pose& pose);
     void set_color(const Color& color);
