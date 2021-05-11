@@ -26,6 +26,7 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/renderers/PointCloudRenderer.h
     include/rtac_display/renderers/MeshRenderer.h
     include/rtac_display/renderers/NormalsRenderer.h
+    include/rtac_display/renderers/TexturedMeshRenderer.h
 
     include/rtac_display/Display.h
     include/rtac_display/GLVector.h
