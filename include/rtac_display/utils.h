@@ -8,8 +8,11 @@
 #include <GL/glew.h>
 //#define GL3_PROTOTYPES 1
 #include <GL/gl.h>
-
 #include <GLFW/glfw3.h>
+
+#include <rtac_base/types/Shape.h>
+
+#include <rtac_display/GLFormat.h>
 
 #define GLFW_CHECK( call )                                              \
     do {                                                                \
@@ -24,7 +27,21 @@
         }                                                               \
     } while(0)                                                          \
 
+#define GL_CHECK_LAST()                                                 \
+    do {                                                                \
+        GLenum err = glGetError();                                      \
+        if(err != GL_NO_ERROR) {                                        \
+            std::ostringstream oss;                                     \
+            oss << "GL call failed '"                                   \
+                << "' (code:" << err << ")\n"                           \
+                << __FILE__ << ":" << __LINE__ << "\n";                 \
+            throw std::runtime_error(oss.str());                        \
+        }                                                               \
+    } while(0)                                                          \
+
 namespace rtac { namespace display {
+
+using Shape = rtac::types::Shape<size_t>;
 
 bool check_gl(const std::string& location = "");
 

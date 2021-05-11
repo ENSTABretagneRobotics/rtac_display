@@ -7,6 +7,8 @@
 #include <rtac_base/types/Shape.h>
 #include <rtac_base/types/Handle.h>
 
+#include <rtac_display/utils.h>
+
 namespace rtac { namespace display {
 
 class View
@@ -19,8 +21,8 @@ class View
     using Ptr      = rtac::types::Handle<View>;
     using ConstPtr = rtac::types::Handle<const View>;
 
-    using Mat4  = rtac::types::Matrix4<float>;
-    using Shape = rtac::types::Shape<size_t>;
+    using Mat4 = rtac::types::Matrix4<float>;
+    using Shape = rtac::display::Shape;
 
     protected:
 
