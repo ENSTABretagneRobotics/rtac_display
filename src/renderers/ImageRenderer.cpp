@@ -40,36 +40,24 @@ ImageRenderer::Ptr ImageRenderer::New()
 
 ImageRenderer::ImageRenderer() :
     Renderer(vertexShader, fragmentShader, ImageView::New()),
-    texId_(0),
+    texture_(GLTexture::New()),
     imageView_(std::dynamic_pointer_cast<ImageView>(view_))
+{}
+
+GLTexture::Ptr& ImageRenderer::texture()
 {
-    this->init_texture();
+    return texture_;
 }
 
-ImageRenderer::~ImageRenderer()
+GLTexture::ConstPtr ImageRenderer::texture() const
 {
-    //glDeleteTextures(1, &texId_);
-}
-
-void ImageRenderer::init_texture()
-{
-    if(!texId_)
-        glGenTextures(1, &texId_);
-
-    glBindTexture(GL_TEXTURE_2D, texId_);
-
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    //glGenerateMipmap(GL_TEXTURE_2D);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
+    return texture_;
 }
 
 void ImageRenderer::draw()
 {
+    imageView_->set_image_shape(texture_->shape());
+
     float vertices[] = {-1.0,-1.0,
                          1.0,-1.0,
                          1.0, 1.0,
@@ -97,7 +85,7 @@ void ImageRenderer::draw()
 
     glUniform1i(glGetUniformLocation(renderProgram_, "tex"), 0);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texId_);
+    glBindTexture(GL_TEXTURE_2D, texture_->gl_id());
     
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indexes);
     
@@ -106,57 +94,8 @@ void ImageRenderer::draw()
     glDisableVertexAttribArray(0);
 
     glUseProgram(0);
-}
 
-void ImageRenderer::set_image(const Shape& imageSize, const void* data,
-                              GLenum format, GLenum type)
-{
-    // ensuring no buffer bound to GL_PIXEL_UNPACK_BUFFER for data to be read
-    // from CPU side memory.
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-    glBindTexture(GL_TEXTURE_2D, texId_);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageSize.width, imageSize.height,
-        0, format, type, data);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    imageView_->set_image_shape(imageSize);
-}
-
-//void ImageRenderer::set_image(const Shape& imageSize, const void* data)
-//{
-//    this->set_gray_image(imageSize, data);
-//}
-//
-void ImageRenderer::set_gray_image(const Shape& imageSize, const void* data)
-{
-    this->set_image(imageSize, data, GL_RED, GL_UNSIGNED_BYTE);
-}
-
-void ImageRenderer::set_rgb_image(const Shape& imageSize, const void* data)
-{
-    this->set_image(imageSize, data, GL_RGB, GL_UNSIGNED_BYTE);
-}
-
-void ImageRenderer::set_image(const Shape& imageSize, GLuint bufferId,
-                              GLenum format, GLenum type)
-{
-    // only for RGB data
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, bufferId);
-    glBindTexture(GL_TEXTURE_2D, texId_);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageSize.width, imageSize.height,
-        0, format, type, 0);
-    check_gl("ImageRenderer::set_image texImage");
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-
-    imageView_->set_image_shape(imageSize);
-}
-
-
-void ImageRenderer::set_texture(const Shape& shape, GLuint texId)
-{
-    texId_ = texId;
-    imageView_->set_image_shape(shape);
+    GL_CHECK_LAST();
 }
 
 }; //namespace display

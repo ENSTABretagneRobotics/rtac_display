@@ -13,10 +13,6 @@ namespace rtac { namespace display {
 
 class ImageRenderer : public Renderer
 {
-    protected:
-
-    void init_texture();
-
     public:
 
     using Ptr      = rtac::types::Handle<ImageRenderer>;
@@ -29,8 +25,8 @@ class ImageRenderer : public Renderer
     static const std::string fragmentShader;
 
     protected:
-
-    GLuint texId_;
+    
+    GLTexture::Ptr texture_;
     ImageView::Ptr imageView_;
 
     public:
@@ -38,47 +34,12 @@ class ImageRenderer : public Renderer
     static Ptr New();
 
     ImageRenderer();
-    ~ImageRenderer();
+
+    GLTexture::Ptr& texture();
+    GLTexture::ConstPtr texture() const;
     
     virtual void draw();
-    
-    // Setting image from client memory
-    void set_image(const Shape& imageSize, const void* data,
-                   GLenum format, GLenum type);
-    //void set_image(const Shape& imageSize, const void* data); // legacy
-    void set_gray_image(const Shape& imageSize, const void* data);
-    void set_rgb_image(const Shape& imageSize, const void* data);
-
-    void set_image(const Shape& imageSize, GLuint buffer,
-                   GLenum format = GL_RGB, GLenum type = GL_FLOAT);
-    
-    template <typename T>
-    void set_image(const Shape& imageSize, const T* data);
-    template <typename T>
-    void set_image(const Shape& imageSize, const GLVector<T>& data);
-
-    void set_texture(const Shape& shape, GLuint texId);
 };
-
-// Implementation
-template <typename T>
-void ImageRenderer::set_image(const Shape& imageSize, const T* data)
-{
-    GLenum format, type;
-    infer_gl_format<T>(format, type);
-    this->set_image(imageSize, data, format, type);
-}
-
-template <typename T>
-void ImageRenderer::set_image(const Shape& imageSize, const GLVector<T>& data)
-{
-    GLenum format, type;
-    if(data.size() < imageSize.area()) {
-        throw std::runtime_error("GLVector not big enough for image");
-    }
-    infer_gl_format<T>(format, type);
-    this->set_image(imageSize, data.gl_id(), format, type);
-}
 
 }; //namespace display
 }; //namespace rtac

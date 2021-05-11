@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#include <rtac_base/types/Handle.h>
+
 #include <rtac_display/utils.h>
 #include <rtac_display/GLFormat.h>
 #include <rtac_display/GLVector.h>
@@ -12,6 +14,11 @@ namespace rtac { namespace display {
 
 class GLTexture
 {
+    public:
+
+    using Ptr      = rtac::types::Handle<GLTexture>;
+    using ConstPtr = rtac::types::Handle<const GLTexture>;
+
     protected:
     
     Shape  shape_;
@@ -23,6 +30,8 @@ class GLTexture
     virtual void configure_texture();
 
     public:
+
+    static Ptr New();
 
     GLTexture();
     ~GLTexture();

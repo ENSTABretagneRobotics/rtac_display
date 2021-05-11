@@ -1,14 +1,14 @@
 
 list(APPEND test_names
-    # base_test.cpp
-    # view_test.cpp
-    # mesh_test.cpp
+    base_test.cpp
+    view_test.cpp
+    mesh_test.cpp
     texture_test.cpp
     # texturedmesh_test.cpp
-    # pointcloud_test.cpp
-    # imagedisplay_test.cpp
-    # userinput_test.cpp
-    # glfwinput_test.cpp
+    pointcloud_test.cpp
+    imagedisplay_test.cpp
+    userinput_test.cpp
+    glfwinput_test.cpp
 )
 list(APPEND test_deps
     rtac_display

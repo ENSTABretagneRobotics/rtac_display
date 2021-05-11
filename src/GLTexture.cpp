@@ -2,6 +2,11 @@
 
 namespace rtac { namespace display {
 
+GLTexture::Ptr GLTexture::New()
+{
+    return Ptr(new GLTexture());
+}
+
 GLTexture::GLTexture() :
     shape_({0,0}),
     texId_(0),

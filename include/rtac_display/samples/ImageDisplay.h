@@ -28,11 +28,11 @@ class ImageDisplay : public Display
 
     template <typename T>
     void set_image(const Shape& imageSize, const T* data) {
-        renderer_->set_image(imageSize, data);
+        renderer_->texture()->set_image(imageSize, data);
     }
     template <typename T>
     void set_image(const Shape& imageSize, const GLVector<T>& data) {
-        renderer_->set_image(imageSize, data);
+        renderer_->texture()->set_image(imageSize, data);
     }
 };
 
@@ -107,7 +107,7 @@ template <typename T>
 void DeviceImageDisplay<T>::draw()
 {
     if(imageUpdated_) {
-        renderer_->set_image(imageShape_, data_);
+        renderer_->texture()->set_image(imageShape_, data_);
     }
     this->ImageDisplay::draw();
 }

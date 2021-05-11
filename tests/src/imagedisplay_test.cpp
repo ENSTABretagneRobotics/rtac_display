@@ -11,20 +11,24 @@ struct Color {
     T r; T g; T b;
 };
 
+namespace rtac { namespace display {
+// Specialization of GLFormat to be used in GLTexture
 template <>
-inline void rtac::display::infer_gl_format<Color<uint8_t>>(GLenum& format, GLenum& type) {
-    cout << "Using RGB uint8_t" << endl;
-    format = GL_RGB;
-    type   = GL_UNSIGNED_BYTE;
-}
+struct GLFormat<Color<uint8_t>> {
+    static constexpr unsigned int Size  = 3;
+    static constexpr GLenum PixelFormat = GL_RGB;
+    static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
+};
 
 template <>
-inline void rtac::display::infer_gl_format<Color<float>>(GLenum& format, GLenum& type) {
-    cout << "Using RGB float" << endl;
-    format = GL_RGB;
-    type   = GL_FLOAT;
-}
+struct GLFormat<Color<float>> {
+    static constexpr unsigned int Size  = 3;
+    static constexpr GLenum PixelFormat = GL_RGB;
+    static constexpr GLenum Type        = GL_FLOAT;
+};
 
+}; //namespace display
+}; //namespace rtac
 
 std::vector<uint8_t> image_data(int width, int height)
 {
@@ -94,7 +98,7 @@ int main()
     display.set_image({W,H}, data1.data());
     display.set_image({W,H}, data2.data());
     GLVector<Color<float>> data3(data2);
-    display.renderer()->set_image({W,H}, data3);
+    display.set_image({W,H}, data3);
 
     while(!display.should_close()) {
         display.draw();
