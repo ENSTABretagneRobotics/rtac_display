@@ -48,7 +48,7 @@ ImageRenderer::ImageRenderer() :
 
 ImageRenderer::~ImageRenderer()
 {
-    glDeleteTextures(1, &texId_);
+    //glDeleteTextures(1, &texId_);
 }
 
 void ImageRenderer::init_texture()
@@ -150,6 +150,13 @@ void ImageRenderer::set_image(const Shape& imageSize, GLuint bufferId,
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
     imageView_->set_image_shape(imageSize);
+}
+
+
+void ImageRenderer::set_texture(const Shape& shape, GLuint texId)
+{
+    texId_ = texId;
+    imageView_->set_image_shape(shape);
 }
 
 }; //namespace display

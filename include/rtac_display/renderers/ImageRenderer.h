@@ -7,6 +7,7 @@
 #include <rtac_display/renderers/Renderer.h>
 #include <rtac_display/views/ImageView.h>
 #include <rtac_display/GLVector.h>
+#include <rtac_display/GLTexture.h>
 
 namespace rtac { namespace display {
 
@@ -55,6 +56,8 @@ class ImageRenderer : public Renderer
     void set_image(const Shape& imageSize, const T* data);
     template <typename T>
     void set_image(const Shape& imageSize, const GLVector<T>& data);
+
+    void set_texture(const Shape& shape, GLuint texId);
 };
 
 // Implementation
