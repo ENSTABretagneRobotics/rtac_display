@@ -11,24 +11,24 @@ struct Color {
     T r; T g; T b;
 };
 
-namespace rtac { namespace display {
+// namespace rtac { namespace display {
 // Specialization of GLFormat to be used in GLTexture
 template <>
-struct GLFormat<Color<uint8_t>> {
+struct rtac::display::GLFormat<Color<uint8_t>> {
     static constexpr unsigned int Size  = 3;
     static constexpr GLenum PixelFormat = GL_RGB;
     static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
 };
 
 template <>
-struct GLFormat<Color<float>> {
+struct rtac::display::GLFormat<Color<float>> {
     static constexpr unsigned int Size  = 3;
     static constexpr GLenum PixelFormat = GL_RGB;
     static constexpr GLenum Type        = GL_FLOAT;
 };
 
-}; //namespace display
-}; //namespace rtac
+// }; //namespace display
+// }; //namespace rtac
 
 std::vector<uint8_t> image_data(int width, int height)
 {
