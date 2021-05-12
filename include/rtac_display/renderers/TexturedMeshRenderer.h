@@ -1,6 +1,8 @@
 #ifndef _DEF_RTAC_DISPLAY_TEXTURED_MESH_RENDERER_H_
 #define _DEF_RTAC_DISPLAY_TEXTURED_MESH_RENDERER_H_
 
+#include <algorithm>
+
 #include <rtac_base/types/common.h>
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Point.h>
@@ -72,6 +74,9 @@ class TexturedMeshRenderer : public Renderer
     void set_pose(const Pose& pose);
 
     virtual void draw();
+
+    static Ptr from_ply(const std::string& path, const View3D::Ptr& view,
+                        bool transposeUVs = false);
 };
 
 template <typename Tp, typename Tf, typename Tu>
@@ -206,13 +211,14 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_solid() const
     
     if(faces_->size() > 0) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faces_->gl_id());
-        glDrawElements(GL_TRIANGLES, GLFormat<Tf>::Size*faces_->size(),
-                       GLFormat<Tf>::Type, 0);
-        // glDrawElements(GL_LINE_STRIP, GLFormat<Tf>::Size*faces_->size(),
+        // glDrawElements(GL_TRIANGLES, GLFormat<Tf>::Size*faces_->size(),
         //                GLFormat<Tf>::Type, 0);
+        glDrawElements(GL_LINE_STRIP, GLFormat<Tf>::Size*faces_->size(),
+                       GLFormat<Tf>::Type, 0);
     }
     else {
-        glDrawArrays(GL_TRIANGLES, 0, points_->size());
+        // glDrawArrays(GL_TRIANGLES, 0, points_->size());
+        glDrawArrays(GL_LINE_STRIP, 0, points_->size());
     }
 
     glDisableVertexAttribArray(0);
@@ -262,6 +268,90 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_textured() const
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glUseProgram(0);
+}
+
+template <typename Tp, typename Tf, typename Tu>
+typename TexturedMeshRenderer<Tp,Tf,Tu>::Ptr
+TexturedMeshRenderer<Tp,Tf,Tu>::from_ply(const std::string& path, const View3D::Ptr& view,
+                                         bool transposeUVs)
+{
+    std::ifstream f(path, std::ios::binary | std::ios::in);
+    if(!f.is_open()) {
+        throw std::runtime_error(
+            "PointCloud::from_ply : could not open file for reading " + path);
+    }
+    happly::PLYData data(f);
+    
+    if(!data.hasElement("vertex")) {
+        throw std::runtime_error(
+            "Invalid ply file : No vertex defined in \"" + path + "\"");
+    }
+
+    auto mesh = New(view);
+    
+    {
+        // Loading vertices
+        auto x = data.getElement("vertex").getProperty<float>("x");
+        auto y = data.getElement("vertex").getProperty<float>("y");
+        auto z = data.getElement("vertex").getProperty<float>("z");
+
+        mesh->points()->resize(x.size());
+        auto ptr = mesh->points()->map();
+        Tp* data = ptr;
+        for(int i = 0; i < x.size(); i++) {
+            data[i].x = x[i];
+            data[i].y = y[i];
+            data[i].z = z[i];
+        }
+    }
+
+    if(data.hasElement("face")) {
+        // Loading faces
+        std::vector<std::string> names({"vertex_indices", "vertex_index"});
+        std::vector<std::vector<uint32_t>> f;
+        for(auto& name : names) {
+            try {
+                f = data.getElement("face").getListPropertyAnySign<uint32_t>(name);
+                break;
+            }
+            catch(const std::runtime_error& e) {
+                // wrong face index name, trying another
+            }
+        }
+        
+        mesh->faces()->resize(f.size());
+        auto ptr = mesh->faces()->map();
+        Tf* data = ptr;
+        for(int i = 0; i < f.size(); i++) {
+            data[i].x = f[i][0];
+            data[i].y = f[i][1];
+            data[i].z = f[i][2];
+        }
+    }
+
+    if(data.hasElement("texCoords")) {
+        // Loading texture coordinates
+        auto x = data.getElement("texCoords").getProperty<float>("x");
+        auto y = data.getElement("texCoords").getProperty<float>("y");
+
+        mesh->uvs()->resize(x.size());
+        auto ptr = mesh->uvs()->map();
+        Tu* data = ptr;
+        if(transposeUVs) {
+            for(int i = 0; i < x.size(); i++) {
+                data[i].x = y[i];
+                data[i].y = x[i];
+            }
+        }
+        else {
+            for(int i = 0; i < x.size(); i++) {
+                data[i].x = x[i];
+                data[i].y = y[i];
+            }
+        }
+    }
+    
+    return mesh;
 }
 
 }; //namespace display

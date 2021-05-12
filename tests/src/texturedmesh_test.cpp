@@ -50,39 +50,44 @@ int main()
     display.controls()->look_at({0,0,0}, {5,4,3});
     
     auto renderer = Renderer::New();
-    // auto view3d = PinholeView::New();
-    // view3d->look_at({0,0,0}, {5,4,3});
-    // renderer->set_view(view3d);
+    renderer->set_view(display.view());
     display.add_renderer(renderer);
 
-    auto meshRenderer = TexturedMeshRenderer<>::New(display.view());
-
-    auto mesh = Mesh::cube(0.5);
-    Mesh::PointVector points(0);
-    for(auto f : mesh.faces()) {
-        points.push_back(mesh.point(f.x));
-        points.push_back(mesh.point(f.y));
-        points.push_back(mesh.point(f.z));
-    }
-    std::vector<Point2<float>> uvs({
-        Point2<float>({0,0}), Point2<float>({1,1}), Point2<float>({1,0}),
-        Point2<float>({0,0}), Point2<float>({0,1}), Point2<float>({1,1}),
-        Point2<float>({0,0}), Point2<float>({1,0}), Point2<float>({1,1}),
-        Point2<float>({0,0}), Point2<float>({1,1}), Point2<float>({0,1}),
-        Point2<float>({0,0}), Point2<float>({1,0}), Point2<float>({1,1}),
-        Point2<float>({0,0}), Point2<float>({1,1}), Point2<float>({0,1}),
-        Point2<float>({0,0}), Point2<float>({1,0}), Point2<float>({1,1}),
-        Point2<float>({0,0}), Point2<float>({1,1}), Point2<float>({0,1}),
-        Point2<float>({0,0}), Point2<float>({1,0}), Point2<float>({1,1}),
-        Point2<float>({0,0}), Point2<float>({1,1}), Point2<float>({0,1}),
-        Point2<float>({0,0}), Point2<float>({1,0}), Point2<float>({1,1}),
-        Point2<float>({0,0}), Point2<float>({1,1}), Point2<float>({0,1})
-    });
-    *meshRenderer->points() = points;
-    *meshRenderer->uvs()    = uvs;
-
+    // auto meshRenderer = TexturedMeshRenderer<>::New(display.view());
+    // auto mesh = Mesh::cube(0.5);
+    // Mesh::PointVector points(0);
+    // for(auto f : mesh.faces()) {
+    //     points.push_back(mesh.point(f.x));
+    //     points.push_back(mesh.point(f.y));
+    //     points.push_back(mesh.point(f.z));
+    // }
+    // std::vector<Point2<float>> uvs({
+    //     Point2<float>({0,0}), Point2<float>({1,1}), Point2<float>({1,0}),
+    //     Point2<float>({0,0}), Point2<float>({0,1}), Point2<float>({1,1}),
+    //     Point2<float>({0,0}), Point2<float>({1,0}), Point2<float>({1,1}),
+    //     Point2<float>({0,0}), Point2<float>({1,1}), Point2<float>({0,1}),
+    //     Point2<float>({0,0}), Point2<float>({1,0}), Point2<float>({1,1}),
+    //     Point2<float>({0,0}), Point2<float>({1,1}), Point2<float>({0,1}),
+    //     Point2<float>({0,0}), Point2<float>({1,0}), Point2<float>({1,1}),
+    //     Point2<float>({0,0}), Point2<float>({1,1}), Point2<float>({0,1}),
+    //     Point2<float>({0,0}), Point2<float>({1,0}), Point2<float>({1,1}),
+    //     Point2<float>({0,0}), Point2<float>({1,1}), Point2<float>({0,1}),
+    //     Point2<float>({0,0}), Point2<float>({1,0}), Point2<float>({1,1}),
+    //     Point2<float>({0,0}), Point2<float>({1,1}), Point2<float>({0,1})
+    // });
+    // *meshRenderer->points() = points;
+    // *meshRenderer->uvs()    = uvs;
     // meshRenderer->texture()->set_image({4,4}, image_data_rgbf(4,4));
-    auto path = files::find_one(".*mummy-orthoimage-halfResolution.ppm");
+
+    auto meshPath = files::find_one(".*mummy_dtm_uav_withUV.ply");
+    cout << "Mesh path : " << meshPath << endl;
+    auto meshRenderer = TexturedMeshRenderer<>::from_ply(meshPath, display.view(), true);
+
+    cout << "vertex count : " << meshRenderer->points()->size() << endl;
+    cout << "face count   : " << meshRenderer->faces()->size() << endl;
+
+    //auto path = files::find_one(".*mummy-orthoimage-halfResolution.ppm");
+    auto path = files::find_one(".*mummy-orthoimage-fullResolution.ppm");
     meshRenderer->texture() = GLTexture::from_ppm(path);
 
     // *meshRenderer->points() = mesh.points();
