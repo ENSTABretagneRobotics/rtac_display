@@ -5,12 +5,14 @@
 using namespace std;
 
 #include <rtac_base/time.h>
+#include <rtac_base/files.h>
 #include <rtac_base/types/Point.h>
 using FrameCounter = rtac::time::FrameCounter;
 template <typename T>
 using Point2 = rtac::types::Point2<T>;
 template <typename T>
 using Point3 = rtac::types::Point3<T>;
+using namespace rtac;
 
 #include <rtac_base/types/Pose.h>
 #include <rtac_base/types/Mesh.h>
@@ -78,7 +80,10 @@ int main()
     });
     *meshRenderer->points() = points;
     *meshRenderer->uvs()    = uvs;
-    meshRenderer->texture()->set_image({4,4}, image_data_rgbf(4,4));
+
+    // meshRenderer->texture()->set_image({4,4}, image_data_rgbf(4,4));
+    auto path = files::find_one(".*mummy-orthoimage-halfResolution.ppm");
+    meshRenderer->texture() = GLTexture::from_ppm(path);
 
     // *meshRenderer->points() = mesh.points();
     // *meshRenderer->faces()  = mesh.faces();

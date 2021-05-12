@@ -5,6 +5,7 @@
 #include <GL/gl.h>
 
 #include <rtac_base/types/Handle.h>
+#include <rtac_base/files.h>
 
 #include <rtac_display/utils.h>
 #include <rtac_display/GLFormat.h>
@@ -30,7 +31,7 @@ class GLTexture
     virtual void configure_texture();
 
     public:
-
+    
     static Ptr New();
 
     GLTexture();
@@ -44,6 +45,9 @@ class GLTexture
     void set_image(const Shape& shape, const T* data);
     template <typename T>
     void set_image(const Shape& shape, const GLVector<T>& data);
+
+    // various loaders.
+    static Ptr from_ppm(const std::string& path);
 };
 
 template <typename T>

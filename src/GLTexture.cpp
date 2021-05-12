@@ -64,6 +64,20 @@ GLint GLTexture::format() const
     return format_;
 }
 
+// loaders implementation
+GLTexture::Ptr GLTexture::from_ppm(const std::string& path)
+{
+    auto texture = GLTexture::New();
+
+    size_t Win, Hin;
+    std::vector<uint8_t> data;
+
+    files::read_ppm(path, Win, Hin, data); 
+
+    texture->set_image({Win, Hin}, (const rtac::types::Point3<uint8_t>*)data.data());
+    return texture;
+}
+
 }; //namespace display
 }; //namespace rtac
 
