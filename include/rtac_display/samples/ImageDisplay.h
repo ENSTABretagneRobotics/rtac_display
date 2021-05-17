@@ -108,6 +108,7 @@ void DeviceImageDisplay<T>::draw()
 {
     if(imageUpdated_) {
         renderer_->texture()->set_image(imageShape_, data_);
+        imageUpdated_ = false;
     }
     this->ImageDisplay::draw();
 }

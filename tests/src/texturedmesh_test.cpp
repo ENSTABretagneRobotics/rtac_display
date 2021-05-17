@@ -106,7 +106,7 @@ int main()
         display.draw();
         
         //cout << counter;
-        this_thread::sleep_for(10ms);
+        //this_thread::sleep_for(10ms);
     }
     cout << endl;
 
