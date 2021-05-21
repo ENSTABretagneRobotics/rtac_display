@@ -19,6 +19,24 @@
 
 namespace rtac { namespace display {
 
+/**
+ * Helper class to manage OpenGL [buffer
+ * Objects](https://www.khronos.org/opengl/wiki/Buffer_Object) as a typed
+ * vector.
+ *
+ * OpenGL buffer objects are untyped chunks of GPU memory which can be
+ * cumbersome to use. This object provides an easier memory management.
+ * GLVectors are typed and can be resized and copied in a similar way than the
+ * C++ standard library containers. 
+ *
+ * However, it does not provide direct element access and iterators since the
+ * data is stored on the GPU memory. Element access or modification is perform
+ * either by copying a full data vector to GPU memory or by mapping the
+ * GLVector data on host memory ("CPU memory").
+ *
+ * @tparam T Data element type of GLVector. Usually a simple scalar or vector
+ *           type.
+ */
 template <typename T>
 class GLVector
 {
@@ -118,7 +136,13 @@ class GLVector
     #endif
 };
 
-// implementation
+/**
+ * Instanciate a new GLVector.
+ *
+ * No operation is made on the device, so this can be called before the
+ * creation of an OpenGL context. However, no data can be allocated until an
+ * OpenGL context has been created.
+ */
 template <typename T>
 GLVector<T>::GLVector() :
     bufferId_(0),
@@ -132,6 +156,13 @@ GLVector<T>::GLVector() :
 #endif
 {}
 
+/**
+ * Instanciate a new GLVector and allocate data on the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param size Number of elements to allocate.
+ */
 template <typename T>
 GLVector<T>::GLVector(size_t size) :
     GLVector()
@@ -139,6 +170,14 @@ GLVector<T>::GLVector(size_t size) :
     this->resize(size);
 }
 
+/**
+ * Instanciate a new GLVector, allocate data on the device and copy data from
+ * another GLVector. Copy happen solely on the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param other GLVector to be copied.
+ */
 template <typename T>
 GLVector<T>::GLVector(const GLVector<T>& other) :
     GLVector(other.size())
@@ -146,6 +185,14 @@ GLVector<T>::GLVector(const GLVector<T>& other) :
     *this = other;
 }
 
+/**
+ * Instanciate a new GLVector, allocate data on the device and transfert data
+ * from the host to the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param other std::vector with data to be copied to the host.
+ */
 template <typename T>
 GLVector<T>::GLVector(const std::vector<T>& other) :
     GLVector(other.size())
@@ -159,6 +206,16 @@ GLVector<T>::~GLVector()
     this->free();
 }
 
+/**
+ * Reallocate data if needed and copy an existing GLVector. Copy happen solely
+ * on the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param other GLVector to be copied.
+ *
+ * @return A reference to this instance.
+ */
 template <typename T>
 GLVector<T>& GLVector<T>::operator=(const GLVector<T>& other)
 {
@@ -177,6 +234,16 @@ GLVector<T>& GLVector<T>::operator=(const GLVector<T>& other)
     return *this;
 }
 
+/**
+ * Reallocate data if needed and copy data from an std::vector. Data is copied
+ * from the host to the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param other std::vector to be copied.
+ *
+ * @return A reference to this instance.
+ */
 template <typename T>
 GLVector<T>& GLVector<T>::operator=(const std::vector<T>& other)
 {
@@ -184,6 +251,14 @@ GLVector<T>& GLVector<T>::operator=(const std::vector<T>& other)
     return *this;
 }
 
+/**
+ * Reallocate data if needed and copy data from host memory.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param size number of elements to copy.
+ * @param data Host memory pointer to the data to be copied.
+ */
 template <typename T>
 void GLVector<T>::set_data(unsigned int size, const T* data)
 {
@@ -194,6 +269,13 @@ void GLVector<T>::set_data(unsigned int size, const T* data)
     this->unbind(GL_ARRAY_BUFFER);
 }
 
+/**
+ * Reallocate data on the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param size Number of elements to allocate.
+ */
 template <typename T>
 void GLVector<T>::allocate(size_t size)
 {
@@ -204,6 +286,12 @@ void GLVector<T>::allocate(size_t size)
     this->unbind();
 }
 
+/**
+ * Free data on the device. It is safe to call this function several time in a
+ * row.
+ *
+ * An OpenGL context must have been created beforehand.
+ */
 template <typename T>
 void GLVector<T>::free()
 {
@@ -213,6 +301,14 @@ void GLVector<T>::free()
     size_     = 0;
 }
 
+/**
+ * Resize data on the device. Reallocation happen only if requested data is
+ * larger than already allocated data.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param size Number of elements to allocate.
+ */
 template <typename T>
 void GLVector<T>::resize(size_t size)
 {
@@ -221,12 +317,18 @@ void GLVector<T>::resize(size_t size)
     size_ = size;
 }
 
+/**
+ * @return current size of the vector. (Allocated size might be larger).
+ */
 template <typename T>
 size_t GLVector<T>::size() const
 {
     return size_;
 }
 
+/**
+ * @return currently allocated size on the device in number of elements.
+ */
 template <typename T>
 size_t GLVector<T>::capacity() const
 {
@@ -239,12 +341,18 @@ size_t GLVector<T>::capacity() const
     return capa / sizeof(T);
 }
 
+/**
+ * @return the name of the OpenGL buffer object. (can be used in glBindBuffer).
+ */
 template <typename T>
 GLuint GLVector<T>::gl_id() const
 {
     return bufferId_;
 }
 
+/**
+ * Bind the buffer to an OpenGL target (such as GL_ARRAY_BUFFER).
+ */
 template <typename T>
 void GLVector<T>::bind(GLenum target) const
 {
@@ -252,6 +360,12 @@ void GLVector<T>::bind(GLenum target) const
     check_gl("GLVector::bind : could not bind buffer.");
 }
 
+/**
+ * Unbind all buffer from an OpenGL target.
+ *
+ * This was implemented as a method in this class to keep a symmetry in the
+ * interface, but it is not necessary. Might be removed in the future.
+ */
 template <typename T>
 void GLVector<T>::unbind(GLenum target) const
 {
@@ -259,7 +373,16 @@ void GLVector<T>::unbind(GLenum target) const
     check_gl("GLVector::unbind : could not unbind buffer (invalid target).");
 }
 
-// Mapping functions
+/**
+ * Map device memory of the GLVector to host memory for its data to be
+ * read from/written to by the host.
+ *
+ * The GLVector must be unmapped before use in OpenGL API calls. Otherwise,
+ * OpenGL error will be generated.
+ *
+ * @return a pointer to host memory which can be read or written to by the
+ *         host.
+ */
 template <typename T>
 T* GLVector<T>::do_map()
 {
@@ -274,6 +397,16 @@ T* GLVector<T>::do_map()
     return mappedPtr_;
 }
 
+/**
+ * Map device memory of the GLVector to host memory for its data to be
+ * written to by the host.
+ *
+ * The GLVector must be unmapped before use in OpenGL API calls. Otherwise,
+ * OpenGL error will be generated.
+ *
+ * @return a pointer to host memory on which host can write to. Data is write
+ *         only.
+ */
 template <typename T>
 T* GLVector<T>::do_map_write_only()
 {
@@ -288,7 +421,15 @@ T* GLVector<T>::do_map_write_only()
     return mappedPtr_;
 }
 
-
+/**
+ * Map device memory of the GLVector to host memory for its data to be
+ * read by the host.
+ *
+ * The GLVector must be unmapped before use in OpenGL API calls. Otherwise,
+ * OpenGL error will be generated.
+ *
+ * @return a pointer to host memory to be read by the host. Data is read only.
+ */
 template <typename T>
 const T* GLVector<T>::do_map() const
 {
@@ -303,6 +444,19 @@ const T* GLVector<T>::do_map() const
     return mappedPtr_;
 }
 
+/**
+ * Map GLVector data to host and return a MappedPointer. The MappedPointer will
+ * automatically unmap the GLVector on destruction.
+ *
+ * The GLVector cannot be used in OpenGL API calls until this MappedPointer is
+ * destroyed and the GLVector unmapped.
+ *
+ * @param writeOnly If writeOnly is set to true, the Mapped Pointer can only be
+ *                  written to. If writeOnly is false, data can be read and
+ *                  written. Specifying writeOnly when needed might accelerate
+ *                  writing.
+ * @return a MappedPointer to the GLVector device data.
+ */
 template <typename T>
 typename GLVector<T>::MappedPointer GLVector<T>::map(bool writeOnly)
 {
@@ -318,6 +472,15 @@ typename GLVector<T>::MappedPointer GLVector<T>::map(bool writeOnly)
     }
 }
 
+/**
+ * Map GLVector data to host and return a MappedPointer. The MappedPointer will
+ * automatically unmap the GLVector on destruction. MappedPointer is read-only.
+ *
+ * The GLVector cannot be used in OpenGL API calls until this MappedPointer is
+ * destroyed and the GLVector unmapped.
+ *
+ * @return a read-only MappedPointer to the GLVector device data.
+ */
 template <typename T>
 typename GLVector<T>::ConstMappedPointer GLVector<T>::map() const
 {
@@ -326,6 +489,16 @@ typename GLVector<T>::ConstMappedPointer GLVector<T>::map() const
                               &GLVector<T>::unmap);
 }
 
+/**
+ * Unmap GLVector. This will update device with the data which was written to
+ * the mapping location.
+ *
+ * It is mandatory to unmap a buffer before use on OpenGL API call.
+ *
+ * If the GLVector was mapped with GLVector::map, the resulting MappedPointer
+ * will automatically unmap the GLVector by calling this function when it is
+ * destroyed.
+ */
 template <typename T>
 void GLVector<T>::unmap() const
 {
@@ -343,6 +516,17 @@ void GLVector<T>::unmap() const
 
 // BELOW HERE ARE CUDA SPECIFIC FUNCTIONALITIES
 #ifdef RTAC_DISPLAY_CUDA
+/**
+ * Map device memory of the GLVector to a read-only CUDA device pointer.
+ *
+ * This allows to use OpenGL Buffer Object data directly into CUDA API calls.
+ * It is helpful to perform GPU treatment on displayed data before rendering.
+ *
+ * The GLVector must be unmapped before use in OpenGL API calls. Otherwise,
+ * OpenGL error will be generated.
+ *
+ * @return a CUDA const pointer to device memory.
+ */
 template <typename T>
 const T* GLVector<T>::do_map_cuda() const
 {
@@ -369,6 +553,17 @@ const T* GLVector<T>::do_map_cuda() const
     return cudaDevicePtr_;
 }
 
+/**
+ * Map device memory of the GLVector to a read-write CUDA device pointer.
+ *
+ * This allows to use OpenGL Buffer Object data directly into CUDA API calls.
+ * It is helpful to perform GPU treatment on displayed data before rendering.
+ *
+ * The GLVector must be unmapped before use in OpenGL API calls. Otherwise,
+ * OpenGL error will be generated.
+ *
+ * @return a CUDA pointer to device memory.
+ */
 template <typename T>
 T* GLVector<T>::do_map_cuda()
 {
@@ -395,6 +590,18 @@ T* GLVector<T>::do_map_cuda()
     return cudaDevicePtr_;
 }
 
+/**
+ * Map GLVector data to CUDA device and return a MappedPointer. The
+ * MappedPointer will automatically unmap the GLVector on destruction.
+ *
+ * This allows to use OpenGL Buffer Object data directly into CUDA API calls.
+ * It is helpful to perform GPU treatment on displayed data before rendering.
+ *
+ * The GLVector cannot be used in OpenGL API calls until this MappedPointer is
+ * destroyed and the GLVector unmapped.
+ *
+ * @return a read-write MappedPointer to CUDA device memory.
+ */
 template <typename T>
 typename GLVector<T>::MappedPointer GLVector<T>::map_cuda()
 {
@@ -403,6 +610,19 @@ typename GLVector<T>::MappedPointer GLVector<T>::map_cuda()
                          &GLVector<T>::unmap_cuda);
 }
 
+/**
+ * Map GLVector data to CUDA device and return a MappedPointer. The
+ * MappedPointer will automatically unmap the GLVector on destruction. The
+ * MappedPointer is read-only.
+ *
+ * This allows to use OpenGL Buffer Object data directly into CUDA API calls.
+ * It is helpful to perform GPU treatment on displayed data before rendering.
+ *
+ * The GLVector cannot be used in OpenGL API calls until this MappedPointer is
+ * destroyed and the GLVector unmapped.
+ *
+ * @return a read-write MappedPointer to CUDA device memory.
+ */
 template <typename T>
 typename GLVector<T>::ConstMappedPointer GLVector<T>::map_cuda() const
 {
@@ -411,6 +631,15 @@ typename GLVector<T>::ConstMappedPointer GLVector<T>::map_cuda() const
                               &GLVector<T>::unmap_cuda);
 }
 
+/**
+ * Unmap GLVector.
+ *
+ * It is mandatory to unmap a buffer before use on OpenGL API call.
+ *
+ * If the GLVector was mapped with GLVector::map_cuda, the resulting MappedPointer
+ * will automatically unmap the GLVector by calling this function when it is
+ * destroyed.
+ */
 template <typename T>
 void GLVector<T>::unmap_cuda() const
 {
@@ -425,6 +654,14 @@ void GLVector<T>::unmap_cuda() const
 }
 
 // CUDA helpers implementations
+/**
+ * Instanciate a new GLVector, allocate data on the device and copy data from
+ * a rtac::cuda::DeviceVector. Copy happen solely on the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param other DeviceVector to be copied.
+ */
 template <typename T>
 GLVector<T>::GLVector(const rtac::cuda::DeviceVector<T>& other) :
     GLVector(other.size())
@@ -432,6 +669,14 @@ GLVector<T>::GLVector(const rtac::cuda::DeviceVector<T>& other) :
     *this = other;
 }
 
+/**
+ * Instanciate a new GLVector, allocate data on the device and copy data from
+ * a rtac::cuda::HostVector. Copy happen from the host to the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param other HostVector to be copied.
+ */
 template <typename T>
 GLVector<T>::GLVector(const rtac::cuda::HostVector<T>& other) :
     GLVector(other.size())
@@ -439,6 +684,16 @@ GLVector<T>::GLVector(const rtac::cuda::HostVector<T>& other) :
     *this = other;
 }
 
+/**
+ * Reallocate data if needed and copy from a rtac::cuda::DeviceVector. Copy
+ * happen solely on the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param other DeviceVector to be copied.
+ *
+ * @return A reference to this instance.
+ */
 template <typename T>
 GLVector<T>& GLVector<T>::operator=(const rtac::cuda::DeviceVector<T>& other)
 {
@@ -449,6 +704,16 @@ GLVector<T>& GLVector<T>::operator=(const rtac::cuda::DeviceVector<T>& other)
     return *this;
 }
 
+/**
+ * Reallocate data if needed and copy from a rtac::cuda::HostVector. Copy
+ * happen from the host to the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param other HostVector to be copied.
+ *
+ * @return A reference to this instance.
+ */
 template <typename T>
 GLVector<T>& GLVector<T>::operator=(const rtac::cuda::HostVector<T>& other)
 {
@@ -461,6 +726,14 @@ GLVector<T>& GLVector<T>::operator=(const rtac::cuda::HostVector<T>& other)
     return *this;
 }
 
+/**
+ * Copy data to an existing rtac::cuda::DeviceVector. Copy happen solely on
+ * the device.
+ *
+ * @param other a non-const reference to a DeviceVector.
+ *
+ * @return a reference to the same DeviceVector other.
+ */
 template <typename T>
 rtac::cuda::DeviceVector<T>&
 GLVector<T>::to_device_vector(rtac::cuda::DeviceVector<T>& other) const
@@ -472,6 +745,12 @@ GLVector<T>::to_device_vector(rtac::cuda::DeviceVector<T>& other) const
     return other;
 }
 
+/**
+ * Creates a new rtac::cuda::DeviceVector and copy data to it. Copy happen
+ * solely on the device.
+ *
+ * @return a reference to the newly created DeviceVector.
+ */
 template <typename T>
 rtac::cuda::DeviceVector<T> GLVector<T>::to_device_vector() const
 {

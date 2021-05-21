@@ -13,6 +13,17 @@
 
 namespace rtac { namespace display {
 
+/**
+ * The main purpose of this class is to provide an easy interface to manipulate
+ * OpenGL textures.
+ *
+ * Texture images can be loaded either from host memory or from a GLVector.
+ * Memory management is hidden from the user. The texture internal format is
+ * infered from the input data type at compile-time through the use of the
+ * GLFormat structure.
+ *
+ * For now pixel data is stored as float32 only.
+ */
 class GLTexture
 {
     public:
@@ -50,6 +61,16 @@ class GLTexture
     static Ptr from_ppm(const std::string& path);
 };
 
+/**
+ * Set texture image data from host memory.
+ *
+ * The texture format is infered using the template type **T** and a template
+ * specialization of rtac::display::GLFormat. See rtac::display::GLformat
+ * documentation for more information.
+ *
+ * @param shape Dimensions of the texture {width,height}. Texture width must be even.
+ * @param data  Pixel data to upload to the texture.
+ */
 template <typename T>
 void GLTexture::set_image(const Shape& shape, const T* data)
 {
@@ -68,6 +89,16 @@ void GLTexture::set_image(const Shape& shape, const T* data)
     shape_ = shape;
 }
 
+/**
+ * Set texture image data from an OpenGL Buffer Object.
+ *
+ * The texture format is infered using the template type **T** and a template
+ * specialization of rtac::display::GLFormat. See rtac::display::GLformat
+ * documentation for more information.
+ *
+ * @param shape Dimensions of the texture {width,height}. Texture width must be even.
+ * @param data  GLVector containing the pixel data.
+ */
 template <typename T>
 void GLTexture::set_image(const Shape& shape, const GLVector<T>& data)
 {

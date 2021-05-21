@@ -2,11 +2,19 @@
 
 namespace rtac { namespace display {
 
+/**
+ * @return a shared pointer to a newly created GLTexture.
+ */
 GLTexture::Ptr GLTexture::New()
 {
     return Ptr(new GLTexture());
 }
 
+/**
+ * Contructor of GLTexture
+ *
+ * An OpenGL context must have been created beforehand.
+ */
 GLTexture::GLTexture() :
     shape_({0,0}),
     texId_(0),
@@ -21,12 +29,22 @@ GLTexture::~GLTexture()
     this->delete_texture();
 }
 
+/**
+ * Creates a new OpenGL Texture Object.
+ *
+ * Must not be called by the user.
+ */
 void GLTexture::init_texture()
 {
     if(!texId_)
         glGenTextures(1, &texId_);
 }
 
+/**
+ * Free the OpenGL Texture Object.
+ *
+ * It is safe to call this function several times in a row.
+ */
 void GLTexture::delete_texture()
 {
     if(texId_)
@@ -35,6 +53,9 @@ void GLTexture::delete_texture()
     shape_ = Shape({0,0});
 }
 
+/**
+ * Default OpenGL Texture configuration (configure min-mag filters).
+ */
 void GLTexture::configure_texture()
 {
     glBindTexture(GL_TEXTURE_2D, texId_);
@@ -47,22 +68,46 @@ void GLTexture::configure_texture()
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+/**
+ * @return the dimension of the texture.
+ */
 Shape GLTexture::shape() const
 {
     return shape_;
 }
 
+/**
+ * @return the id of the OpenGL Texture Object.
+ */
 GLuint GLTexture::gl_id() const
 {
     return texId_;
 }
 
+/**
+ * Returns the pixel format of the texture.
+ *
+ * The pixel format is infered at compile time through the use of the GLFormat
+ * structures. It can be any value amongs GL_RED, GL_RG, GL_RGB, GL_RGBA. See
+ * more information
+ * [here](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml).
+ *
+ * @return the pixel format of the texture.
+ */
 GLint GLTexture::format() const
 {
     return format_;
 }
 
-// loaders implementation
+/**
+ * Creates a new texture from a PPM image file.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param path Path to .ppm image file.
+ *
+ * @return a shared pointer to a newly created texture.
+ */
 GLTexture::Ptr GLTexture::from_ppm(const std::string& path)
 {
     auto texture = GLTexture::New();
