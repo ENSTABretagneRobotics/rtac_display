@@ -27,6 +27,22 @@
 
 namespace rtac { namespace display {
 
+/**
+ * Main display class. Handles window creation, receives input event, manage
+ * Views and Renderers.
+ *
+ * Display is the very first class to be instanciated before any other display
+ * related class. It will open a new window and create the OpenGL context
+ * necessary to use the other features of rtac_display. After an instance of
+ * Display was created, the user can create and add new views (manage camera)
+ * and renderers (make the OpenGL API call to draw a specific object) to the
+ * Display object.
+ *
+ * It will also manage user input events ny providing an API for adding
+ * callbacks for mouse and keyboard.
+ *
+ * Caution : Only one instance of Display at a time is supported for now.
+ */
 class Display
 {
     public:

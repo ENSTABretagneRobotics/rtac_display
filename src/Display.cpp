@@ -41,6 +41,9 @@ void Display::terminate()
     glfwTerminate();
 }
 
+/**
+ * @return width and height of the window in a Shape object.
+ */
 Display::Shape Display::window_shape() const
 {
     Shape wSize;
@@ -51,12 +54,35 @@ Display::Shape Display::window_shape() const
     return wSize;
 }
 
+/**
+ * Check if the Display window should close.
+ *
+ * This is usually put as the condition in a while loop. While this function
+ * returns false, the drawing loop should continue. The window will report true
+ * if a closing condition is met (ctrl-c, window close button was clicked...)
+ *
+ * This function will also handle polled events when called.
+ *
+ * @return Boolean true if window closing was requested.
+ */
 int Display::should_close() const
 {
     glfwPollEvents();
     return glfwWindowShouldClose(window_.get()) > 0;
 }
 
+/**
+ * Check if the Display window should close (same as should close, but will
+ * also draw the scene).
+ *
+ * This is usually put as the condition in a while loop. While this function
+ * returns false, the drawing loop should continue. The window will report true
+ * if a closing condition is met (ctrl-c, window close button was clicked...)
+ *
+ * This function will also handle polled events when called and draw the scene.
+ *
+ * @return Boolean true if window closing was requested.
+ */
 int Display::is_drawing()
 {
     this->draw();
@@ -64,6 +90,10 @@ int Display::is_drawing()
     return glfwWindowShouldClose(window_.get()) == 0;
 }
 
+/**
+ * Wait until a window closing condition is met (ctrl-c, window close button
+ * clicked..)
+ */
 void Display::wait_for_close() const
 {
     using namespace std;
@@ -72,6 +102,11 @@ void Display::wait_for_close() const
     }
 }
 
+/**
+ * Append a rtac::display::View to the list of handled views.
+ *
+ * If the view is already handled, it won't be added a second time.
+ */
 void Display::add_view(const View::Ptr& view)
 {
     for(auto v : views_) {
@@ -82,12 +117,25 @@ void Display::add_view(const View::Ptr& view)
     views_.push_back(view);
 }
 
+/**
+ * Append a rtac::display::Renderer to the list of handled renderers.
+ *
+ * The renderer associated view will automatically be added to the handled
+ * views via Display::add_view method.
+ */
 void Display::add_renderer(const Renderer::Ptr& renderer)
 {
     renderers_.push_back(renderer);
     views_.push_back(renderer->view());
 }
 
+/**
+ * Update all handled views with the current window size and draw all the
+ * handled renderers after clearing the window.
+ *
+ * If the frame counter is enabled, it will display the frame rate in the
+ * standard output.
+ */
 void Display::draw()
 {
     glfwMakeContextCurrent(window_.get());
@@ -113,6 +161,9 @@ void Display::draw()
     }
 }
 
+/**
+ * Enable frame counter and display frame rate in standard output.
+ */
 void Display::enable_frame_counter()
 {
     frameCounterEnabled_ = true;
@@ -123,16 +174,28 @@ void Display::disable_frame_counter()
     frameCounterEnabled_ = false;
 }
 
+/**
+ * Enable frame limiter and set it to a specific frame rate (does no work
+ * accurately).
+ */
 void Display::limit_frame_rate(double fps)
 {
     frameCounter_.limit_frame_rate(fps);
 }
 
+/**
+ * Disable frame limiter and display as fast as possible.
+ */
 void Display::free_frame_rate()
 {
     frameCounter_.free_frame_rate();
 }
 
+/**
+ * Main keyboard key callback. This will call all users registered key callbacks.
+ *
+ * Users should not call this directly.
+ */
 void Display::key_callback(GLFWwindow* window, int key, int scancode, int action, int modes)
 {
     auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
@@ -144,6 +207,12 @@ void Display::key_callback(GLFWwindow* window, int key, int scancode, int action
     display->keyCallbacks_.call(key, scancode, action, modes);
 }
 
+/**
+ * Main mouse position callback. This will call all users registered mouse
+ * position callbacks.
+ *
+ * Users should not call this directly.
+ */
 void Display::mouse_position_callback(GLFWwindow* window, double x, double y)
 {
     auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
@@ -155,6 +224,12 @@ void Display::mouse_position_callback(GLFWwindow* window, double x, double y)
     display->mousePositionCallbacks_.call(x, y);
 }
 
+/**
+ * Main mouse button callback. This will call all users registered mouse button
+ * callbacks.
+ *
+ * Users should not call this directly.
+ */
 void Display::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
@@ -166,6 +241,11 @@ void Display::mouse_button_callback(GLFWwindow* window, int button, int action, 
     display->mouseButtonCallbacks_.call(button, action, mods);
 }
 
+/**
+ * Main scroll callback. This will call all users registered scroll callbacks.
+ *
+ * Users should not call this directly.
+ */
 void Display::scroll_callback(GLFWwindow* window, double x, double y)
 {
     auto display = reinterpret_cast<Display*>(glfwGetWindowUserPointer(window));
@@ -177,6 +257,27 @@ void Display::scroll_callback(GLFWwindow* window, double x, double y)
     display->scrollCallbacks_.call(x, y);
 }
 
+/**
+ * Add a keyboard key callback.
+ *
+ * The signature of the callback should be (int,int,int,int). Parameters are :
+ * - int key      : keyboard key (value may depend on system configuration,
+ *                  i.e. QWERTY, AZERTY...)
+ * - int scancode : platform-specific. Constant unique identifier for a key.
+ *                  Constant regardless of system configuration, may/will vary
+ *                  across platforms.
+ * - int action   : Either GLFW_PRESS, GLFW_RELEASE, GLFW_REPEAT.
+ * - int mods     : Modifier bits (CONTROL, SHIFT, ALT, SUPER ...)
+ *
+ * See [GLFW input guide](https://www.glfw.org/docs/3.3/input_guide.html) for
+ * more information.
+ *
+ * @param callback Either a function pointer with the signature
+ *                 (int,int,int,int) or an equivalent std::function (use a
+ *                 std::function to bind a class method to an object with the
+ *                 function std::bind. See rtac_base::types::CallbackQueue,
+ *                 or Display::add_event_handler for more information).
+ */
 unsigned int Display::add_key_callback(const KeyCallbackT& callback)
 {
     // Adding all callback handler for now (dynamic ones later)
@@ -184,24 +285,82 @@ unsigned int Display::add_key_callback(const KeyCallbackT& callback)
     return keyCallbacks_.add_callback(callback);
 }
 
+/**
+ * Add a mouse position callback.
+ *
+ * The signature of the callback should be (double, double). Parameters are :
+ * - double x, double y : Cursor position measured in screen relative to
+ *                        the top-left corner of the window content area. If
+ *                        platform supports it, sub-pixel cursor position is
+ *                        passed.
+ *
+ * See [GLFW input guide](https://www.glfw.org/docs/3.3/input_guide.html) for
+ * more information.
+ *
+ * @param callback Either a function pointer with the signature (double,double)
+ *                 or an equivalent std::function (use a std::function to bind
+ *                 a class method to an object with the function std::bind. See
+ *                 rtac_base::types::CallbackQueue, or
+ *                 Display::add_event_handler for more information).
+ */
 unsigned int Display::add_mouse_position_callback(const MousePositionCallbackT& callback)
 {
     GLFW_CHECK( glfwSetCursorPosCallback(window_.get(), &Display::mouse_position_callback) );
     return mousePositionCallbacks_.add_callback(callback);
 }
 
+/**
+ * Add a mouse button callback.
+ *
+ * The signature of the callback should be (int,int,int). Parameters are :
+ * - int button   : Mouse button id, GLFW_MOUSE_BUTTON_(LEFT/RIGHT/MIDDLE/others)
+ * - int action   : Either GLFW_PRESS, GLFW_RELEASE.
+ * - int mods     : Modifier bits (CONTROL, SHIFT, ALT, SUPER ...)
+ *
+ * See [GLFW input guide](https://www.glfw.org/docs/3.3/input_guide.html) for
+ * more information.
+ *
+ * @param callback Either a function pointer with the signature (int,int,int)
+ *                 or an equivalent std::function (use a std::function to bind
+ *                 a class method to an object with the function std::bind. See
+ *                 rtac_base::types::CallbackQueue, or
+ *                 Display::add_event_handler for more information).
+ */
 unsigned int Display::add_mouse_button_callback(const MouseButtonCallbackT& callback)
 {
     GLFW_CHECK( glfwSetMouseButtonCallback(window_.get(), &Display::mouse_button_callback) );
     return mouseButtonCallbacks_.add_callback(callback);
 }
 
+/**
+ * Add a scroll callback.
+ *
+ * The signature of the callback should be (double, double). Parameters are :
+ * - double x, double y : Scroll offset (mouse scroll is on y axis).
+ *
+ * See [GLFW input guide](https://www.glfw.org/docs/3.3/input_guide.html) for
+ * more information.
+ *
+ * @param callback Either a function pointer with the signature (double,double)
+ *                 or an equivalent std::function (use a std::function to bind
+ *                 a class method to an object with the function std::bind. See
+ *                 rtac_base::types::CallbackQueue, or
+ *                 Display::add_event_handler for more information).
+ */
 unsigned int Display::add_scroll_callback(const ScrollCallbackT& callback)
 {
     GLFW_CHECK( glfwSetScrollCallback(window_.get(), &Display::scroll_callback) );
     return scrollCallbacks_.add_callback(callback);
 }
 
+/**
+ * Add an event handler to the window.
+ *
+ * Usually an EventHandler is a user-movable camera. See EventHandler
+ * documentation for more information.
+ *
+ * @param eventHandler A pointer to an existing instance of EventHandler.
+ */
 void Display::add_event_handler(const EventHandler::Ptr& eventHandler)
 {
     if(eventHandler->uses_keyboard()) {
