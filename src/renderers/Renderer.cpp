@@ -2,6 +2,10 @@
 
 namespace rtac { namespace display {
 
+/**
+ * Simple GLSL Vertex shader. This shader pass the color c to the fragment
+ * shader and multiplies a vector by the view matrix.
+ */
 const std::string Renderer::vertexShader = std::string( R"(
 #version 430 core
 
@@ -18,6 +22,9 @@ void main()
 }
 )");
 
+/**
+ * Simple GLSL Fragment shader. Simply outputs the color passed as parameter.
+ */
 const std::string Renderer::fragmentShader = std::string(R"(
 #version 430 core
 
@@ -43,6 +50,10 @@ Renderer::Renderer(const std::string& vertexShader, const std::string& fragmentS
     view_(view)
 {}
 
+/**
+ * Performs the OpenGL API calls to draw an object. By default this draws a XYZ
+ * frame at the origin.
+ */
 void Renderer::draw()
 {
     float vertices[] = {0,0,0,

@@ -2,6 +2,10 @@
 
 namespace rtac { namespace display {
 
+/**
+ * This vertex shader expects coordinates of the corner of the image, and
+ * automatically generates texture coordinates accordingly.
+ */
 const std::string ImageRenderer::vertexShader = std::string( R"(
 #version 430 core
 
@@ -19,6 +23,9 @@ void main()
 }
 )");
 
+/**
+ * Simply outputs the texture value at given texture coordinates.
+ */
 const std::string ImageRenderer::fragmentShader = std::string(R"(
 #version 430 core
 
@@ -33,11 +40,21 @@ void main()
 }
 )");
 
+/**
+ * Creates a new ImageRenderer object on the heap and outputs a shared_ptr.
+ *
+ * An OpenGL context must have been created beforehand.
+ */
 ImageRenderer::Ptr ImageRenderer::New()
 {
     return Ptr(new ImageRenderer());
 }
 
+/**
+ * ImageRenderer does not expects any parameters. It creates its own view.
+ *
+ * An OpenGL context must have been created before any instantiation.
+ */
 ImageRenderer::ImageRenderer() :
     Renderer(vertexShader, fragmentShader, ImageView::New()),
     texture_(GLTexture::New()),
@@ -54,6 +71,9 @@ GLTexture::ConstPtr ImageRenderer::texture() const
     return texture_;
 }
 
+/**
+ * Generate screen coordinates of corner of image and displays the image.
+ */
 void ImageRenderer::draw()
 {
     imageView_->set_image_shape(texture_->shape());

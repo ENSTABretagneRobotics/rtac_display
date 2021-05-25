@@ -16,6 +16,13 @@
 
 namespace rtac { namespace display {
 
+/**
+ * Displays a Mesh optionally textured.
+ *
+ * This will draw a 3D mesh. Depending on the provided information (faces,
+ * texture coordinates, texture...) rendering type will be either a
+ * solid-colored wire mesh or a textured mesh.
+ */
 template <typename Tp = types::Point3<float>,
           typename Tf = types::Point3<uint32_t>,
           typename Tu = types::Point2<float>>
@@ -70,7 +77,7 @@ class TexturedMeshRenderer : public Renderer
     GLTexture::Ptr&     texture()       { return texture_; }
     GLTexture::ConstPtr texture() const { return texture_; }
 
-    void set_pose(const Color& color);
+    void set_color(const Color& color);
     void set_pose(const Pose& pose);
 
     virtual void draw();
@@ -79,6 +86,10 @@ class TexturedMeshRenderer : public Renderer
                         bool transposeUVs = false);
 };
 
+/**
+ * Vertex shader for solid color renderering. Simply pass along the color to
+ * the fragment shader.
+ */
 template <typename Tp, typename Tf, typename Tu>
 const std::string TexturedMeshRenderer<Tp,Tf,Tu>::vertexShader = std::string( R"(
 #version 430 core
@@ -98,6 +109,9 @@ void main()
 }
 )");
 
+/**
+ * Fragment shader for solid color renderering. Simply outputs the input color.
+ */
 template <typename Tp, typename Tf, typename Tu>
 const std::string TexturedMeshRenderer<Tp,Tf,Tu>::fragmentShader = std::string( R"(
 #version 430 core
@@ -111,6 +125,10 @@ void main()
 }
 )");
 
+/**
+ * Vertex shader for textured renderering. Simply pass along the texture
+ * coordinates to the fragment shader.
+ */
 template <typename Tp, typename Tf, typename Tu>
 const std::string TexturedMeshRenderer<Tp,Tf,Tu>::vertexShaderTextured = std::string( R"(
 #version 430 core
@@ -130,6 +148,10 @@ void main()
 }
 )");
 
+/**
+ * Fragment shader for textured rendering. Simply fetch color data from texture
+ * using the textured coordinates passed along by the vertex shader.
+ */
 template <typename Tp, typename Tf, typename Tu>
 const std::string TexturedMeshRenderer<Tp,Tf,Tu>::fragmentShaderTextured = std::string( R"(
 #version 430 core
@@ -145,6 +167,11 @@ void main()
 }
 )");
 
+/**
+ * Constructor of TexturedMeshRenderer.
+ *
+ * An OpenGL context must have been created beforehand.
+ */
 template <typename Tp, typename Tf, typename Tu>
 TexturedMeshRenderer<Tp,Tf,Tu>::TexturedMeshRenderer(const View3D::Ptr& view) :
     Renderer(vertexShader, fragmentShader, view),
@@ -157,6 +184,11 @@ TexturedMeshRenderer<Tp,Tf,Tu>::TexturedMeshRenderer(const View3D::Ptr& view) :
     color_({1,1,0,1})
 {}
 
+/**
+ * Creates a new TexturedMeshRenderer object on the heap and outputs a shared_ptr.
+ *
+ * An OpenGL context must have been created beforehand.
+ */
 template <typename Tp, typename Tf, typename Tu>
 typename TexturedMeshRenderer<Tp,Tf,Tu>::Ptr
 TexturedMeshRenderer<Tp,Tf,Tu>::New(const View3D::Ptr& view)
@@ -164,12 +196,32 @@ TexturedMeshRenderer<Tp,Tf,Tu>::New(const View3D::Ptr& view)
     return Ptr(new TexturedMeshRenderer<Tp,Tf,Tu>(view));
 }
 
+/**
+ * Sets the solid-color of the object. (Ignored at rendering if texture
+ * information were provided)
+ */
+template <typename Tp, typename Tf, typename Tu>
+void TexturedMeshRenderer<Tp,Tf,Tu>::set_color(const Color& color)
+{
+    color_ = color;
+}
+
+/**
+ * Sets the position of the object in 3D-space.
+ */
 template <typename Tp, typename Tf, typename Tu>
 void TexturedMeshRenderer<Tp,Tf,Tu>::set_pose(const Pose& pose)
 {
     pose_ = pose;
 }
 
+/**
+ * Main drawing function.
+ *
+ * Depending on the provided information, this will dispatch rendering to
+ * either a textured rendering (if a texture and texture coordinates were
+ * provided) or a solid-colored wired rendering.
+ */
 template <typename Tp, typename Tf, typename Tu>
 void TexturedMeshRenderer<Tp,Tf,Tu>::draw()
 {
@@ -255,8 +307,6 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_textured() const
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faces_->gl_id());
         glDrawElements(GL_TRIANGLES, GLFormat<Tf>::Size*faces_->size(),
                        GLFormat<Tf>::Type, 0);
-        // glDrawElements(GL_LINE_STRIP, GLFormat<Tf>::Size*faces_->size(),
-        //                GLFormat<Tf>::Type, 0);
     }
     else {
         glDrawArrays(GL_TRIANGLES, 0, points_->size());
@@ -270,6 +320,23 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_textured() const
     glUseProgram(0);
 }
 
+/**
+ * Reads mesh information from a .ply file and instanciate a new
+ * TextureMeshRenderer.
+ *
+ * PLY file specifications :
+ * - Vertex position element must be named "vertex" with "x","y","z"
+ *   properties of type float.
+ * - Face indexes element must be named "face", with a single list property
+ *   named either "vertex_indices" or "vertex_index" of type uchar or uint (to
+ *   be checked).
+ * - Texture coordinates element must be named "texCoord" with "x","y"
+ *   properties of type float.
+ * - The PLY file can be either ascii or binary (provided the endianess is
+ *   correct).
+ *
+ * An OpenGL context must have been created beforehand.
+ */
 template <typename Tp, typename Tf, typename Tu>
 typename TexturedMeshRenderer<Tp,Tf,Tu>::Ptr
 TexturedMeshRenderer<Tp,Tf,Tu>::from_ply(const std::string& path, const View3D::Ptr& view,

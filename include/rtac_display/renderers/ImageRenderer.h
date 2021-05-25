@@ -11,6 +11,17 @@
 
 namespace rtac { namespace display {
 
+/**
+ * Simple Renderer to display an image.
+ *
+ * This takes a GLTexture as an image. See GLTexture documentation for more
+ * information on how to handle images in OpenGL.
+ *
+ * For now, no colormaps are supported. Sending grayscale data will result in
+ * displaying a red-scaled image. (OpenGL always displays a full RGBA image.
+ * Missing blue and green components are filled with 0, and missing alpha is
+ * filled with 1).
+ */
 class ImageRenderer : public Renderer
 {
     public:
