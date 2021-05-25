@@ -171,6 +171,8 @@ void main()
  * Constructor of TexturedMeshRenderer.
  *
  * An OpenGL context must have been created beforehand.
+ *
+ * @param view a View instance to render this object.
  */
 template <typename Tp, typename Tf, typename Tu>
 TexturedMeshRenderer<Tp,Tf,Tu>::TexturedMeshRenderer(const View3D::Ptr& view) :
@@ -188,6 +190,10 @@ TexturedMeshRenderer<Tp,Tf,Tu>::TexturedMeshRenderer(const View3D::Ptr& view) :
  * Creates a new TexturedMeshRenderer object on the heap and outputs a shared_ptr.
  *
  * An OpenGL context must have been created beforehand.
+ *
+ * @param view a View instance to render this object.
+ *
+  @return a shader pointer to the newly created instance.
  */
 template <typename Tp, typename Tf, typename Tu>
 typename TexturedMeshRenderer<Tp,Tf,Tu>::Ptr
@@ -199,6 +205,8 @@ TexturedMeshRenderer<Tp,Tf,Tu>::New(const View3D::Ptr& view)
 /**
  * Sets the solid-color of the object. (Ignored at rendering if texture
  * information were provided)
+ *
+ * @param color a RGBA color.
  */
 template <typename Tp, typename Tf, typename Tu>
 void TexturedMeshRenderer<Tp,Tf,Tu>::set_color(const Color& color)
@@ -208,6 +216,9 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::set_color(const Color& color)
 
 /**
  * Sets the position of the object in 3D-space.
+ *
+ * @param pose a rtac::types::Pose representing the full pose (position and
+ *             orientation) in 3D space.
  */
 template <typename Tp, typename Tf, typename Tu>
 void TexturedMeshRenderer<Tp,Tf,Tu>::set_pose(const Pose& pose)
@@ -336,6 +347,13 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_textured() const
  *   correct).
  *
  * An OpenGL context must have been created beforehand.
+ * 
+ * @param path   path of the PLY to be loaded.
+ * @param view   View instance for this object to be renderered with.
+ * @transposeUVs boolean. If true will swap x and y texture coordinates (usually
+ *               to fix an image orientation.
+ *
+ * @return a shared pointer to the newly created TexturedMeshRenderer instance.
  */
 template <typename Tp, typename Tf, typename Tu>
 typename TexturedMeshRenderer<Tp,Tf,Tu>::Ptr

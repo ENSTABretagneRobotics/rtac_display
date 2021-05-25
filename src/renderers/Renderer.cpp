@@ -37,6 +37,21 @@ void main()
 }
 )");
 
+/**
+ * Instanciate a new Renderer on the heap.
+ *
+ * @param vertexShader   vertex shader source which will be used to create the
+ *                       OpenGL render program for this object (default is
+ *                       Renderer::vertexShader).
+ * @param fragmentShader fragment shader source which will be used to create the
+ *                       OpenGL render program for this object (default is
+ *                       Renderer::fragmentShader).
+ * @param view           View to be used to render this object. Default is
+ *                       Identity (no geometric transformation for renderering
+ *                       => rendering in the 2D x-y plane).
+ *
+ * @return a shared pointer to the newly instanciated Renderer.
+ */
 Renderer::Ptr Renderer::New(const std::string& vertexShader,
                             const std::string& fragmentShader,
                             const View::Ptr& view)
@@ -44,6 +59,19 @@ Renderer::Ptr Renderer::New(const std::string& vertexShader,
     return Ptr(new Renderer(vertexShader, fragmentShader, view));
 }
 
+/**
+ * Constructor of Renderer
+ *
+ * @param vertexShader   vertex shader source which will be used to create the
+ *                       OpenGL render program for this object (default is
+ *                       Renderer::vertexShader).
+ * @param fragmentShader fragment shader source which will be used to create the
+ *                       OpenGL render program for this object (default is
+ *                       Renderer::fragmentShader).
+ * @param view           View to be used to render this object. Default is
+ *                       Identity (no geometric transformation for renderering
+ *                       => rendering in the 2D x-y plane).
+ */
 Renderer::Renderer(const std::string& vertexShader, const std::string& fragmentShader,
                    const View::Ptr& view) :
     renderProgram_(create_render_program(vertexShader, fragmentShader)),
