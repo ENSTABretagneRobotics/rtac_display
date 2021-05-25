@@ -18,7 +18,7 @@ namespace rtac { namespace display {
  * This mostly handles conversion from the RTAC framework 3D coordinates
  * conventions (x to right of screen, y towards back of screen, z up) to OpenGL
  * 3D conventions (x towards right of screen, y towards up, z towards front of
- * screen). It also implements some helpers such as setting the Point Of View
+ * screen). It also implements some helpers such as setting the point of view
  * from a rtac::types::Pose object and other geometrical helpers.
  */
 class View3D : public View

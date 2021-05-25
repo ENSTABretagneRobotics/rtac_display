@@ -2,12 +2,23 @@
 
 namespace rtac { namespace display {
 
-
+/**
+ * Creates a new ImageView instance on the heap.
+ *
+ * @param image the size of the image to be displayed.
+ *
+ * @return a shared pointer to the newly created ImageView instance.
+ */
 ImageView::Ptr ImageView::New(const Shape& image)
 {
     return Ptr(new ImageView(image));
 }
 
+/**
+ * Constructor of ImageView.
+ *
+ * @param image the size of the image to be displayed.
+ */
 ImageView::ImageView(const Shape& image) :
     image_(image)
 {}
@@ -39,12 +50,17 @@ void ImageView::update_projection()
 
 /**
  * Set width and height of image via a Shape object.
+ *
+ * @param image the size of the image to be displayed.
  */
 void ImageView::set_image_shape(const Shape& image)
 {
     image_ = image;
 }
 
+/**
+ * @return the size of the image to be displayed.
+ */
 ImageView::Shape ImageView::image_shape() const
 {
     return image_;

@@ -4,6 +4,10 @@ namespace rtac { namespace display {
 
 /**
  * Creates a new Instance of View on the heap and returns a smart pointer.
+ *
+ * @param a homogeneous 4x4 projection matrix (default is identity).
+ *
+ * @return a shared pointer to the newly created View instance.
  */
 View::Ptr View::New(const Mat4& mat)
 {
@@ -14,6 +18,8 @@ View::Ptr View::New(const Mat4& mat)
  * Constructor of View.
  *
  * By default the screen aspect ratio is 1 (screenSize is set to {1,1})
+ *
+ * @param a homogeneous 4x4 projection matrix (default is identity).
  */
 View::View(const Mat4& mat) :
     screenSize_({1,1}),
@@ -42,6 +48,9 @@ void View::update_projection()
 
 /**
  * Called by a Display object when the display surface size changes.
+ *
+ * @param screen a rtac::types::Shape object containing the width and height
+ *               of the display area.
  */
 void View::set_screen_size(const Shape& screen)
 {
@@ -50,7 +59,7 @@ void View::set_screen_size(const Shape& screen)
 }
 
 /**
- * Returns the projection matrix.
+ * @return the projection matrix.
  */
 View::Mat4 View::projection_matrix() const
 {
@@ -58,8 +67,8 @@ View::Mat4 View::projection_matrix() const
 }
 
 /**
- * Returns the view matrix (product of the projection matrix with the pov
- * matrix (to be changed to simplify the interface).
+ * @return the view matrix (product of the projection matrix with the pov
+ *         matrix (to be changed to simplify the interface).
  */
 View::Mat4 View::view_matrix() const
 {
@@ -67,7 +76,7 @@ View::Mat4 View::view_matrix() const
 }
 
 /**
- * Returns the current screen size.
+ * @return the current screen size.
  */
 View::Shape View::screen_size() const
 {
