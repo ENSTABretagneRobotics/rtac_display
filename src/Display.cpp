@@ -105,6 +105,10 @@ void Display::wait_for_close() const
 /**
  * Append a rtac::display::View to the list of handled views.
  *
+ * This allows Display to inform the views of a change of size of the display
+ * area (i.e.  when the window is resized). This allows the views to compensate
+ * for a change in the aspect ratio in the display area.
+ *
  * If the view is already handled, it won't be added a second time.
  */
 void Display::add_view(const View::Ptr& view)
@@ -120,8 +124,8 @@ void Display::add_view(const View::Ptr& view)
 /**
  * Append a rtac::display::Renderer to the list of handled renderers.
  *
- * The renderer associated view will automatically be added to the handled
- * views via Display::add_view method.
+ * The view associated to the renderer will automatically be added to the
+ * handled views via Display::add_view method.
  */
 void Display::add_renderer(const Renderer::Ptr& renderer)
 {

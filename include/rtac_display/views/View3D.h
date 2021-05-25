@@ -11,12 +11,19 @@
 
 namespace rtac { namespace display {
 
+/**
+ * Handle point of view in a 3D scene. (This does **not** handle perspective
+ * projection. For perspective projection see PinholeView instead).
+ *
+ * This mostly handles conversion from the RTAC framework 3D coordinates
+ * conventions (x to right of screen, y towards back of screen, z up) to OpenGL
+ * 3D conventions (x towards right of screen, y towards up, z towards front of
+ * screen). It also implements some helpers such as setting the Point Of View
+ * from a rtac::types::Pose object and other geometrical helpers.
+ */
 class View3D : public View
 {
     public:
-
-    // Alignment issue (caused by integration of pcl, activation of vectorization)
-    //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     using Ptr      = rtac::types::Handle<View3D>;
     using ConstPtr = rtac::types::Handle<const View3D>;

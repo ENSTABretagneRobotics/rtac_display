@@ -9,6 +9,14 @@
 
 namespace rtac { namespace display {
 
+/**
+ * Handle projection to display a simple 2D image on the screen. To be used
+ * with the ImageRenderer object.
+ *
+ * This will manipulate the projection matrix to keep a constant aspect ratio
+ * of 1 (image not stretched) regardless of the size of the Display area and
+ * the size of the image.
+ */
 class ImageView : public View
 {
     public:
