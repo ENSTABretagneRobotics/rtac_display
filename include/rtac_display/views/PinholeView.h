@@ -10,12 +10,19 @@
 
 namespace rtac { namespace display {
 
+/**
+ * Subclass of View3D to handle perspective projection in 3D space.
+ *
+ * The perspective projection transformation is well described by the mapping
+ * of a frustum to a cube centered on 0 of size 2.([see here for
+ * details](https://learnopengl.com/Getting-started/Coordinate-Systems)). The
+ * 3D frustum is described by the vertical field of view, the aspect ratio of
+ * the display area (to keep an apparent aspect ratio of 1) and the near and
+ * far clipping plane.
+ */
 class PinholeView : public View3D
 {
     public:
-
-    // Alignment issue (caused by integration of pcl, activation of vectorization)
-    //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     using Ptr      = rtac::types::Handle<PinholeView>;
     using ConstPtr = rtac::types::Handle<const PinholeView>;
