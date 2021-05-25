@@ -11,12 +11,20 @@
 
 namespace rtac { namespace display {
 
+/**
+ * Subclass of View3D to handle orthographic projection in 3D space.
+ *
+ * An orthographic projection is a projection without perspective (equivalent
+ * to a perspective projection from infinitely far and infinitely zoomed in, a
+ * zero angle field of view). It is modeled as a rectangular cuboid
+ * parametrized by [left-right], [bottom-top] and [near-far] clipping planes.
+ *
+ * This kind of projection is often used in CAD design softwares to avoid the
+ * distorsion of perspective projection.
+ */
 class OrthoView : public View3D
 {
     public:
-
-    // Alignment issue (caused by integration of pcl, activation of vectorization)
-    //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     using Ptr      = rtac::types::Handle<OrthoView>;
     using ConstPtr = rtac::types::Handle<const OrthoView>;

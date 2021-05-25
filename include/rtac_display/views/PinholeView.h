@@ -19,6 +19,10 @@ namespace rtac { namespace display {
  * 3D frustum is described by the vertical field of view, the aspect ratio of
  * the display area (to keep an apparent aspect ratio of 1) and the near and
  * far clipping plane.
+ *
+ * The pinhole projection is the most simple perspective projection model which
+ * mimics a camera or an eye (without lense distorsion). The furthest an object
+ * is from the camera, the smaller it is.
  */
 class PinholeView : public View3D
 {

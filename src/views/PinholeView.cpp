@@ -45,7 +45,7 @@ PinholeView::PinholeView(float fovy, const Pose& pose,
 }
 
 /**
- * Computes the projection matrix from the fovy_, zNear, zFar and
+ * Computes the perspective projection matrix from the fovy_, zNear, zFar and
  * View::screenSize_ attributes.
  *
  * More information on how the projection matrix is computed
