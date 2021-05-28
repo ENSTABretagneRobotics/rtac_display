@@ -28,6 +28,7 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/renderers/NormalsRenderer.h
     include/rtac_display/renderers/TexturedMeshRenderer.h
 
+    include/rtac_display/DrawingSurface.h
     include/rtac_display/Display.h
     include/rtac_display/GLVector.h
     include/rtac_display/GLTexture.h
@@ -51,7 +52,8 @@ list(APPEND rtac_display_SOURCES
     src/renderers/PointCloudRenderer.cpp
     src/renderers/MeshRenderer.cpp
     src/renderers/NormalsRenderer.cpp
-
+    
+    src/DrawingSurface.cpp
     src/Display.cpp
     src/GLTexture.cpp
     src/EventHandler.cpp
