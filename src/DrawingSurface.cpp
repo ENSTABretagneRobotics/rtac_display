@@ -3,7 +3,8 @@
 namespace rtac { namespace display {
 
 DrawingSurface::DrawingSurface(const Shape& shape) :
-    Renderer("", "", View::New())
+    Renderer("", "", View::New()),
+    viewportOrigin_({0,0})
 {
     this->view_->set_screen_size(shape);
 }
@@ -62,7 +63,8 @@ void DrawingSurface::draw()
         view->set_screen_size(shape);
     }
 
-    glViewport(0,0,shape.width,shape.height);
+    glViewport(viewportOrigin_.x, viewportOrigin_.y,
+               shape.width, shape.height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     for(auto renderer : renderers_) {
@@ -70,6 +72,22 @@ void DrawingSurface::draw()
             renderer->draw();
         }
     }
+}
+
+void DrawingSurface::set_viewport_origin(const Point2& origin)
+{
+    viewportOrigin_ = origin;
+}
+
+void DrawingSurface::set_viewport_size(const Shape& size)
+{
+    this->view()->set_screen_size(size);
+}
+
+void DrawingSurface::set_viewport(int x, int y, size_t width, size_t height)
+{
+    this->set_viewport_origin({x,y});
+    this->set_viewport_size({width,height});
 }
 
 }; //namespace display
