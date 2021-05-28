@@ -3,7 +3,7 @@
 namespace rtac { namespace display {
 
 DrawingSurface::DrawingSurface(const Shape& shape) :
-    Renderer(Renderer::vertexShader, Renderer::fragmentShader, View::New())
+    Renderer("", "", View::New())
 {
     this->view_->set_screen_size(shape);
 }

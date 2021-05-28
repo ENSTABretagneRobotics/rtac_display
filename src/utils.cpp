@@ -54,6 +54,9 @@ GLuint compile_shader(GLenum shaderType, const std::string& source)
 GLuint create_render_program(const std::string& vertexShaderSource,
                              const std::string& fragmentShaderSource)
 {
+    if(vertexShaderSource.size() == 0 || fragmentShaderSource.size() == 0) {
+        return 0;
+    }
     GLuint vertexShader   = compile_shader(GL_VERTEX_SHADER, vertexShaderSource);
     GLuint fragmentShader = compile_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 

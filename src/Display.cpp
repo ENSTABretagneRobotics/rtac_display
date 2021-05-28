@@ -2,7 +2,8 @@
 
 namespace rtac { namespace display {
 
-Display::Display(int width, int height, const std::string& title) :
+Display::Display(size_t width, size_t height, const std::string& title) :
+    DrawingSurface({width,height}),
     window_(NULL),
     frameCounterEnabled_(true)
 {
@@ -103,37 +104,6 @@ void Display::wait_for_close() const
 }
 
 /**
- * Append a rtac::display::View to the list of handled views.
- *
- * This allows Display to inform the views of a change of size of the display
- * area (i.e.  when the window is resized). This allows the views to compensate
- * for a change in the aspect ratio in the display area.
- *
- * If the view is already handled, it won't be added a second time.
- */
-void Display::add_view(const View::Ptr& view)
-{
-    for(auto v : views_) {
-        if(view.get() == view.get()) {
-            return;
-        }
-    }
-    views_.push_back(view);
-}
-
-/**
- * Append a rtac::display::Renderer to the list of handled renderers.
- *
- * The view associated to the renderer will automatically be added to the
- * handled views via Display::add_view method.
- */
-void Display::add_renderer(const Renderer::Ptr& renderer)
-{
-    renderers_.push_back(renderer);
-    views_.push_back(renderer->view());
-}
-
-/**
  * Update all handled views with the current window size and draw all the
  * handled renderers after clearing the window.
  *
@@ -143,20 +113,9 @@ void Display::add_renderer(const Renderer::Ptr& renderer)
 void Display::draw()
 {
     glfwMakeContextCurrent(window_.get());
-    Shape wSize = this->window_shape();
-
-    for(auto view : views_) {
-        view->set_screen_size(wSize);
-    }
-
-    glViewport(0,0,wSize.width,wSize.height);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    for(auto renderer : renderers_) {
-        if(renderer) {
-            renderer->draw();
-        }
-    }
+    this->view()->set_screen_size(this->window_shape());
+    
+    this->DrawingSurface::draw();
 
     glfwSwapBuffers(window_.get());
 

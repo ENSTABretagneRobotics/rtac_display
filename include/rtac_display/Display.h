@@ -21,8 +21,7 @@
 #include <rtac_base/types/CallbackQueue.h>
 
 #include <rtac_display/utils.h>
-#include <rtac_display/views/View.h>
-#include <rtac_display/renderers/Renderer.h>
+#include <rtac_display/DrawingSurface.h>
 #include <rtac_display/EventHandler.h>
 
 namespace rtac { namespace display {
@@ -43,7 +42,7 @@ namespace rtac { namespace display {
  *
  * Caution : Only one instance of Display at a time is supported for now.
  */
-class Display
+class Display : public DrawingSurface
 {
     public:
 
@@ -80,7 +79,7 @@ class Display
 
     public:
 
-    Display(int width = 800, int height = 600,
+    Display(size_t width = 800, size_t height = 600,
             const std::string& title = "optix render");
     void terminate();
 
@@ -89,8 +88,6 @@ class Display
     int is_drawing();
     void wait_for_close() const;
     
-    void add_view(const View::Ptr& view);
-    void add_renderer(const Renderer::Ptr& renderer);
     virtual void draw();
 
     void enable_frame_counter();
