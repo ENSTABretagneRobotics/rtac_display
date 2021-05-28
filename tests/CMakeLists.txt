@@ -26,3 +26,5 @@ foreach(name ${test_names})
     set_target_properties(${test_target_name} PROPERTIES OUTPUT_NAME ${executable_name})
 
 endforeach()
+
+add_subdirectory(freetype_test)
