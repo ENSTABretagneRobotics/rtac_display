@@ -57,6 +57,9 @@ class GLTexture
     template <typename T>
     void set_image(const Shape& shape, const GLVector<T>& data);
 
+    void bind(GLenum target = GL_TEXTURE_2D);
+    void unbind(GLenum target = GL_TEXTURE_2D);
+
     // various loaders.
     static Ptr from_ppm(const std::string& path);
 };

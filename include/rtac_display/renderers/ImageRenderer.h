@@ -8,6 +8,7 @@
 #include <rtac_display/views/ImageView.h>
 #include <rtac_display/GLVector.h>
 #include <rtac_display/GLTexture.h>
+#include <rtac_display/Colormap.h>
 
 namespace rtac { namespace display {
 
@@ -34,11 +35,16 @@ class ImageRenderer : public Renderer
 
     static const std::string vertexShader;
     static const std::string fragmentShader;
+    static const std::string colormapFragmentShader;
 
     protected:
     
     GLTexture::Ptr texture_;
     ImageView::Ptr imageView_;
+    Colormap::Ptr  colormap_;
+
+    GLuint passThroughProgram_;
+    GLuint colormapProgram_;
 
     public:
 
@@ -50,6 +56,11 @@ class ImageRenderer : public Renderer
     GLTexture::ConstPtr texture() const;
     
     virtual void draw();
+
+    void set_colormap(const Colormap::Ptr& colormap);
+    bool enable_colormap();
+    void disable_colormap();
+    bool uses_colormap() const;
 };
 
 }; //namespace display

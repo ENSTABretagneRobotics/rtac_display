@@ -28,6 +28,10 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/renderers/NormalsRenderer.h
     include/rtac_display/renderers/TexturedMeshRenderer.h
 
+    include/rtac_display/Colormap.h
+    include/rtac_display/colormaps/Gray.h
+    include/rtac_display/colormaps/Viridis.h
+
     include/rtac_display/DrawingSurface.h
     include/rtac_display/Display.h
     include/rtac_display/GLVector.h
@@ -52,6 +56,8 @@ list(APPEND rtac_display_SOURCES
     src/renderers/PointCloudRenderer.cpp
     src/renderers/MeshRenderer.cpp
     src/renderers/NormalsRenderer.cpp
+
+    src/Colormap.cpp
     
     src/DrawingSurface.cpp
     src/Display.cpp

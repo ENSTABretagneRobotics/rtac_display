@@ -128,6 +128,22 @@ struct GLFormat<types::Point3<uint8_t>>
 };
 
 template<>
+struct GLFormat<types::Point4<float>>
+{
+    static constexpr unsigned int Size  = 4;
+    static constexpr GLenum PixelFormat = GL_RGBA;
+    static constexpr GLenum Type        = GL_FLOAT;
+};
+
+template<>
+struct GLFormat<types::Point4<uint8_t>>
+{
+    static constexpr unsigned int Size  = 4;
+    static constexpr GLenum PixelFormat = GL_RGBA;
+    static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
+};
+
+template<>
 struct GLFormat<types::Point2<float>>
 {
     static constexpr unsigned int Size  = 2;

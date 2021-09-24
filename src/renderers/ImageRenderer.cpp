@@ -41,6 +41,24 @@ void main()
 )");
 
 /**
+ * Simply outputs the texture value at given texture coordinates.
+ */
+const std::string ImageRenderer::colormapFragmentShader = std::string(R"(
+#version 430 core
+
+in vec2 uv;
+uniform sampler2D tex;
+uniform sampler2D colormap;
+
+out vec4 outColor;
+
+void main()
+{
+    outColor = texture(colormap, vec2(texture(tex, uv).x, 0.0));
+}
+)");
+
+/**
  * Creates a new ImageRenderer object on the heap and outputs a shared_ptr.
  *
  * An OpenGL context must have been created beforehand.
@@ -58,7 +76,9 @@ ImageRenderer::Ptr ImageRenderer::New()
 ImageRenderer::ImageRenderer() :
     Renderer(vertexShader, fragmentShader, ImageView::New()),
     texture_(GLTexture::New()),
-    imageView_(std::dynamic_pointer_cast<ImageView>(view_))
+    imageView_(std::dynamic_pointer_cast<ImageView>(view_)),
+    passThroughProgram_(this->renderProgram_),
+    colormapProgram_(create_render_program(vertexShader, colormapFragmentShader))
 {}
 
 GLTexture::Ptr& ImageRenderer::texture()
@@ -69,6 +89,30 @@ GLTexture::Ptr& ImageRenderer::texture()
 GLTexture::ConstPtr ImageRenderer::texture() const
 {
     return texture_;
+}
+
+void ImageRenderer::set_colormap(const Colormap::Ptr& colormap)
+{
+    colormap_ = colormap;
+    this->enable_colormap();
+}
+
+bool ImageRenderer::enable_colormap()
+{
+    if(!colormap_)
+        return false;
+    renderProgram_ = colormapProgram_;
+    return true;
+}
+
+void ImageRenderer::disable_colormap()
+{
+    renderProgram_ = passThroughProgram_;
+}
+
+bool ImageRenderer::uses_colormap() const
+{
+    return renderProgram_ == colormapProgram_;
 }
 
 /**
@@ -107,6 +151,12 @@ void ImageRenderer::draw()
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_->gl_id());
     
+    if(this->uses_colormap()) {
+        glUniform1i(glGetUniformLocation(renderProgram_, "colormap"), 1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, colormap_->texture().gl_id());
+    }
+     
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indexes);
     
     glBindTexture(GL_TEXTURE_2D, 0);

@@ -99,6 +99,16 @@ GLint GLTexture::format() const
     return format_;
 }
 
+void GLTexture::bind(GLenum target)
+{
+    glBindTexture(target, this->gl_id());
+}
+
+void GLTexture::unbind(GLenum target)
+{
+    glBindTexture(target, 0);
+}
+
 /**
  * Creates a new texture from a PPM image file.
  *
