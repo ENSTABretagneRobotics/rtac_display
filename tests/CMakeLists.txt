@@ -27,4 +27,8 @@ foreach(name ${test_names})
 
 endforeach()
 
-add_subdirectory(freetype_test)
+if(TARGET Freetype::Freetype)
+    add_subdirectory(freetype_test)
+endif()
+
+

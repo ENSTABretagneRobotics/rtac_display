@@ -30,9 +30,12 @@ class Glyph
 
     public:
 
-    // // Disallowing Glyph copy
-    // Glyph(const Glyph&)            = delete;
-    // Glyph& operator=(const Glyph&) = delete;
+    // Disallowing Glyph copy
+    Glyph(const Glyph&)            = delete;
+    Glyph& operator=(const Glyph&) = delete;
+
+    Glyph(Glyph&& other);
+    Glyph& operator=(Glyph&& other);
 
     types::Point2<long> bearing() const;
     types::Point2<long> advance() const;

@@ -22,6 +22,20 @@ Glyph::Glyph(FT_Face face) :
     texture_.unbind(GL_TEXTURE_2D);
 }
 
+Glyph::Glyph(Glyph&& other) :
+    bearing_(std::move(other.bearing_)),
+    advance_(std::move(other.advance_)),
+    texture_(std::move(other.texture_))
+{}
+
+Glyph& Glyph::operator=(Glyph&& other)
+{
+    bearing_ = std::move(other.bearing_);
+    advance_ = std::move(other.advance_);
+    texture_ = std::move(other.texture_);
+    return *this;
+}
+
 types::Point2<long> Glyph::bearing() const
 {
     return bearing_;
