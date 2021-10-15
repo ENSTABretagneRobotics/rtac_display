@@ -29,6 +29,21 @@ GLTexture::~GLTexture()
     this->delete_texture();
 }
 
+GLTexture::GLTexture(GLTexture&& other) :
+    shape_ (std::move(other.shape_)),
+    texId_ (std::exchange(other.texId_, 0)),
+    format_(other.format_)
+{}
+
+GLTexture& GLTexture::operator=(GLTexture&& other)
+{
+    shape_  = std::move(other.shape_);
+    texId_  = std::exchange(other.texId_, 0);
+    format_ = other.format_;
+
+    return *this;
+}
+
 /**
  * Creates a new OpenGL Texture Object.
  *

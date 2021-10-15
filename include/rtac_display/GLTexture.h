@@ -1,6 +1,8 @@
 #ifndef _DEF_RTAC_DISPLAY_GLTEXTURE_H_
 #define _DEF_RTAC_DISPLAY_GLTEXTURE_H_
 
+#include <utility>
+
 #include <GL/glew.h>
 #include <GL/gl.h>
 
@@ -47,6 +49,13 @@ class GLTexture
 
     GLTexture();
     ~GLTexture();
+
+    // disallowing copy but authorizing ressource move
+    GLTexture(const GLTexture&)            = delete;
+    GLTexture& operator=(const GLTexture&) = delete;
+
+    GLTexture(GLTexture&& other);
+    GLTexture& operator=(GLTexture&& other);
     
     Shape  shape()  const;
     GLuint gl_id()  const;
