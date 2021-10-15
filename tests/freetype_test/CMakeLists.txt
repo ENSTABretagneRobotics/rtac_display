@@ -1,6 +1,6 @@
 
 
-find_package(freetype REQUIRED)
+find_package(Freetype REQUIRED)
 
 set(target_name ${PROJECT_NAME}_freetype_test)
 add_executable(${target_name}
@@ -8,5 +8,5 @@ add_executable(${target_name}
 )
 target_link_libraries(${target_name} PRIVATE
     rtac_display
-    freetype
+    Freetype::Freetype
 )

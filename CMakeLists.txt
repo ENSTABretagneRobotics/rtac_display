@@ -2,13 +2,30 @@ cmake_minimum_required(VERSION 3.10)
 project(rtac_display VERSION 0.1)
 
 option(WITH_CUDA "enable cuda related code" ON)
+if(${WITH_CUDA})
+    enable_language(CUDA)
+    if(NOT TARGET rtac_cuda)
+        find_package(rtac_cuda REQUIRED)
+    endif()
+endif()
+
+
+if(NOT TARGET rtac_base)
+    find_package(rtac_base REQUIRED)
+endif()
+
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
 
-if(NOT TARGET rtac_base)
-    find_package(rtac_base REQUIRED)
+
+# Optionally finding freetype for text rendering
+find_package(Freetype)
+if(NOT TARGET Freetype::Freetype)
+    message(STATUS 
+       "WARNING : Could not find freetype library. Text rendering support is disabled."
+    )
 endif()
 
 list(APPEND rtac_display_PUBLIC_HEADERS
@@ -68,12 +85,6 @@ list(APPEND rtac_display_SOURCES
     src/samples/OrbitControls.cpp
     src/samples/Display3D.cpp
 )
-if(${WITH_CUDA})
-    enable_language(CUDA)
-    if(NOT TARGET rtac_cuda)
-        find_package(rtac_cuda REQUIRED)
-    endif()
-endif()
 add_library(rtac_display SHARED ${rtac_display_SOURCES})
 set_target_properties(rtac_display PROPERTIES 
     RTAC_PUBLIC_HEADERS "${rtac_display_PUBLIC_HEADERS}"
@@ -90,12 +101,27 @@ target_link_libraries(rtac_display PUBLIC
     glfw
     rtac_base
 )
+
 if(${WITH_CUDA})
     target_link_libraries(rtac_display PUBLIC rtac_cuda)
     target_compile_definitions(rtac_display PUBLIC RTAC_DISPLAY_CUDA)
     list(APPEND CONFIG_COMMANDS "find_package(rtac_cuda REQUIRED)")
 endif()
 
+
+if(TARGET Freetype::Freetype)
+    list(APPEND rtac_display_PUBLIC_HEADERS
+        include/rtac_display/text/freetype.h
+        include/rtac_display/text/Glyph.h
+        include/rtac_display/text/FontFace.h
+    )
+    target_sources(rtac_display PRIVATE 
+        src/text/freetype.cpp
+        src/text/Glyph.cpp
+        src/text/FontFace.cpp
+    )
+    target_link_libraries(rtac_display PUBLIC Freetype::Freetype)
+endif()
 
 add_subdirectory(tests)
 
