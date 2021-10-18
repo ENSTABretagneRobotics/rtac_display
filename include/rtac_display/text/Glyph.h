@@ -20,11 +20,15 @@ class Glyph
     // Only the FontFace type is allowed to create a new Glyph
     friend class FontFace;
 
+    static const std::string vertexShader;
+    static const std::string fragmentShader;
+
     protected:
     
     types::Point2<long> bearing_;
     types::Point2<long> advance_;
-    GLTexture           texture_;
+    mutable GLTexture   texture_;
+    GLuint              renderProgram_;
 
     Glyph(FT_Face face);
 
@@ -40,6 +44,8 @@ class Glyph
     types::Point2<long> bearing() const;
     types::Point2<long> advance() const;
     const GLTexture&    texture() const;
+
+    void draw() const;
 };
 
 }; //namespace text

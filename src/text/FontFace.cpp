@@ -44,6 +44,16 @@ void FontFace::load_glyphs(FT_UInt pixelWidth, FT_UInt pixelHeight)
     }
 }
 
+const FontFace::GlyphMap& FontFace::glyphs() const
+{
+    return glyphs_;
+}
+
+const Glyph& FontFace::glyph(uint8_t c) const
+{
+    return glyphs_.at(c);
+}
+
 }; //namespace text
 }; //namespace display
 }; //namespace rtac

@@ -36,6 +36,9 @@ class FontFace
                       Library::Ptr ftLibrary = nullptr);
 
     void load_glyphs(FT_UInt pixelWidth, FT_UInt pixelHeight);
+
+    const GlyphMap& glyphs() const;
+    const Glyph& glyph(uint8_t c) const;
 };
 
 }; //namespace text

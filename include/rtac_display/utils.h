@@ -33,7 +33,7 @@
         if(err != GL_NO_ERROR) {                                        \
             std::ostringstream oss;                                     \
             oss << "GL call failed '"                                   \
-                << "' (code:" << err << ")\n"                           \
+                << "' (code:0x" << std::hex << err << std::dec << ")\n" \
                 << __FILE__ << ":" << __LINE__ << "\n";                 \
             throw std::runtime_error(oss.str());                        \
         }                                                               \
