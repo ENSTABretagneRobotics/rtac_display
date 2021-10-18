@@ -42,6 +42,11 @@ void Display::terminate()
     glfwTerminate();
 }
 
+Display::Window Display::window()
+{
+    return window_;
+}
+
 /**
  * @return width and height of the window in a Shape object.
  */

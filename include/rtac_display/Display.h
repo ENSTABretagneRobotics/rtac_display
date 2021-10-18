@@ -83,6 +83,8 @@ class Display : public DrawingSurface
             const std::string& title = "optix render");
     void terminate();
 
+    Window window();
+
     Shape window_shape() const;
     int should_close() const;
     int is_drawing();
