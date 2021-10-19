@@ -98,7 +98,7 @@ const GLTexture& Glyph::texture() const
  * This function assumes that the viewport was set to the proper size and
  * position by another entity (namely a renderer holding the full sentence).
  */
-void Glyph::draw() const
+void Glyph::draw(const std::array<float,3>& color) const
 {
     static const float points[] = {-1.0f,-1.0f,
                                     1.0f,-1.0f,
@@ -106,7 +106,7 @@ void Glyph::draw() const
                                    -1.0f, 1.0f};
     static const unsigned int indexes[] = {0, 1, 2,
                                            0, 2, 3};
-    static const float color[] = {0.0f,0.0f,0.0f}; // to be replaced by a parameter.
+    //static const float color[] = {0.0f,0.0f,0.0f}; // to be replaced by a parameter.
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -116,7 +116,7 @@ void Glyph::draw() const
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, points);
     glEnableVertexAttribArray(0);
 
-    glUniform3fv(glGetUniformLocation(renderProgram_, "color"), 1, color);
+    glUniform3fv(glGetUniformLocation(renderProgram_, "color"), 1, color.data());
 
     glUniform1i(glGetUniformLocation(renderProgram_, "tex"), 0);
     glActiveTexture(GL_TEXTURE0);

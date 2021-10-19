@@ -23,8 +23,8 @@ int main()
         display.draw();
         glClearColor(1.0,1.0,1.0,1.0);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-        glyph->second.draw();
+        
+        glyph->second.draw({1,0,0});
         glyph++;
         if(glyph == font->glyphs().end())
             glyph = font->glyphs().begin();

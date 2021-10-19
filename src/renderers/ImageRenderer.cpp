@@ -118,9 +118,9 @@ bool ImageRenderer::uses_colormap() const
 /**
  * Generate screen coordinates of corner of image and displays the image.
  */
-void ImageRenderer::draw()
+void ImageRenderer::draw(const GLTexture& texture)
 {
-    imageView_->set_image_shape(texture_->shape());
+    imageView_->set_image_shape(texture.shape());
 
     float vertices[] = {-1.0,-1.0,
                          1.0,-1.0,
@@ -149,7 +149,7 @@ void ImageRenderer::draw()
 
     glUniform1i(glGetUniformLocation(renderProgram_, "tex"), 0);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture_->gl_id());
+    glBindTexture(GL_TEXTURE_2D, texture.gl_id());
     
     if(this->uses_colormap()) {
         glUniform1i(glGetUniformLocation(renderProgram_, "colormap"), 1);
@@ -166,6 +166,11 @@ void ImageRenderer::draw()
     glUseProgram(0);
 
     GL_CHECK_LAST();
+}
+
+void ImageRenderer::draw()
+{
+    this->draw(*texture_);
 }
 
 }; //namespace display

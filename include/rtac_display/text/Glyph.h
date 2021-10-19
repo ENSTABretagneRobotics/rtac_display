@@ -45,7 +45,7 @@ class Glyph
     types::Point2<long> advance() const;
     const GLTexture&    texture() const;
 
-    void draw() const;
+    void draw(const std::array<float,3>& color = {0,0,0}) const;
 };
 
 }; //namespace text
