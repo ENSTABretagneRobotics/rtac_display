@@ -10,6 +10,7 @@ const std::string ImageRenderer::vertexShader = std::string( R"(
 #version 430 core
 
 in vec2 point;
+in vec2 uvIn;
 out vec2 uv;
 uniform mat4 view;
 
@@ -18,8 +19,9 @@ void main()
     //gl_Position = vec4(point, 0.0, 1.0);
     gl_Position = view*vec4(point, 0.0, 1.0);
     //uv = 0.5f*(point.xy + 1.0f);
-    uv.x = 0.5f*(point.x + 1.0f);
-    uv.y = 0.5f*(1.0f - point.y);
+    //uv.x = 0.5f*(point.x + 1.0f);
+    //uv.y = 0.5f*(1.0f - point.y);
+    uv = uvIn;
 }
 )");
 
@@ -78,7 +80,8 @@ ImageRenderer::ImageRenderer() :
     texture_(GLTexture::New()),
     imageView_(std::dynamic_pointer_cast<ImageView>(view_)),
     passThroughProgram_(this->renderProgram_),
-    colormapProgram_(create_render_program(vertexShader, colormapFragmentShader))
+    colormapProgram_(create_render_program(vertexShader, colormapFragmentShader)),
+    verticalFlip_(true) // More natural for CPU texture
 {}
 
 GLTexture::Ptr& ImageRenderer::texture()
@@ -115,6 +118,11 @@ bool ImageRenderer::uses_colormap() const
     return renderProgram_ == colormapProgram_;
 }
 
+void ImageRenderer::set_vertical_flip(bool doFlip)
+{
+    verticalFlip_ = doFlip;
+}
+
 /**
  * Generate screen coordinates of corner of image and displays the image.
  */
@@ -122,15 +130,18 @@ void ImageRenderer::draw(const GLTexture& texture)
 {
     imageView_->set_image_shape(texture.shape());
 
-    float vertices[] = {-1.0,-1.0,
-                         1.0,-1.0,
-                         1.0, 1.0,
-                        -1.0, 1.0};
-                       
-    float colors1[] = {1.0, 0.0, 0.0,
-                       0.0, 0.0, 1.0,
-                       1.0, 1.0, 1.0,
-                       0.0, 1.0, 0.0};
+    static const float vertices[] = {-1.0,-1.0,
+                                      1.0,-1.0,
+                                      1.0, 1.0,
+                                     -1.0, 1.0};
+    static const float uvNoFlip[] = {0.0, 0.0,
+                                     1.0, 0.0,
+                                     1.0, 1.0,
+                                     0.0, 1.0};
+    static const float uvFlip[] = {0.0, 1.0,
+                                   1.0, 1.0,
+                                   1.0, 0.0,
+                                   0.0, 0.0};
     unsigned int indexes[] = {0, 1, 2,
                               0, 2, 3};
     
@@ -140,7 +151,10 @@ void ImageRenderer::draw(const GLTexture& texture)
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors1);
+    if(verticalFlip_)
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, uvNoFlip);
+    else
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, uvFlip);
     glEnableVertexAttribArray(1);
 
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),

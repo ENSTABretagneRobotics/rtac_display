@@ -46,6 +46,8 @@ class ImageRenderer : public Renderer
     GLuint passThroughProgram_;
     GLuint colormapProgram_;
 
+    bool verticalFlip_;
+
     public:
 
     static Ptr New();
@@ -62,6 +64,7 @@ class ImageRenderer : public Renderer
     bool enable_colormap();
     void disable_colormap();
     bool uses_colormap() const;
+    void set_vertical_flip(bool doFlip);
 };
 
 }; //namespace display

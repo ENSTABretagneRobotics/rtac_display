@@ -14,10 +14,11 @@ int main()
     Display display;
 	display.disable_frame_counter();
     auto renderer = ImageRenderer::New();
+    renderer->set_vertical_flip(false);
     display.add_renderer(renderer);
 
     auto font = text::FontFace::Create(filename);
-    font->load_glyphs(0, 24);
+    font->load_glyphs(0, 48);
     
     text::Glyph::Mat4 view = text::Glyph::Mat4::Identity();
     view(0,0) = 0.5f; view(1,1) = 0.5f;
@@ -33,7 +34,7 @@ int main()
     auto glyph = font->glyphs().begin();
     while(!display.should_close()) {
         
-        display.draw();
+        //display.draw();
         glClearColor(1.0,1.0,1.0,1.0);
         //glClearColor(0.0,0.0,0.0,0.0);
 
