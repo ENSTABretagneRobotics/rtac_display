@@ -20,6 +20,7 @@ class TextRenderer : public Renderer
     using Ptr      = rtac::types::Handle<TextRenderer>;
     using ConstPtr = rtac::types::Handle<const TextRenderer>;
     using Mat4     = View::Mat4;
+    using Vec4   = types::Vector4<float>;
 
     static const std::string vertexShader;
     static const std::string fragmentShader;
@@ -29,6 +30,7 @@ class TextRenderer : public Renderer
     FontFace::ConstPtr font_;
     std::string        text_;
     GLTexture          texture_;
+    Vec4               origin_; // full 3D space position.
     
     TextRenderer(const FontFace::ConstPtr& font);
     void update_texture();
@@ -44,6 +46,8 @@ class TextRenderer : public Renderer
     const std::string& text() const;
     const GLTexture&   texture() const;
     Mat4 view_matrix() const;
+    Vec4& origin();
+    const Vec4& origin() const;
 
     virtual void draw();
 };

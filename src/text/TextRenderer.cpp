@@ -2,8 +2,43 @@
 
 namespace rtac { namespace display { namespace text {
 
+/**
+ * Point position computed on CPU side. 
+ */
+const std::string TextRenderer::vertexShader = std::string( R"(
+#version 430 core
+
+in vec4 point;
+in vec2 uvIn;
+out vec2 uv;
+
+void main()
+{
+    gl_Position = point;
+    uv = uvIn;
+}
+)");
+
+/**
+ * Simply outputs the texture value at given texture coordinates.
+ */
+const std::string TextRenderer::fragmentShader = std::string(R"(
+#version 430 core
+
+in vec2 uv;
+uniform sampler2D tex;
+
+out vec4 outColor;
+
+void main()
+{
+    outColor = texture(tex, uv);
+}
+)");
 TextRenderer::TextRenderer(const FontFace::ConstPtr& font) :
-    font_(font)
+    Renderer(vertexShader, fragmentShader),
+    font_(font),
+    origin_({0,0,0,1})
 {
     if(!font_) {
         std::ostringstream oss;
@@ -109,7 +144,7 @@ void TextRenderer::update_texture()
         std::cout << "character : " << c
                   << ", shape : " << glyph->shape()
                   << ", texture shape : " << glyph->texture().shape() << std::endl;
-        glyph->draw(origin * current);
+        glyph->draw(origin * current, {1,1,1});
         current(0,3) += glyph->advance().x;
     }
 
@@ -150,8 +185,55 @@ TextRenderer::Mat4 TextRenderer::view_matrix() const
     return view;
 }
 
+TextRenderer::Vec4& TextRenderer::origin()
+{
+    return origin_;
+}
+
+const TextRenderer::Vec4& TextRenderer::origin() const
+{
+    return origin_;
+}
+
 void TextRenderer::draw()
 {
+    // OpenGL clip space origin.
+    Vec4 clipOrigin = view_->view_matrix() * origin_;
+    float clipWidth  = (2.0f*texture_.width() ) / view_->screen_size().width;
+    float clipHeight = (2.0f*texture_.height()) / view_->screen_size().height;
+
+    std::vector<Vec4> points_({
+        Vec4(clipOrigin + Vec4({0,0,0,0})),
+        Vec4(clipOrigin + Vec4({clipWidth,0,0,0})),
+        Vec4(clipOrigin + Vec4({clipWidth,clipHeight,0,0})),
+        Vec4(clipOrigin + Vec4({0,clipHeight,0,0}))});
+    static const float uv[] = {0,1,
+                               1,1,
+                               1,0,
+                               0,0};
+    static const unsigned int indexes[] = {0, 1, 2,
+                                           0, 2, 3};
+
+    glUseProgram(renderProgram_);
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, points_.data());
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, uv);
+    glEnableVertexAttribArray(1);
+
+    glUniform1i(glGetUniformLocation(renderProgram_, "tex"), 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture_.gl_id());
+    
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indexes);
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(0);
+
+    glUseProgram(0);
+
+    GL_CHECK_LAST();
 }
 
 }; //namespace text
