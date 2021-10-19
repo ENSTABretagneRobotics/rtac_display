@@ -60,7 +60,11 @@ class GLTexture
     Shape  shape()  const;
     GLuint gl_id()  const;
     GLint  format() const;
+    size_t width() const;
+    size_t height() const;
 
+    template <typename T>
+    void set_size(const Shape& shape);
     template <typename T>
     void set_image(const Shape& shape, const T* data);
     template <typename T>
@@ -72,6 +76,34 @@ class GLTexture
     // various loaders.
     static Ptr from_ppm(const std::string& path);
 };
+
+/**
+ * Set texture size without data initialization
+ *
+ * The texture format is infered using the template type **T** and a template
+ * specialization of rtac::display::GLFormat. See rtac::display::GLformat
+ * documentation for more information.
+ *
+ * @param shape Dimensions of the texture {width,height}. Texture width must be even.
+ * @param data  Pixel data to upload to the texture.
+ */
+template <typename T>
+void GLTexture::set_size(const Shape& shape)
+{
+    format_ = GLFormat<T>::PixelFormat;
+
+    // ensuring no buffer bound to GL_PIXEL_UNPACK_BUFFER for data to be read
+    // from CPU side memory.
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+    glBindTexture(GL_TEXTURE_2D, texId_);
+    glTexImage2D(GL_TEXTURE_2D, 0, format_, shape.width, shape.height,
+        0, format_, GLFormat<T>::Type, 0);
+    GL_CHECK_LAST();
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    shape_ = shape;
+}
 
 /**
  * Set texture image data from host memory.

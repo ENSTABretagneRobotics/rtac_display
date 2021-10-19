@@ -91,6 +91,16 @@ Shape GLTexture::shape() const
     return shape_;
 }
 
+size_t GLTexture::width() const
+{
+    return shape_.width;
+}
+
+size_t GLTexture::height() const
+{
+    return shape_.height;
+}
+
 /**
  * @return the id of the OpenGL Texture Object.
  */
