@@ -22,7 +22,11 @@ FontFace::Ptr FontFace::Create(const std::string& fontFilename,
     if(!ftLibrary) {
         ftLibrary = Library::Create();
     }
-    return Ptr(new FontFace(fontFilename, faceIndex, ftLibrary));
+
+    // This ensure proper reference counting see enable_shared_from_this
+    // documentation for more info.
+    auto tmp = Ptr(new FontFace(fontFilename, faceIndex, ftLibrary));
+    return tmp->shared_from_this();
 }
 
 void FontFace::load_glyphs(FT_UInt pixelWidth, FT_UInt pixelHeight)
@@ -40,6 +44,9 @@ void FontFace::load_glyphs(FT_UInt pixelWidth, FT_UInt pixelHeight)
             std::cerr << "rtac_display error : failed to load glyph '"
                       << c << "'" << std::endl;
         }
+        std::cout << "Glyph " << c << ":\n" << face_->glyph->metrics << std::endl;
+        std::cout << "bitmap : " << face_->glyph->bitmap.width << "x"
+                                 << face_->glyph->bitmap.rows << std::endl << std::endl;
         glyphs_.emplace(std::make_pair(c, Glyph(face_)));
     }
 }
@@ -52,6 +59,31 @@ const FontFace::GlyphMap& FontFace::glyphs() const
 const Glyph& FontFace::glyph(uint8_t c) const
 {
     return glyphs_.at(c);
+}
+
+const FT_Face& FontFace::face() const
+{
+    return face_;
+}
+
+float FontFace::ascender() const
+{
+    return ((float)face_->ascender * face_->size->metrics.y_ppem) / face_->units_per_EM;
+}
+
+float FontFace::descender() const
+{
+    return ((float)face_->descender * face_->size->metrics.y_ppem) / face_->units_per_EM;
+}
+
+float FontFace::baselineskip() const
+{
+    return face_->size->metrics.height / 64.0f;
+}
+
+float FontFace::max_advance() const
+{
+    return face_->size->metrics.max_advance / 64.0f;
 }
 
 }; //namespace text

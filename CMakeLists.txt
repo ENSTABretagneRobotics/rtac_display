@@ -114,11 +114,13 @@ if(TARGET Freetype::Freetype)
         include/rtac_display/text/freetype.h
         include/rtac_display/text/Glyph.h
         include/rtac_display/text/FontFace.h
+        include/rtac_display/text/TextRenderer.h
     )
     target_sources(rtac_display PRIVATE 
         src/text/freetype.cpp
         src/text/Glyph.cpp
         src/text/FontFace.cpp
+        src/text/TextRenderer.cpp
     )
     target_link_libraries(rtac_display PUBLIC Freetype::Freetype)
 endif()

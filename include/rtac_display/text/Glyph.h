@@ -5,6 +5,7 @@
 
 #include <rtac_base/types/Point.h>
 
+#include <rtac_display/views/View.h>
 #include <rtac_display/GLTexture.h>
 #include <rtac_display/text/freetype.h>
 
@@ -20,15 +21,18 @@ class Glyph
     // Only the FontFace type is allowed to create a new Glyph
     friend class FontFace;
 
+    using Mat4 = View::Mat4;
+
     static const std::string vertexShader;
     static const std::string fragmentShader;
 
     protected:
     
-    types::Point2<long> bearing_;
-    types::Point2<long> advance_;
-    mutable GLTexture   texture_;
-    GLuint              renderProgram_;
+    types::Point2<float> bearing_;
+    types::Point2<float> advance_;
+    types::Point2<float> shape_;
+    mutable GLTexture    texture_;
+    GLuint               renderProgram_;
 
     Glyph(FT_Face face);
 
@@ -41,11 +45,13 @@ class Glyph
     Glyph(Glyph&& other);
     Glyph& operator=(Glyph&& other);
 
-    types::Point2<long> bearing() const;
-    types::Point2<long> advance() const;
-    const GLTexture&    texture() const;
+    types::Point2<float> bearing() const;
+    types::Point2<float> advance() const;
+    types::Point2<float> shape()   const;
+    const GLTexture&     texture() const;
 
-    void draw(const std::array<float,3>& color = {0,0,0}) const;
+    void draw(const Mat4& mat = Mat4::Identity(),
+              const std::array<float,3>& color = {0,0,0}) const;
 };
 
 }; //namespace text
