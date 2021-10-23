@@ -93,6 +93,16 @@ void DrawingSurface::set_viewport(int x, int y, size_t width, size_t height)
     this->set_viewport_size({width,height});
 }
 
+void DrawingSurface::set_clear_color(const Color::RGBAf& color)
+{
+    clearColor_ = color;
+}
+
+Color::RGBAf DrawingSurface::clear_color() const
+{
+    return clearColor_;
+}
+
 void DrawingSurface::add_display_flags(Flags flags)
 {
     displayFlags_ |= flags;
@@ -111,7 +121,13 @@ void DrawingSurface::remove_display_flags(Flags flags)
 void DrawingSurface::handle_display_flags() const
 {
     GLbitfield clearingMask = 0;
-    if(displayFlags_ & CLEAR_COLOR) clearingMask |= GL_COLOR_BUFFER_BIT;
+    if(displayFlags_ & CLEAR_COLOR) {
+        clearingMask |= GL_COLOR_BUFFER_BIT;
+        glClearColor(clearColor_.r,
+                     clearColor_.g,
+                     clearColor_.b,
+                     clearColor_.a);
+    }
     if(displayFlags_ & CLEAR_DEPTH) clearingMask |= GL_DEPTH_BUFFER_BIT;
 
     if(displayFlags_ & GAMMA_CORRECTION) glEnable(GL_FRAMEBUFFER_SRGB);

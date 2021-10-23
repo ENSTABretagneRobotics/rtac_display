@@ -62,6 +62,9 @@ class DrawingSurface : public Renderer
     void set_viewport_size(const Shape& size);
     void set_viewport(int x, int y, size_t width, size_t height);
 
+    void set_clear_color(const Color::RGBAf& color);
+    Color::RGBAf clear_color() const;
+
     void add_display_flags(Flags flags);
     void set_display_flags(Flags flags);
     void remove_display_flags(Flags flags);

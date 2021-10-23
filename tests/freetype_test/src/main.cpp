@@ -35,40 +35,21 @@ int main()
     display.add_renderer(textRenderer);
     textRenderer->origin()(0) = -1;
     textRenderer->origin()(1) = 0;
-
-    display.add_display_flags(  DrawingSurface::CLEAR_COLOR 
-                              | DrawingSurface::CLEAR_DEPTH
-                              | DrawingSurface::GAMMA_CORRECTION);
-
-    glClearColor(1.0,1.0,1.0,1.0);
+    
+    display.set_clear_color({1,1,1,1});
     textRenderer->set_text_color({0,0,0});
+    display.add_display_flags(DrawingSurface::GAMMA_CORRECTION);
+    // display.remove_display_flags(DrawingSurface::GAMMA_CORRECTION);
 
-    //glClearColor(0.0,0.0,0.0,1.0);
+    // display.set_clear_color({0,0,0,0});
+    // textRenderer->set_text_color({1,1,1});
+    // display.add_display_flags(DrawingSurface::GAMMA_CORRECTION);
+    // //display.remove_display_flags(DrawingSurface::GAMMA_CORRECTION);
 
     auto glyph = font->glyphs().begin();
     while(!display.should_close()) {
         
         display.draw();
-        // //glClearColor(0.0,0.0,0.0,0.0);
-
-        // glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-        // // std::cout << "bearing      : " << glyph->second.bearing() << std::endl;
-        // // std::cout << "advance      : " << glyph->second.advance() << std::endl;
-        // // std::cout << "shape        : " << glyph->second.size() << std::endl;
-
-        // //glyph->second.draw(view);
-        // glyph++;
-        // if(glyph == font->glyphs().end())
-        //     glyph = font->glyphs().begin();
-
-        // glEnable(GL_BLEND);
-        // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        // renderer->draw(textRenderer->texture());
-        // //renderer->draw(glyph->second.texture());
-
-        // glfwSwapBuffers(display.window().get());
-
         //this_thread::sleep_for(250ms);
     }
     return 0;
