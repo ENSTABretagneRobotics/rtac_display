@@ -35,6 +35,10 @@ Display::Display(size_t width, size_t height, const std::string& title) :
 
     // Making this the user pointer for callback related features.
     GLFW_CHECK( glfwSetWindowUserPointer(window_.get(), this) );
+
+    this->add_display_flags( DrawingSurface::CLEAR_COLOR 
+                           | DrawingSurface::CLEAR_DEPTH
+                           | DrawingSurface::GAMMA_CORRECTION);
 }
 
 void Display::terminate()

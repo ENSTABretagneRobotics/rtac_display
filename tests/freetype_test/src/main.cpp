@@ -14,6 +14,7 @@ int main()
     //std::string filename = "/usr/share/fonts/truetype/ubuntu/UbuntuMono-B.ttf";
     Display display;
 	display.disable_frame_counter();
+
     auto renderer = ImageRenderer::New();
     renderer->set_vertical_flip(false);
     //display.add_renderer(renderer);
@@ -35,8 +36,15 @@ int main()
     textRenderer->origin()(0) = -1;
     textRenderer->origin()(1) = 0;
 
-    //glClearColor(1.0,1.0,1.0,1.0);
-    glClearColor(0.0,0.0,0.0,1.0);
+    display.add_display_flags(  DrawingSurface::CLEAR_COLOR 
+                              | DrawingSurface::CLEAR_DEPTH
+                              | DrawingSurface::GAMMA_CORRECTION);
+
+    glClearColor(1.0,1.0,1.0,1.0);
+    textRenderer->set_text_color({0,0,0});
+
+    //glClearColor(0.0,0.0,0.0,1.0);
+
     auto glyph = font->glyphs().begin();
     while(!display.should_close()) {
         

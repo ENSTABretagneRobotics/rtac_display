@@ -4,7 +4,9 @@ namespace rtac { namespace display {
 
 DrawingSurface::DrawingSurface(const Shape& shape) :
     Renderer("", "", View::New()),
-    viewportOrigin_({0,0})
+    viewportOrigin_({0,0}),
+    clearColor_({0,0,0,0}),
+    displayFlags_(FLAGS_NONE)
 {
     this->view_->set_screen_size(shape);
 }
@@ -62,16 +64,17 @@ void DrawingSurface::draw()
     for(auto view : views_) {
         view->set_screen_size(shape);
     }
-
+    
     glViewport(viewportOrigin_.x, viewportOrigin_.y,
                shape.width, shape.height);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    this->handle_display_flags();
     for(auto renderer : renderers_) {
         if(renderer) {
             renderer->draw();
         }
     }
+    glDisable(GL_FRAMEBUFFER_SRGB);
 }
 
 void DrawingSurface::set_viewport_origin(const Point2& origin)
@@ -88,6 +91,32 @@ void DrawingSurface::set_viewport(int x, int y, size_t width, size_t height)
 {
     this->set_viewport_origin({x,y});
     this->set_viewport_size({width,height});
+}
+
+void DrawingSurface::add_display_flags(Flags flags)
+{
+    displayFlags_ |= flags;
+}
+
+void DrawingSurface::set_display_flags(Flags flags)
+{
+    displayFlags_ = flags;
+}
+
+void DrawingSurface::remove_display_flags(Flags flags)
+{
+    displayFlags_ &= static_cast<Flags>(~flags);
+}
+
+void DrawingSurface::handle_display_flags() const
+{
+    GLbitfield clearingMask = 0;
+    if(displayFlags_ & CLEAR_COLOR) clearingMask |= GL_COLOR_BUFFER_BIT;
+    if(displayFlags_ & CLEAR_DEPTH) clearingMask |= GL_DEPTH_BUFFER_BIT;
+
+    if(displayFlags_ & GAMMA_CORRECTION) glEnable(GL_FRAMEBUFFER_SRGB);
+    if(clearingMask)
+        glClear(clearingMask);
 }
 
 }; //namespace display

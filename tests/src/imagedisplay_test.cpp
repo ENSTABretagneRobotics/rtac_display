@@ -65,6 +65,7 @@ std::vector<Color::RGBf> image_data_rgbf(int width, int height)
 int main()
 {
     samples::ImageDisplay display;
+    display.remove_display_flags(DrawingSurface::GAMMA_CORRECTION);
     
     unsigned int W = 4, H = 4;
     auto data0 = image_data(W,H);
