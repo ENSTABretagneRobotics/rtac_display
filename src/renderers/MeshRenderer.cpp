@@ -10,14 +10,15 @@ in vec3 normal;
 
 uniform mat4 view;
 uniform mat4 projection;
-uniform vec3 color;
+uniform vec4 color;
 
-out vec3 c;
+out vec4 c;
 
 void main()
 {
     gl_Position = view*vec4(point, 1.0f);
-    c = vec3(1.0,1.0,1.0) * abs(dot(mat3(view)*normal, normalize(vec3(gl_Position))));
+    c = vec4(color.xyz * abs(dot(mat3(view)*normal, normalize(vec3(gl_Position)))),
+             1.0);
     gl_Position = projection * gl_Position;
     //c = vec3(1.0,1.0,1.0);
 }
@@ -26,21 +27,21 @@ void main()
 const std::string MeshRenderer::fragmentShader = std::string(R"(
 #version 430 core
 
-in vec3 c;
+in vec4 c;
 out vec4 outColor;
 
 void main()
 {
-    outColor = vec4(c, 1.0f);
+    outColor = c;
 }
 )");
 
-MeshRenderer::Ptr MeshRenderer::New(const View3D::Ptr& view, const Color& color)
+MeshRenderer::Ptr MeshRenderer::New(const View3D::Ptr& view, const Color::RGBAf& color)
 {
     return Ptr(new MeshRenderer(view, color));
 }
 
-MeshRenderer::MeshRenderer(const View3D::Ptr& view, const Color& color) :
+MeshRenderer::MeshRenderer(const View3D::Ptr& view, const Color::RGBAf& color) :
     Renderer(vertexShader, fragmentShader, view),
     numPoints_(0),
     points_(0),
@@ -123,11 +124,12 @@ void MeshRenderer::set_pose(const Pose& pose)
     pose_ = pose;
 }
 
-void MeshRenderer::set_color(const Color& color)
+void MeshRenderer::set_color(const Color::RGBAf& color)
 {
-    color_[0] = std::max(0.0f, std::min(1.0f, color[0]));
-    color_[1] = std::max(0.0f, std::min(1.0f, color[1]));
-    color_[2] = std::max(0.0f, std::min(1.0f, color[2]));
+    color_.r = std::max(0.0f, std::min(1.0f, color.r));
+    color_.g = std::max(0.0f, std::min(1.0f, color.g));
+    color_.b = std::max(0.0f, std::min(1.0f, color.b));
+    color_.a = std::max(0.0f, std::min(1.0f, color.a));
 }
 
 void MeshRenderer::draw()
@@ -157,8 +159,8 @@ void MeshRenderer::draw()
         1, GL_FALSE, viewMatrix.data());
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "projection"),
         1, GL_FALSE, view->projection_matrix().data());
-    glUniform3fv(glGetUniformLocation(renderProgram_, "color"),
-        1, color_.data());
+    glUniform4fv(glGetUniformLocation(renderProgram_, "color"),
+        1, reinterpret_cast<const float*>(&color_));
 
     glDrawArrays(GL_TRIANGLES, 0, numPoints_);
 

@@ -8,9 +8,9 @@ const std::string NormalsRenderer::vertexShader = std::string(R"(
 in vec3 point;
 
 uniform mat4 view;
-uniform vec3 color;
+uniform vec4 color;
 
-out vec3 c;
+out vec4 c;
 
 void main()
 {
@@ -22,12 +22,12 @@ void main()
 const std::string NormalsRenderer::fragmentShader = std::string(R"(
 #version 430 core
 
-in vec3 c;
+in vec4 c;
 out vec4 outColor;
 
 void main()
 {
-    outColor = vec4(c, 1.0f);
+    outColor = c;
 }
 )");
 
@@ -117,13 +117,13 @@ void main()
 )");
 
 NormalsRenderer::Ptr NormalsRenderer::New(const View::Ptr& view,
-                                          const Color& color)
+                                          const Color::RGBAf& color)
 {
     return Ptr(new NormalsRenderer(view, color));
 }
 
 NormalsRenderer::NormalsRenderer(const View::Ptr& view,
-                                 const Color& color) :
+                                 const Color::RGBAf& color) :
     Renderer(vertexShader, fragmentShader, view),
     numPoints_(0),
     displayData_(0),
@@ -216,11 +216,12 @@ void NormalsRenderer::set_pose(const Pose& pose)
     pose_ = pose;
 }
 
-void NormalsRenderer::set_color(const Color& color)
+void NormalsRenderer::set_color(const Color::RGBAf& color)
 {
-    color_[0] = std::max(0.0f, std::min(1.0f, color[0]));
-    color_[1] = std::max(0.0f, std::min(1.0f, color[1]));
-    color_[2] = std::max(0.0f, std::min(1.0f, color[2]));
+    color_.r = std::max(0.0f, std::min(1.0f, color.r));
+    color_.g = std::max(0.0f, std::min(1.0f, color.g));
+    color_.b = std::max(0.0f, std::min(1.0f, color.b));
+    color_.a = std::max(0.0f, std::min(1.0f, color.a));
 }
 
 void NormalsRenderer::draw()
@@ -239,8 +240,8 @@ void NormalsRenderer::draw()
 
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),
         1, GL_FALSE, view.data());
-    glUniform3fv(glGetUniformLocation(renderProgram_, "color"),
-        1, color_.data());
+    glUniform4fv(glGetUniformLocation(renderProgram_, "color"),
+        1, reinterpret_cast<const float*>(&color_));
 
     glDrawArrays(GL_LINES, 0, 2*numPoints_);
     

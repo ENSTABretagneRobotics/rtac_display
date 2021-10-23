@@ -5,6 +5,7 @@
 
 #include <rtac_base/types/Point.h>
 
+#include <rtac_display/Color.h>
 #include <rtac_display/views/View.h>
 #include <rtac_display/GLTexture.h>
 #include <rtac_display/text/freetype.h>
@@ -51,7 +52,7 @@ class Glyph
     const GLTexture&     texture() const;
 
     void draw(const Mat4& mat = Mat4::Identity(),
-              const std::array<float,3>& color = {0,0,0}) const;
+              const Color::RGBf& color = {0,0,0}) const;
 };
 
 }; //namespace text

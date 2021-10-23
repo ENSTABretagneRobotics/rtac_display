@@ -9,6 +9,7 @@
 #include <rtac_base/types/Mesh.h>
 
 #include <rtac_display/utils.h>
+#include <rtac_display/Color.h>
 #include <rtac_display/GLVector.h>
 #include <rtac_display/GLTexture.h>
 #include <rtac_display/renderers/Renderer.h>
@@ -35,7 +36,6 @@ class TexturedMeshRenderer : public Renderer
 
     using Mat4  = View3D::Mat4;
     using Pose  = View3D::Pose;
-    using Color = std::array<float,4>;
 
     using Points = GLVector<Tp>;
     using Faces  = GLVector<Tf>;
@@ -56,8 +56,8 @@ class TexturedMeshRenderer : public Renderer
     typename UVs::Ptr    uvs_; // texture coordinates
     GLTexture::Ptr       texture_;
 
-    Color color_;
-    Pose  pose_;
+    Color::RGBAf color_;
+    Pose         pose_;
 
     void draw_solid() const;
     void draw_textured() const;
@@ -77,7 +77,7 @@ class TexturedMeshRenderer : public Renderer
     GLTexture::Ptr&     texture()       { return texture_; }
     GLTexture::ConstPtr texture() const { return texture_; }
 
-    void set_color(const Color& color);
+    void set_color(const Color::RGBAf& color);
     void set_pose(const Pose& pose);
 
     virtual void draw();
@@ -209,7 +209,7 @@ TexturedMeshRenderer<Tp,Tf,Tu>::New(const View3D::Ptr& view)
  * @param color a RGBA color.
  */
 template <typename Tp, typename Tf, typename Tu>
-void TexturedMeshRenderer<Tp,Tf,Tu>::set_color(const Color& color)
+void TexturedMeshRenderer<Tp,Tf,Tu>::set_color(const Color::RGBAf& color)
 {
     color_ = color;
 }
@@ -270,7 +270,8 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_solid() const
         1, GL_FALSE, viewMatrix.data());
     glUniformMatrix4fv(glGetUniformLocation(solidRender_, "projection"),
         1, GL_FALSE, view->projection_matrix().data());
-    glUniform4fv(glGetUniformLocation(solidRender_, "solidColor"), 1, color_.data());
+    glUniform4fv(glGetUniformLocation(solidRender_, "solidColor"), 1, 
+                 reinterpret_cast<const float*>(&color_));
     
     if(faces_->size() > 0) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faces_->gl_id());

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <rtac_base/types/Point.h>
+#include <rtac_display/Color.h>
 #include <rtac_display/GLTexture.h>
 
 namespace rtac { namespace display {
@@ -14,9 +14,6 @@ class Colormap
 
     using Ptr      = rtac::types::Handle<Colormap>;
     using ConstPtr = rtac::types::Handle<const Colormap>;
-    
-    template <typename T>
-    using Color = types::Point4<T>;
 
     protected:
 
@@ -38,7 +35,7 @@ template <typename T>
 Colormap::Colormap(const std::vector<T>& rgbaData)
 {
     texture_.set_image({rgbaData.size() / 4, 1},
-                       reinterpret_cast<const Color<T>*>(rgbaData.data()));
+                       reinterpret_cast<const Color::RGBA<T>*>(rgbaData.data()));
     texture_.bind();
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

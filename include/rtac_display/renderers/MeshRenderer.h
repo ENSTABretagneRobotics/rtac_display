@@ -5,6 +5,7 @@
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Mesh.h>
 
+#include <rtac_display/Color.h>
 #include <rtac_display/renderers/Renderer.h>
 #include <rtac_display/views/View3D.h>
 
@@ -20,18 +21,17 @@ class MeshRenderer : public Renderer
     using Mat4  = View3D::Mat4;
     using Mesh  = rtac::types::Mesh<>;
     using Pose  = View3D::Pose;
-    using Color = std::array<float,3>;
 
     protected:
 
     static const std::string vertexShader;
     static const std::string fragmentShader;
 
-    size_t numPoints_;
-    GLuint points_;
-    GLuint normals_;
-    Pose   pose_;
-    Color  color_;
+    size_t       numPoints_;
+    GLuint       points_;
+    GLuint       normals_;
+    Pose         pose_;
+    Color::RGBAf color_;
 
     protected:
 
@@ -41,13 +41,13 @@ class MeshRenderer : public Renderer
     public:
 
     static Ptr New(const View3D::Ptr& view,
-                   const Color& color = {1.0,1.0,1.0});
+                   const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
     MeshRenderer(const View3D::Ptr& view,
-                 const Color& color = {1.0,1.0,1.0});
+                 const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
 
     //void set_mesh(const Mesh& mesh);
     void set_pose(const Pose& pose);
-    void set_color(const Color& color);
+    void set_color(const Color::RGBAf& color);
 
     virtual void draw();
     

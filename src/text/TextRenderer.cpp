@@ -38,7 +38,9 @@ void main()
 TextRenderer::TextRenderer(const FontFace::ConstPtr& font) :
     Renderer(vertexShader, fragmentShader),
     font_(font),
-    origin_({0,0,0,1})
+    origin_({0,0,0,1}),
+    textColor_({0,0,0}),
+    backColor_({0,0,0,0})
 {
     if(!font_) {
         std::ostringstream oss;
@@ -56,10 +58,25 @@ TextRenderer::Ptr TextRenderer::Create(const FontFace::ConstPtr& font,
     return renderer;
 }
 
-void TextRenderer::set_text(const std::string& text)
+void TextRenderer::set_text(const std::string& text, bool updateNow)
 {
     text_ = text;
-    this->update_texture();
+    if(updateNow)
+        this->update_texture();
+}
+
+void TextRenderer::set_text_color(const Color::RGBf& color, bool updateNow)
+{
+    textColor_ = color;
+    if(updateNow)
+        this->update_texture();
+}
+
+void TextRenderer::set_back_color(const Color::RGBAf& color, bool updateNow)
+{
+    backColor_ = color;
+    if(updateNow)
+        this->update_texture();
 }
 
 Shape TextRenderer::compute_text_area(const std::string& text)
@@ -113,12 +130,9 @@ void TextRenderer::update_texture()
     }
     texture_.unbind(GL_TEXTURE_2D);
 
-    glClearColor(0.0,0.0,0.0,0.0);
-    //glClearColor(0.0,1.0,0.0,1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
-
     glViewport(0, 0, texture_.shape().width, texture_.shape().height);
-    //glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    glClearColor(backColor_.r, backColor_.g, backColor_.b, backColor_.a);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     Mat4 origin  = this->view_matrix();
     Mat4 current = Mat4::Identity();
@@ -144,7 +158,7 @@ void TextRenderer::update_texture()
         std::cout << "character : " << c
                   << ", shape : " << glyph->shape()
                   << ", texture shape : " << glyph->texture().shape() << std::endl;
-        glyph->draw(origin * current, {1,1,1});
+        glyph->draw(origin * current, textColor_);
         current(0,3) += glyph->advance().x;
     }
 
@@ -193,6 +207,16 @@ TextRenderer::Vec4& TextRenderer::origin()
 const TextRenderer::Vec4& TextRenderer::origin() const
 {
     return origin_;
+}
+
+const Color::RGBf& TextRenderer::text_color() const
+{
+    return textColor_;
+}
+
+const Color::RGBAf& TextRenderer::back_color() const
+{
+    return backColor_;
 }
 
 void TextRenderer::draw()

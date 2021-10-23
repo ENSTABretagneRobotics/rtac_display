@@ -31,6 +31,7 @@ endif()
 list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/utils.h
     include/rtac_display/GLFormat.h
+    include/rtac_display/Color.h
 
     include/rtac_display/views/View.h
     include/rtac_display/views/ImageView.h

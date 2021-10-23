@@ -8,6 +8,7 @@
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/types/PointCloud.h>
 
+#include <rtac_display/Color.h>
 #include <rtac_display/GLVector.h>
 #include <rtac_display/renderers/Renderer.h>
 #include <rtac_display/views/View3D.h>
@@ -24,23 +25,22 @@ class PointCloudRendererBase : public Renderer
     using Mat4    = View3D::Mat4;
     using Shape   = View3D::Shape;
     using Pose    = View3D::Pose;
-    using Color   = std::array<float,3>;
 
     static const std::string vertexShader;
     static const std::string fragmentShader;
 
     protected:
     
-    Pose             pose_;
-    Color            color_;
+    Pose  pose_;
+    Color::RGBAf color_;
 
     public:
 
     PointCloudRendererBase(const View3D::Ptr& view,
-                           const Color& color = {0.7,0.7,1.0});
+                           const Color::RGBAf& color = {0.7,0.7,1.0,1.0});
 
     void set_pose(const Pose& pose);
-    void set_color(const Color& color);
+    void set_color(const Color::RGBAf& color);
 };
 
 template <typename PointT>
@@ -57,7 +57,6 @@ class PointCloudRenderer : public PointCloudRendererBase
     using Mat4    = PointCloudRendererBase::Mat4;
     using Shape   = PointCloudRendererBase::Shape;
     using Pose    = PointCloudRendererBase::Pose;
-    using Color   = PointCloudRendererBase::Color;
 
     protected:
     
@@ -66,9 +65,9 @@ class PointCloudRenderer : public PointCloudRendererBase
     public:
     
     static Ptr New(const View3D::Ptr& view,
-                   const Color& color = {0.7,0.7,1.0});
+                   const Color::RGBAf& color = {0.7,0.7,1.0,1.0});
     PointCloudRenderer(const View3D::Ptr& view,
-                       const Color& color = {0.7,0.7,1.0});
+                       const Color::RGBAf& color = {0.7,0.7,1.0,1.0});
 
     GLVector<PointT>& points();
     const GLVector<PointT>& points() const;
@@ -85,14 +84,14 @@ class PointCloudRenderer : public PointCloudRendererBase
 // implementation
 template <typename PointT>
 typename PointCloudRenderer<PointT>::Ptr PointCloudRenderer<PointT>::New(
-    const View3D::Ptr& view, const Color& color)
+    const View3D::Ptr& view, const Color::RGBAf& color)
 {
     return Ptr(new PointCloudRenderer<PointT>(view, color));
 }
 
 template <typename PointT>
 PointCloudRenderer<PointT>::PointCloudRenderer(const View3D::Ptr& view,
-                                               const Color& color) :
+                                               const Color::RGBAf& color) :
     PointCloudRendererBase(view, color)
 {}
 
@@ -173,8 +172,8 @@ void PointCloudRenderer<PointT>::draw()
 
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),
         1, GL_FALSE, view.data());
-    glUniform3fv(glGetUniformLocation(renderProgram_, "color"),
-        1, color_.data());
+    glUniform4fv(glGetUniformLocation(renderProgram_, "color"),
+        1, reinterpret_cast<const float*>(&color_));
 
     glDrawArrays(GL_POINTS, 0, points_.size());
     

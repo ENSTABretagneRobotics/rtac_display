@@ -3,32 +3,9 @@
 #include <vector>
 using namespace std;
 
+#include <rtac_display/Color.h>
 #include <rtac_display/samples/ImageDisplay.h>
 using namespace rtac::display;
-
-template <typename T>
-struct Color {
-    T r; T g; T b;
-};
-
-// namespace rtac { namespace display {
-// Specialization of GLFormat to be used in GLTexture
-template <>
-struct rtac::display::GLFormat<Color<uint8_t>> {
-    static constexpr unsigned int Size  = 3;
-    static constexpr GLenum PixelFormat = GL_RGB;
-    static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
-};
-
-template <>
-struct rtac::display::GLFormat<Color<float>> {
-    static constexpr unsigned int Size  = 3;
-    static constexpr GLenum PixelFormat = GL_RGB;
-    static constexpr GLenum Type        = GL_FLOAT;
-};
-
-// }; //namespace display
-// }; //namespace rtac
 
 std::vector<uint8_t> image_data(int width, int height)
 {
@@ -51,34 +28,34 @@ std::vector<uint8_t> image_data(int width, int height)
     return res;
 }
 
-std::vector<Color<uint8_t>> image_data_rgb(int width, int height)
+std::vector<Color::RGB8> image_data_rgb(int width, int height)
 {
-    std::vector<Color<uint8_t>> res(3*width*height);
+    std::vector<Color::RGB8> res(3*width*height);
     for(int h = 0; h < height; h++) {
         for(int w = 0; w < width; w++) {
             unsigned int bw = (w + h) & 0x1;
             if(bw) {
-                res[width*h + w] = Color<uint8_t>({0, 255, 255});
+                res[width*h + w] = Color::RGB8({0, 255, 255});
             }
             else {
-                res[width*h + w] = Color<uint8_t>({255, 124, 0});
+                res[width*h + w] = Color::RGB8({255, 124, 0});
             }
         }
     }
     return res;
 }
 
-std::vector<Color<float>> image_data_rgbf(int width, int height)
+std::vector<Color::RGBf> image_data_rgbf(int width, int height)
 {
-    std::vector<Color<float>> res(3*width*height);
+    std::vector<Color::RGBf> res(3*width*height);
     for(int h = 0; h < height; h++) {
         for(int w = 0; w < width; w++) {
             unsigned int bw = (w + h) & 0x1;
             if(bw) {
-                res[width*h + w] = Color<float>({0, 1, 1});
+                res[width*h + w] = Color::RGBf({0, 1, 1});
             }
             else {
-                res[width*h + w] = Color<float>({1, 0.5, 0});
+                res[width*h + w] = Color::RGBf({1, 0.5, 0});
             }
         }
     }
@@ -97,7 +74,7 @@ int main()
     display.set_image({W,H}, data0.data());
     display.set_image({W,H}, data1.data());
     display.set_image({W,H}, data2.data());
-    GLVector<Color<float>> data3(data2);
+    GLVector<Color::RGBf> data3(data2);
     display.set_image({W,H}, data3);
 
     while(!display.should_close()) {

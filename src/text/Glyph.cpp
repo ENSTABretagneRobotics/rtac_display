@@ -114,7 +114,7 @@ types::Point2<float> Glyph::shape() const
  * This function assumes that the viewport was set to the proper size and
  * position by another entity (namely a renderer holding the full sentence).
  */
-void Glyph::draw(const Mat4& view, const std::array<float,3>& color) const
+void Glyph::draw(const Mat4& view, const Color::RGBf& color) const
 {
     using Point2f = types::Point2<float>;
     std::array<Point2f,4> points = {
@@ -143,7 +143,7 @@ void Glyph::draw(const Mat4& view, const std::array<float,3>& color) const
 
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),
         1, GL_FALSE, view.data());
-    glUniform3fv(glGetUniformLocation(renderProgram_, "color"), 1, color.data());
+    glUniform3fv(glGetUniformLocation(renderProgram_, "color"), 1, (const float*)&color);
 
     glUniform1i(glGetUniformLocation(renderProgram_, "tex"), 0);
     glActiveTexture(GL_TEXTURE0);
