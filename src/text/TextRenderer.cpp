@@ -146,7 +146,7 @@ void TextRenderer::update_texture()
 
     Mat4 origin  = this->view_matrix();
     Mat4 current = Mat4::Identity();
-    
+
     const Glyph* glyph = nullptr;
     for(auto c : text_) {
         if(c == '\n') {
@@ -200,7 +200,9 @@ const GLTexture& TextRenderer::texture() const
 TextRenderer::Mat4 TextRenderer::view_matrix() const
 {
     Mat4 view = Mat4::Identity();
-    view(0,0) = 2.0f / texture_.width();
+    //view(0,0) =  2.0f / (texture_.width()  - 1);
+    //view(1,1) = -2.0f / (texture_.height() - 1);
+    view(0,0) =  2.0f / texture_.width();
     view(1,1) = -2.0f / texture_.height();
 
     view(0,3) = -1.0f;

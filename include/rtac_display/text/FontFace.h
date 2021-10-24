@@ -35,7 +35,7 @@ class FontFace : public std::enable_shared_from_this<FontFace>
                       uint32_t faceIndex = 0,
                       Library::Ptr ftLibrary = nullptr);
     
-    void set_char_size(float pt, FT_UInt screenDpi = 96);
+    void set_char_size(float pt, FT_UInt screenDpi = 102);
     void set_pixel_size(FT_UInt size);
     void load_glyphs();
 
