@@ -114,6 +114,16 @@ void TextRenderer::update_texture()
     Shape textArea = this->compute_text_area(text_);
     std::cout << "Text area size : " << textArea << std::endl;
     texture_.set_size<types::Point4<float>>(textArea);
+    texture_.bind(GL_TEXTURE_2D);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    texture_.unbind(GL_TEXTURE_2D);
 
     // Preparing a framebuffer for off-screen rendering
     GLuint framebuffer;
@@ -225,6 +235,8 @@ void TextRenderer::draw()
     Vec4 clipOrigin = view_->view_matrix() * origin_;
     float clipWidth  = (2.0f*texture_.width() ) / view_->screen_size().width;
     float clipHeight = (2.0f*texture_.height()) / view_->screen_size().height;
+    //float clipWidth  = (2.0f*texture_.width() ) / (view_->screen_size().width - 1);
+    //float clipHeight = (2.0f*texture_.height()) / (view_->screen_size().height- 1);
 
     std::vector<Vec4> points_({
         Vec4(clipOrigin + Vec4({0,0,0,0})),
@@ -238,6 +250,7 @@ void TextRenderer::draw()
     static const unsigned int indexes[] = {0, 1, 2,
                                            0, 2, 3};
 
+    glEnable(GL_FRAMEBUFFER_SRGB);
     glUseProgram(renderProgram_);
 
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, points_.data());
@@ -256,6 +269,7 @@ void TextRenderer::draw()
     glDisableVertexAttribArray(0);
 
     glUseProgram(0);
+    glDisable(GL_FRAMEBUFFER_SRGB);
 
     GL_CHECK_LAST();
 }

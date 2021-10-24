@@ -40,7 +40,8 @@ void FontFace::load_glyphs(FT_UInt pixelWidth, FT_UInt pixelHeight)
     
     glyphs_.clear();
     for(uint8_t c = 0; c < 128; c++) {
-        if(FT_Load_Char(face_, c, FT_LOAD_RENDER)) {
+        if(FT_Load_Char(face_, c, FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT)) {
+        //if(FT_Load_Char(face_, c, FT_LOAD_RENDER)) {
             std::cerr << "rtac_display error : failed to load glyph '"
                       << c << "'" << std::endl;
         }

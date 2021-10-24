@@ -37,8 +37,7 @@ Display::Display(size_t width, size_t height, const std::string& title) :
     GLFW_CHECK( glfwSetWindowUserPointer(window_.get(), this) );
 
     this->add_display_flags( DrawingSurface::CLEAR_COLOR 
-                           | DrawingSurface::CLEAR_DEPTH
-                           | DrawingSurface::GAMMA_CORRECTION);
+                           | DrawingSurface::CLEAR_DEPTH);
 }
 
 void Display::terminate()
