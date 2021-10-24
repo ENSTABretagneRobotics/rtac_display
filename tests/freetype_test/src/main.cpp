@@ -35,8 +35,8 @@ int main()
     //display.add_renderer(renderer);
 
     auto font = text::FontFace::Create(filename);
-    //font->load_glyphs(0, 16);
-    font->load_glyphs(18, 18);
+    //font->set_pixel_size(18);
+    font->set_char_size(12);
     
     text::Glyph::Mat4 view = text::Glyph::Mat4::Identity();
     view(0,0) = 0.5f; view(1,1) = 0.5f;
@@ -79,6 +79,8 @@ int main()
     write_char_pgm('n', font);
     write_char_pgm('e', font);
     write_char_pgm('h', font);
+    write_char_pgm('o', font);
+    write_char_pgm('P', font);
 
     cout << oss.str() << endl;
     auto glyph = font->glyphs().begin();

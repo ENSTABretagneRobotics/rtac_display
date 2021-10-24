@@ -124,6 +124,11 @@ void Glyph::draw(const Mat4& view, const Color::RGBf& color) const
         Point2f({bearing_.x + shape_.x, bearing_.y - shape_.y}),
         Point2f({bearing_.x + shape_.x, bearing_.y}),
         Point2f({bearing_.x           , bearing_.y})};
+    // std::array<Point2f,4> points = {
+    //     Point2f({bearing_.x,                    bearing_.y - texture_.height()}),
+    //     Point2f({bearing_.x + texture_.width(), bearing_.y - texture_.height()}),
+    //     Point2f({bearing_.x + texture_.width(), bearing_.y}),
+    //     Point2f({bearing_.x,                    bearing_.y})};
     // Inverting texture coordinates for rendering (OpenGL texture origin is
     // lower-left corner, but everything else is usually upper-left).
     static const std::array<Point2f,4> uv[] = {Point2f({0.0f, 1.0f}),

@@ -34,8 +34,10 @@ class FontFace : public std::enable_shared_from_this<FontFace>
     static Ptr Create(const std::string& fontFilename,
                       uint32_t faceIndex = 0,
                       Library::Ptr ftLibrary = nullptr);
-
-    void load_glyphs(FT_UInt pixelWidth, FT_UInt pixelHeight);
+    
+    void set_char_size(float pt, FT_UInt screenDpi = 96);
+    void set_pixel_size(FT_UInt size);
+    void load_glyphs();
 
     const GlyphMap& glyphs() const;
     const Glyph& glyph(uint8_t c) const;
@@ -79,6 +81,18 @@ inline std::ostream& operator<<(std::ostream& os, const FT_Size_Metrics& metrics
        << prefix << "descender   : " << metrics.descender / 64.0
        << prefix << "height      : " << metrics.height / 64.0
        << prefix << "max_advance : " << metrics.max_advance / 64.0;
+    return os;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const FT_Bitmap_Size& bitmapSize)
+{
+    const char* prefix = "\n- ";
+    os << "FT_Size_Metrics :"
+       << prefix << "height : " << bitmapSize.height
+       << prefix << "width  : " << bitmapSize.width
+       << prefix << "size   : " << bitmapSize.size   / 64.0f
+       << prefix << "x_ppem : " << bitmapSize.x_ppem / 64.0f
+       << prefix << "y_ppem : " << bitmapSize.y_ppem / 64.0f;
     return os;
 }
 

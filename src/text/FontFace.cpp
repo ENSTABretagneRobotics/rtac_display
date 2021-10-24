@@ -13,6 +13,10 @@ FontFace::FontFace(const std::string& fontFilename,
             << fontFilename;
         throw std::runtime_error(oss.str());
     }
+    std::cout << face_->num_fixed_sizes << " fixed sizes." << std::endl;
+    for(int i = 0; i < face_->num_fixed_sizes; i++) {
+        std::cout << face_->available_sizes[i] << std::endl;
+    }
 }
 
 FontFace::Ptr FontFace::Create(const std::string& fontFilename,
@@ -29,15 +33,31 @@ FontFace::Ptr FontFace::Create(const std::string& fontFilename,
     return tmp->shared_from_this();
 }
 
-void FontFace::load_glyphs(FT_UInt pixelWidth, FT_UInt pixelHeight)
+void FontFace::set_char_size(float pt, FT_UInt screenDpi)
 {
-    if(FT_Set_Pixel_Sizes(face_, pixelWidth, pixelHeight)) {
+    if(FT_Set_Char_Size(face_, 0, (unsigned int) (pt * 64), screenDpi, screenDpi)) {
         std::ostringstream oss;
-        oss << "rtac_display error : Invalid text pixel size ("
-            << pixelWidth << ", " << pixelHeight << ").";
+        oss << "rtac_display error : Invalid text char size (pt:"
+            << pt << ", dpi:" << screenDpi << ")";
         throw std::runtime_error(oss.str());
     }
+    this->load_glyphs();
+}
+
     
+void FontFace::set_pixel_size(FT_UInt size)
+{
+    if(FT_Set_Pixel_Sizes(face_, size, size)) {
+        std::ostringstream oss;
+        oss << "rtac_display error : Invalid text pixel size ("
+            << size << ")";
+        throw std::runtime_error(oss.str());
+    }
+    this->load_glyphs();
+}
+
+void FontFace::load_glyphs()
+{
     glyphs_.clear();
     for(uint8_t c = 0; c < 128; c++) {
         if(FT_Load_Char(face_, c, FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT)) {
@@ -45,9 +65,9 @@ void FontFace::load_glyphs(FT_UInt pixelWidth, FT_UInt pixelHeight)
             std::cerr << "rtac_display error : failed to load glyph '"
                       << c << "'" << std::endl;
         }
-        std::cout << "Glyph " << c << ":\n" << face_->glyph->metrics << std::endl;
-        std::cout << "bitmap : " << face_->glyph->bitmap.width << "x"
-                                 << face_->glyph->bitmap.rows << std::endl << std::endl;
+        //std::cout << "Glyph " << c << ":\n" << face_->glyph->metrics << std::endl;
+        //std::cout << "bitmap : " << face_->glyph->bitmap.width << "x"
+        //                         << face_->glyph->bitmap.rows << std::endl << std::endl;
         glyphs_.emplace(std::make_pair(c, Glyph(face_)));
     }
 }

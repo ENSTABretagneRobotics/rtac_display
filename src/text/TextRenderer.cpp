@@ -165,9 +165,9 @@ void TextRenderer::update_texture()
             glyph = &font_->glyph('\n');
         }
         
-        std::cout << "character : " << c
-                  << ", shape : " << glyph->shape()
-                  << ", texture shape : " << glyph->texture().shape() << std::endl;
+        //std::cout << "character : " << c
+        //          << ", shape : " << glyph->shape()
+        //          << ", texture shape : " << glyph->texture().shape() << std::endl;
         glyph->draw(origin * current, textColor_);
         current(0,3) += glyph->advance().x;
     }
