@@ -10,6 +10,9 @@
 #include <rtac_display/GLTexture.h>
 #include <rtac_display/Colormap.h>
 
+#include <rtac_display/colormaps/Viridis.h>
+#include <rtac_display/colormaps/Gray.h>
+
 namespace rtac { namespace display {
 
 /**
@@ -65,6 +68,9 @@ class ImageRenderer : public Renderer
     void disable_colormap();
     bool uses_colormap() const;
     void set_vertical_flip(bool doFlip);
+
+    void set_viridis_colormap();
+    void set_gray_colormap();
 };
 
 }; //namespace display

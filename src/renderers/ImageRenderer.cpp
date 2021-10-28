@@ -102,8 +102,9 @@ void ImageRenderer::set_colormap(const Colormap::Ptr& colormap)
 
 bool ImageRenderer::enable_colormap()
 {
-    if(!colormap_)
-        return false;
+    if(!colormap_) {
+        this->set_viridis_colormap();
+    }
     renderProgram_ = colormapProgram_;
     return true;
 }
@@ -121,6 +122,16 @@ bool ImageRenderer::uses_colormap() const
 void ImageRenderer::set_vertical_flip(bool doFlip)
 {
     verticalFlip_ = doFlip;
+}
+
+void ImageRenderer::set_viridis_colormap()
+{
+    this->set_colormap(colormap::Viridis());
+}
+
+void ImageRenderer::set_gray_colormap()
+{
+    this->set_colormap(colormap::Gray());
 }
 
 /**
