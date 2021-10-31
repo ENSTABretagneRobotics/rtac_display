@@ -4,8 +4,10 @@ namespace rtac { namespace display { namespace text {
 
 FontFace::FontFace(const std::string& fontFilename,
                    uint32_t faceIndex,
-                   const Library::Ptr& ftLibrary) :
-    ft_(ftLibrary)
+                   const Library::Ptr& ftLibrary,
+                   FT_Render_Mode renderMode) :
+    ft_(ftLibrary),
+    renderMode_(renderMode)
 {
     if(FT_New_Face(*ft_, fontFilename.c_str(), faceIndex, &face_)) {
         std::ostringstream oss;
@@ -21,7 +23,8 @@ FontFace::FontFace(const std::string& fontFilename,
 
 FontFace::Ptr FontFace::Create(const std::string& fontFilename,
                                uint32_t faceIndex,
-                               Library::Ptr ftLibrary)
+                               Library::Ptr ftLibrary,
+                               FT_Render_Mode renderMode)
 {
     if(!ftLibrary) {
         ftLibrary = Library::Create();
@@ -29,7 +32,7 @@ FontFace::Ptr FontFace::Create(const std::string& fontFilename,
 
     // This ensure proper reference counting see enable_shared_from_this
     // documentation for more info.
-    auto tmp = Ptr(new FontFace(fontFilename, faceIndex, ftLibrary));
+    auto tmp = Ptr(new FontFace(fontFilename, faceIndex, ftLibrary, renderMode));
     return tmp->shared_from_this();
 }
 
@@ -59,16 +62,21 @@ void FontFace::set_pixel_size(FT_UInt size)
 void FontFace::load_glyphs()
 {
     glyphs_.clear();
+    if(FT_Library_SetLcdFilter(*ft_, FT_LCD_FILTER_DEFAULT)) {
+        throw std::runtime_error("Subpixel rendering is disabled");
+    }
     for(uint8_t c = 0; c < 128; c++) {
-        if(FT_Load_Char(face_, c, FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT)) {
-        //if(FT_Load_Char(face_, c, FT_LOAD_RENDER)) {
+        //if(FT_Load_Char(face_, c, FT_LOAD_DEFAULT)) {
+        if(FT_Load_Char(face_, c, FT_LOAD_FORCE_AUTOHINT)) {
             std::cerr << "rtac_display error : failed to load glyph '"
                       << c << "'" << std::endl;
         }
-        //std::cout << "Glyph " << c << ":\n" << face_->glyph->metrics << std::endl;
-        //std::cout << "bitmap : " << face_->glyph->bitmap.width << "x"
-        //                         << face_->glyph->bitmap.rows << std::endl << std::endl;
-        glyphs_.emplace(std::make_pair(c, Glyph(face_)));
+        if(FT_Render_Glyph(face_->glyph, renderMode_)) {
+            std::cerr << "rtac_display error : failed to render glyph '"
+                      << c << "'" << std::endl;
+        }
+
+        glyphs_.emplace(std::make_pair(c, Glyph(face_->glyph)));
     }
 }
 
@@ -99,12 +107,20 @@ float FontFace::descender() const
 
 float FontFace::baselineskip() const
 {
-    return face_->size->metrics.height / 64.0f;
+    // return face_->size->metrics.height / 64.0f;
+    //return face_->height / 64.0f;
+    // this aligns with ubuntu terminal (is it correct ?)
+    return face_->size->metrics.height / 64.0f + 1.0f;
 }
 
 float FontFace::max_advance() const
 {
     return face_->size->metrics.max_advance / 64.0f;
+}
+
+FT_Render_Mode FontFace::render_mode() const
+{
+    return renderMode_;
 }
 
 }; //namespace text

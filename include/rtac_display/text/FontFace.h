@@ -21,19 +21,23 @@ class FontFace : public std::enable_shared_from_this<FontFace>
 
     protected:
 
-    Library::Ptr ft_;
-    FT_Face      face_;
-    GlyphMap     glyphs_;
+    Library::Ptr   ft_;
+    FT_Face        face_;
+    GlyphMap       glyphs_;
+    FT_Render_Mode renderMode_;
 
     FontFace(const std::string& fontFilename,
              uint32_t faceIndex,
-             const Library::Ptr& ftLibrary);
+             const Library::Ptr& ftLibrary,
+             FT_Render_Mode renderMode);
 
     public:
 
     static Ptr Create(const std::string& fontFilename,
                       uint32_t faceIndex = 0,
-                      Library::Ptr ftLibrary = nullptr);
+                      Library::Ptr ftLibrary = nullptr,
+                      //FT_Render_Mode renderMode = FT_RENDER_MODE_NORMAL);
+                      FT_Render_Mode renderMode = FT_RENDER_MODE_LCD);
     
     void set_char_size(float pt, FT_UInt screenDpi = 102);
     void set_pixel_size(FT_UInt size);
@@ -48,6 +52,7 @@ class FontFace : public std::enable_shared_from_this<FontFace>
     float descender() const;
     float baselineskip() const;
     float max_advance() const;
+    FT_Render_Mode render_mode() const;
 };
 
 }; //namespace text

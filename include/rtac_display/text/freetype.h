@@ -4,8 +4,10 @@
 #include <iostream>
 #include <memory>
 
+#define FT_CONFIG_OPTION_SUBPIXEL_RENDERING
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include FT_LCD_FILTER_H
 
 namespace rtac { namespace display { namespace text {
 

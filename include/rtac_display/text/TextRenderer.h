@@ -23,7 +23,8 @@ class TextRenderer : public Renderer
     using Vec4     = types::Vector4<float>;
 
     static const std::string vertexShader;
-    static const std::string fragmentShader;
+    static const std::string fragmentShaderFlat;
+    static const std::string fragmentShaderSubPix;
 
     protected:
     
@@ -31,8 +32,11 @@ class TextRenderer : public Renderer
     std::string        text_;
     GLTexture          texture_;
     Vec4               origin_; // full 3D space position.
-    Color::RGBf        textColor_;
+    Color::RGBAf       textColor_;
     Color::RGBAf       backColor_;
+
+    GLuint renderProgramFlat_;
+    GLuint renderProgramSubPix_;
     
     TextRenderer(const FontFace::ConstPtr& font);
 
@@ -41,7 +45,7 @@ class TextRenderer : public Renderer
     static Ptr Create(const FontFace::ConstPtr& font,
                       const std::string& text);
     void set_text(const std::string& text, bool updateNow = true);
-    void set_text_color(const Color::RGBf& color, bool updateNow = true);
+    void set_text_color(const Color::RGBAf& color, bool updateNow = true);
     void set_back_color(const Color::RGBAf& color, bool updateNow = true);
     void update_texture();
 
@@ -53,7 +57,7 @@ class TextRenderer : public Renderer
     Mat4 view_matrix() const;
     Vec4& origin();
     const Vec4& origin() const;
-    const Color::RGBf& text_color() const;
+    const Color::RGBAf& text_color() const;
     const Color::RGBAf& back_color() const;
 
     virtual void draw();

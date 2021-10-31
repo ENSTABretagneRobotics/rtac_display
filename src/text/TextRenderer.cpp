@@ -22,7 +22,7 @@ void main()
 /**
  * Simply outputs the texture value at given texture coordinates.
  */
-const std::string TextRenderer::fragmentShader = std::string(R"(
+const std::string TextRenderer::fragmentShaderFlat = std::string(R"(
 #version 430 core
 
 in vec2 uv;
@@ -35,12 +35,35 @@ void main()
     outColor = texture(tex, uv);
 }
 )");
+
+/**
+ * Simply outputs the texture value at given texture coordinates.
+ */
+const std::string TextRenderer::fragmentShaderSubPix = std::string(R"(
+#version 430 core
+
+in vec2 uv;
+uniform sampler2D tex;
+uniform vec4 color;
+
+layout(location = 0, index = 0) out vec4 outColor;
+layout(location = 0, index = 1) out vec4 outMask;
+
+void main()
+{
+    outColor = color;
+    outMask  = color.a*texture(tex, uv);
+}
+)");
+
 TextRenderer::TextRenderer(const FontFace::ConstPtr& font) :
-    Renderer(vertexShader, fragmentShader),
+    Renderer(vertexShader, fragmentShaderFlat),
     font_(font),
     origin_({0,0,0,1}),
     textColor_({0,0,0}),
-    backColor_({0,0,0,0})
+    backColor_({0,0,0,0}),
+    renderProgramFlat_(renderProgram_),
+    renderProgramSubPix_(create_render_program(vertexShader, fragmentShaderSubPix))
 {
     if(!font_) {
         std::ostringstream oss;
@@ -65,7 +88,7 @@ void TextRenderer::set_text(const std::string& text, bool updateNow)
         this->update_texture();
 }
 
-void TextRenderer::set_text_color(const Color::RGBf& color, bool updateNow)
+void TextRenderer::set_text_color(const Color::RGBAf& color, bool updateNow)
 {
     textColor_ = color;
     if(updateNow)
@@ -106,7 +129,7 @@ Shape TextRenderer::compute_text_area(const std::string& text)
     }
     maxWidth = std::max(maxWidth, currentWidth);
     return Shape({(size_t)(4*(((int)maxWidth + 3) / 4)),
-                  (size_t)(lineCount * font_->baselineskip() + 1)});
+                  (size_t)(lineCount * font_->baselineskip())});
 }
 
 void TextRenderer::update_texture()
@@ -118,10 +141,10 @@ void TextRenderer::update_texture()
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     texture_.unbind(GL_TEXTURE_2D);
 
@@ -175,6 +198,23 @@ void TextRenderer::update_texture()
     // unbinding the frame buffer for re-enabling on-screen rendering
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    switch(font_->render_mode()) {
+        default: {
+            std::ostringstream oss;
+            oss << "TextRenderer::update_texture : pixel type "
+                << font_->render_mode() << " not implemented.";
+            throw std::runtime_error(oss.str());
+            }
+            break;
+        case FT_RENDER_MODE_NORMAL:
+            renderProgram_ = renderProgramFlat_;
+            break;
+        case FT_RENDER_MODE_LCD:
+            renderProgram_ = renderProgramSubPix_;
+            break;
+    }
+    //glEnable(GL_FRAMEBUFFER_SRGB);
+
     GL_CHECK_LAST();
 }
 
@@ -221,7 +261,7 @@ const TextRenderer::Vec4& TextRenderer::origin() const
     return origin_;
 }
 
-const Color::RGBf& TextRenderer::text_color() const
+const Color::RGBAf& TextRenderer::text_color() const
 {
     return textColor_;
 }
@@ -254,7 +294,11 @@ void TextRenderer::draw()
 
     //glEnable(GL_FRAMEBUFFER_SRGB);
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if(renderProgram_ == renderProgramFlat_)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    else
+        glBlendFunc(GL_SRC1_COLOR, GL_ONE_MINUS_SRC1_COLOR);
+
     glUseProgram(renderProgram_);
 
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, points_.data());
@@ -265,6 +309,10 @@ void TextRenderer::draw()
     glUniform1i(glGetUniformLocation(renderProgram_, "tex"), 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_.gl_id());
+
+    if(renderProgram_ == renderProgramSubPix_) {
+        glUniform4fv(glGetUniformLocation(renderProgram_, "color"), 1, (const float*)&textColor_);
+    }
     
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indexes);
     

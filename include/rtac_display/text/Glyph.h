@@ -25,7 +25,8 @@ class Glyph
     using Mat4 = View::Mat4;
 
     static const std::string vertexShader;
-    static const std::string fragmentShader;
+    static const std::string fragmentShaderFlat;
+    static const std::string fragmentShaderSubPix;
 
     protected:
     
@@ -33,9 +34,14 @@ class Glyph
     types::Point2<float> advance_;
     types::Point2<float> shape_;
     mutable GLTexture    texture_;
-    GLuint               renderProgram_;
 
-    Glyph(FT_Face face);
+    GLuint renderProgramFlat_;
+    GLuint renderProgramSubPix_;
+    GLuint renderProgram_;
+
+    Glyph(FT_GlyphSlot glyph);
+
+    void load_bitmap(FT_GlyphSlot glyph);
 
     public:
 
@@ -52,7 +58,7 @@ class Glyph
     const GLTexture&     texture() const;
 
     void draw(const Mat4& mat = Mat4::Identity(),
-              const Color::RGBf& color = {0,0,0}) const;
+              const Color::RGBAf& color = {0,0,0,0}) const;
 };
 
 }; //namespace text
