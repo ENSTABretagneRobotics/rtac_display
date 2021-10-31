@@ -59,15 +59,11 @@ int main()
     // display.set_clear_color({1,1,1,1});
     // textRenderer->set_text_color({0,0,0});
     // //display.add_display_flags(DrawingSurface::GAMMA_CORRECTION);
-    // display.remove_display_flags(DrawingSurface::GAMMA_CORRECTION);
+    // //display.remove_display_flags(DrawingSurface::GAMMA_CORRECTION);
 
-    //display.set_clear_color({0,0,0,0});
-    //display.set_clear_color({48./255,10./255,36./255,1});
     display.set_clear_color({56./255,12./255,42./255,1});
-    //textRenderer->set_text_color({1,1,1});
-    float c = 0.7;
+    float c = 0.8;
     textRenderer->set_text_color({c,c,c});
-    //textRenderer->set_text_color({0.5,0.5,0.5});
     //display.add_display_flags(DrawingSurface::GAMMA_CORRECTION);
     //display.remove_display_flags(DrawingSurface::GAMMA_CORRECTION);
 

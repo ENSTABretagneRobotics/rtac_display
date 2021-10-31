@@ -138,8 +138,8 @@ void Glyph::draw(const Mat4& view, const Color::RGBf& color) const
     static const unsigned int indexes[] = {0, 1, 2,
                                            0, 2, 3};
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glUseProgram(renderProgram_);
 

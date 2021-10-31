@@ -252,7 +252,9 @@ void TextRenderer::draw()
     static const unsigned int indexes[] = {0, 1, 2,
                                            0, 2, 3};
 
-    glEnable(GL_FRAMEBUFFER_SRGB);
+    //glEnable(GL_FRAMEBUFFER_SRGB);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glUseProgram(renderProgram_);
 
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, points_.data());
