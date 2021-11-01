@@ -42,8 +42,9 @@ void write_char_ppm(char c, text::FontFace::Ptr font)
               << prefix << "bsize       : " << glyph->bitmap.width << "x"<< glyph->bitmap.rows
               << prefix << "bpitch      : " << glyph->bitmap.pitch
               << prefix << "horiBearing : " << glyph->metrics.horiBearingX / 64.0f << ", " << glyph->metrics.horiBearingY / 64.0f
-              << prefix << "advance     : " << glyph->advance.x / 64.0f << ", " << glyph->advance.y
               << prefix << "shape       : " << glyph->metrics.width  / 64.0f << ", " << glyph->metrics.height / 64.0f
+              << prefix << "advance     : " << glyph->advance.x / 64.0f << ", " << glyph->advance.y
+              << prefix << "linear adv  : " << glyph->linearHoriAdvance / 65536.0f << "x" << glyph->linearVertAdvance / 65536.0f
               << endl << endl;
 
     std::vector<Color::RGB8> data(glyph->bitmap.width*glyph->bitmap.rows / 3);

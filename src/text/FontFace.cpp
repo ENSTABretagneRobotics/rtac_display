@@ -123,6 +123,27 @@ FT_Render_Mode FontFace::render_mode() const
     return renderMode_;
 }
 
+FT_Vector FontFace::get_kerning(char left, char right) const
+{
+    FT_Vector kerning({0,0});
+
+    auto leftIndex  = FT_Get_Char_Index(face_, left);
+    auto rightIndex = FT_Get_Char_Index(face_, right);
+
+    if(!leftIndex || !rightIndex) {
+        return kerning;
+    }
+
+    if(FT_Get_Kerning(face_, leftIndex, rightIndex,
+                      FT_KERNING_DEFAULT, &kerning)) {
+        std::cerr << "Unable to get kerning info for ("
+                  << left << "," << right << ")" << std::endl;
+        return kerning;
+    }
+
+    return kerning;
+}
+
 }; //namespace text
 }; //namespace display
 }; //namespace rtac

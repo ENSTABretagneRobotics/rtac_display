@@ -53,6 +53,8 @@ class FontFace : public std::enable_shared_from_this<FontFace>
     float baselineskip() const;
     float max_advance() const;
     FT_Render_Mode render_mode() const;
+
+    FT_Vector get_kerning(char left, char right) const;
 };
 
 }; //namespace text
@@ -98,6 +100,12 @@ inline std::ostream& operator<<(std::ostream& os, const FT_Bitmap_Size& bitmapSi
        << prefix << "size   : " << bitmapSize.size   / 64.0f
        << prefix << "x_ppem : " << bitmapSize.x_ppem / 64.0f
        << prefix << "y_ppem : " << bitmapSize.y_ppem / 64.0f;
+    return os;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const FT_Vector& vector)
+{
+    os << "(" << vector.x << "," << vector.y << ")";
     return os;
 }
 
