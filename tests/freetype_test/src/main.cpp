@@ -96,8 +96,13 @@ int main()
         oss << endl << "Portez ce vieux whisky au juge blond qui fume.";
     auto textRenderer = text::TextRenderer::Create(font, oss.str());
     display.add_renderer(textRenderer);
+    textRenderer->origin()(0) = 0;
+    textRenderer->origin()(1) = 0;
+    textRenderer->set_anchor("top left");
+
     textRenderer->origin()(0) = -1;
     textRenderer->origin()(1) = -1;
+    textRenderer->set_anchor("bottom left");
     
     // float c = 0.0;
     // display.set_clear_color({1,1,1,1});

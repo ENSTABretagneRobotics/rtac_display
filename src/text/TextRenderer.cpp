@@ -56,10 +56,12 @@ void main()
 }
 )");
 
-TextRenderer::TextRenderer(const FontFace::ConstPtr& font) :
-    Renderer(vertexShader, fragmentShaderFlat),
+TextRenderer::TextRenderer(const FontFace::ConstPtr& font,
+                           const View::Ptr& view) :
+    Renderer(vertexShader, fragmentShaderFlat, view),
     font_(font),
     origin_({0,0,0,1}),
+    anchor_({0,1.0f}),
     textColor_({0,0,0}),
     backColor_({0,0,0,0}),
     renderProgramFlat_(renderProgram_),
@@ -74,9 +76,10 @@ TextRenderer::TextRenderer(const FontFace::ConstPtr& font) :
 }
 
 TextRenderer::Ptr TextRenderer::Create(const FontFace::ConstPtr& font,
-                                       const std::string& text)
+                                       const std::string& text,
+                                       const View::Ptr& view)
 {
-    auto renderer = Ptr(new TextRenderer(font));
+    auto renderer = Ptr(new TextRenderer(font, view));
     renderer->set_text(text);
     return renderer;
 }
@@ -100,6 +103,27 @@ void TextRenderer::set_back_color(const Color::RGBAf& color, bool updateNow)
     backColor_ = color;
     if(updateNow)
         this->update_texture();
+}
+
+void TextRenderer::set_anchor(const std::string& desc)
+{
+    if(desc.find("center") != std::string::npos) {
+        anchor_(0) = 0.5f;
+        anchor_(1) = 0.5f;
+        return;
+    }
+    if(desc.find("left") != std::string::npos) {
+        anchor_(0) = 0.0f;
+    }
+    else if(desc.find("right") != std::string::npos) {
+        anchor_(0) = 1.0f;
+    }
+    if(desc.find("top") != std::string::npos) {
+        anchor_(1) = 1.0f;
+    }
+    else if(desc.find("bottom") != std::string::npos) {
+        anchor_(1) = 0.0f;
+    }
 }
 
 Shape TextRenderer::compute_text_area(const std::string& text)
@@ -261,6 +285,16 @@ const TextRenderer::Vec4& TextRenderer::origin() const
     return origin_;
 }
 
+TextRenderer::Vec2& TextRenderer::anchor()
+{
+    return anchor_;
+}
+
+const TextRenderer::Vec2& TextRenderer::anchor() const
+{
+    return anchor_;
+}
+
 const Color::RGBAf& TextRenderer::text_color() const
 {
     return textColor_;
@@ -271,20 +305,32 @@ const Color::RGBAf& TextRenderer::back_color() const
     return backColor_;
 }
 
-void TextRenderer::draw()
+std::array<TextRenderer::Vec4,4> TextRenderer::compute_corners() const
 {
-    // OpenGL clip space origin.
-    Vec4 clipOrigin = view_->view_matrix() * origin_;
     float clipWidth  = (2.0f*texture_.width() ) / view_->screen_size().width;
     float clipHeight = (2.0f*texture_.height()) / view_->screen_size().height;
     //float clipWidth  = (2.0f*texture_.width() ) / (view_->screen_size().width - 1);
     //float clipHeight = (2.0f*texture_.height()) / (view_->screen_size().height- 1);
 
-    std::vector<Vec4> points_({
+    // OpenGL clip space origin.
+    Vec4 clipOrigin = view_->view_matrix() * origin_;
+
+    // Anchor shift
+    clipOrigin(0) -= anchor_(0)*clipWidth;
+    clipOrigin(1) -= anchor_(1)*clipHeight;
+
+    std::array<Vec4,4> corners({
         Vec4(clipOrigin + Vec4({0,0,0,0})),
         Vec4(clipOrigin + Vec4({clipWidth,0,0,0})),
         Vec4(clipOrigin + Vec4({clipWidth,clipHeight,0,0})),
         Vec4(clipOrigin + Vec4({0,clipHeight,0,0}))});
+
+    return corners;
+}
+
+void TextRenderer::draw()
+{
+    auto corners = compute_corners();
     static const float uv[] = {0,1,
                                1,1,
                                1,0,
@@ -301,7 +347,7 @@ void TextRenderer::draw()
 
     glUseProgram(renderProgram_);
 
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, points_.data());
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, corners.data());
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, uv);
     glEnableVertexAttribArray(1);
