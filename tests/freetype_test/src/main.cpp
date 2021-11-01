@@ -77,8 +77,9 @@ int main()
     //display.add_renderer(renderer);
 
     auto font = text::FontFace::Create(filename);
-    //font->set_pixel_size(18);
+    font->set_char_size(10);
     font->set_char_size(12);
+    //font->set_pixel_size(18);
     
     text::Glyph::Mat4 view = text::Glyph::Mat4::Identity();
     view(0,0) = 0.5f; view(1,1) = 0.5f;
@@ -91,7 +92,7 @@ int main()
 
     //auto textRenderer = text::TextRenderer::Create(font, "Hello there !\nGeneral Kenobi !\n");
     std::ostringstream oss;
-    oss << "Portez ce vieux whisky au juge blond qui fume.";
+    oss << "Portez ce vieux whisky au juge blond qui fume." << 1234567890;
     for(int i = 0; i < 10; i++)
         oss << endl << "Portez ce vieux whisky au juge blond qui fume.";
     auto textRenderer = text::TextRenderer::Create(font, oss.str());

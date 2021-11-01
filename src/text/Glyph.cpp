@@ -63,10 +63,10 @@ void main()
 
 
 Glyph::Glyph(FT_GlyphSlot glyph) :
-    //bearing_({(float)glyph->bitmap_left,
-    //          (float)glyph->bitmap_top}),
-    bearing_({glyph->metrics.horiBearingX / 64.0f,
-              glyph->metrics.horiBearingY / 64.0f}),
+    bearing_({(float)glyph->bitmap_left,
+              (float)glyph->bitmap_top}),
+    //bearing_({glyph->metrics.horiBearingX / 64.0f,
+    //          glyph->metrics.horiBearingY / 64.0f}),
     advance_({glyph->advance.x / 64.0f,
               glyph->advance.y / 64.0f}),
     shape_({glyph->metrics.width  / 64.0f,
