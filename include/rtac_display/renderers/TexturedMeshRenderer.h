@@ -279,6 +279,7 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_solid() const
         //                GLFormat<Tf>::Type, 0);
         glDrawElements(GL_LINE_STRIP, GLFormat<Tf>::Size*faces_->size(),
                        GLFormat<Tf>::Type, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     else {
         // glDrawArrays(GL_TRIANGLES, 0, points_->size());
@@ -319,6 +320,7 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_textured() const
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faces_->gl_id());
         glDrawElements(GL_TRIANGLES, GLFormat<Tf>::Size*faces_->size(),
                        GLFormat<Tf>::Type, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     else {
         glDrawArrays(GL_TRIANGLES, 0, points_->size());
@@ -327,6 +329,7 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_textured() const
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
 
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glUseProgram(0);
