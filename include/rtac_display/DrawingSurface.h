@@ -6,6 +6,7 @@
 
 #include <rtac_display/Color.h>
 #include <rtac_display/renderers/Renderer.h>
+#include <rtac_display/text/TextRenderer.h>
 
 namespace rtac { namespace display {
 
@@ -45,6 +46,7 @@ class DrawingSurface : public Renderer
     Point2       viewportOrigin_;
     Views        views_;
     Renderers    renderers_;
+    Renderers    textRenderers_;
     Color::RGBAf clearColor_;
     Flags        displayFlags_;
 
@@ -56,6 +58,7 @@ class DrawingSurface : public Renderer
 
     void add_view(const View::Ptr& view);
     void add_renderer(const Renderer::Ptr& renderer);
+    void add_renderer(const text::TextRenderer::Ptr& renderer);
     virtual void draw();
 
     void set_viewport_origin(const Point2& origin);

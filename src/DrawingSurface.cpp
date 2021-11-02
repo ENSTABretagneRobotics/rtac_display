@@ -55,6 +55,18 @@ void DrawingSurface::add_renderer(const Renderer::Ptr& renderer)
 }
 
 /**
+ * Append a rtac::display::Renderer to the list of handled renderers.
+ *
+ * The view associated to the renderer will automatically be added to the
+ * handled views via DrawingSurface::add_view method.
+ */
+void DrawingSurface::add_renderer(const text::TextRenderer::Ptr& renderer)
+{
+    textRenderers_.push_back(renderer);
+    views_.push_back(renderer->view());
+}
+
+/**
  * Update all handled views with the current display size and draw all the
  * handled renderers after clearing the display area.
  */
@@ -70,6 +82,11 @@ void DrawingSurface::draw()
 
     this->handle_display_flags();
     for(auto renderer : renderers_) {
+        if(renderer) {
+            renderer->draw();
+        }
+    }
+    for(auto renderer : textRenderers_) {
         if(renderer) {
             renderer->draw();
         }

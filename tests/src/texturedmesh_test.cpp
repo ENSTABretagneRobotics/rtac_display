@@ -68,6 +68,9 @@ int main()
     label1->set_text_color({1,1,1,1});
     label1->origin()(1) = 1.0f;
 
+    display.add_renderer(label0);
+    display.add_renderer(label1);
+
     // auto meshRenderer = TexturedMeshRenderer<>::New(display.view());
     // auto mesh = Mesh::cube(0.5);
     // Mesh::PointVector points(0);
@@ -112,8 +115,6 @@ int main()
 
     display.add_renderer(renderer);
     display.add_renderer(meshRenderer);
-    display.add_renderer(label0);
-    display.add_renderer(label1);
 
     float dangle = 0.001;
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));
