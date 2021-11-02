@@ -319,6 +319,12 @@ std::array<TextRenderer::Vec4,4> TextRenderer::compute_corners() const
     clipOrigin(0) -= anchor_(0)*clipWidth;
     clipOrigin(1) -= anchor_(1)*clipHeight;
 
+    // normalizing coordinates
+    clipOrigin(0) /= clipOrigin(3);
+    clipOrigin(1) /= clipOrigin(3);
+    clipOrigin(2) /= clipOrigin(3);
+    clipOrigin(3)  = 1.0f;
+
     std::array<Vec4,4> corners({
         Vec4(clipOrigin + Vec4({0,0,0,0})),
         Vec4(clipOrigin + Vec4({clipWidth,0,0,0})),
@@ -346,7 +352,8 @@ void TextRenderer::draw()
         glBlendFunc(GL_SRC1_COLOR, GL_ONE_MINUS_SRC1_COLOR);
 
     glUseProgram(renderProgram_);
-
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, corners.data());
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, uv);
@@ -360,6 +367,7 @@ void TextRenderer::draw()
         glUniform4fv(glGetUniformLocation(renderProgram_, "color"), 1, (const float*)&textColor_);
     }
     
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indexes);
     
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -367,7 +375,8 @@ void TextRenderer::draw()
     glDisableVertexAttribArray(0);
 
     glUseProgram(0);
-    glDisable(GL_FRAMEBUFFER_SRGB);
+    glDisable(GL_BLEND);
+    //glDisable(GL_FRAMEBUFFER_SRGB);
 
     GL_CHECK_LAST();
 }
