@@ -87,10 +87,6 @@ list(APPEND rtac_display_SOURCES
     src/samples/Display3D.cpp
 )
 add_library(rtac_display SHARED ${rtac_display_SOURCES})
-set_target_properties(rtac_display PROPERTIES 
-    RTAC_PUBLIC_HEADERS "${rtac_display_PUBLIC_HEADERS}"
-    INSTALL_RPATH_USE_LINK_PATH True
-)
 target_include_directories(rtac_display PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
@@ -128,6 +124,10 @@ endif()
 
 add_subdirectory(tests)
 
+set_target_properties(rtac_display PROPERTIES 
+    RTAC_PUBLIC_HEADERS "${rtac_display_PUBLIC_HEADERS}"
+    INSTALL_RPATH_USE_LINK_PATH True
+)
 rtac_install_target(rtac_display
     ADDITIONAL_CONFIG_COMMANDS ${CONFIG_COMMANDS}
 )
