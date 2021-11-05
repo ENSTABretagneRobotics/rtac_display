@@ -40,6 +40,7 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/views/OrthoView.h
 
     include/rtac_display/renderers/Renderer.h
+    include/rtac_display/renderers/Frame.h
     include/rtac_display/renderers/ImageRenderer.h
     include/rtac_display/renderers/PointCloudRenderer.h
     include/rtac_display/renderers/MeshRenderer.h
@@ -70,6 +71,7 @@ list(APPEND rtac_display_SOURCES
     src/views/OrthoView.cpp
 
     src/renderers/Renderer.cpp
+    src/renderers/Frame.cpp
     src/renderers/ImageRenderer.cpp
     src/renderers/PointCloudRenderer.cpp
     src/renderers/MeshRenderer.cpp
