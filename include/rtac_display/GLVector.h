@@ -66,7 +66,7 @@ class GLVector
     public:
 
     GLVector();
-    GLVector(size_t size);
+    GLVector(size_t size, const T* data = nullptr);
     GLVector(const GLVector<T>& other);
     GLVector(const std::vector<T>& other);
     ~GLVector();
@@ -164,10 +164,12 @@ GLVector<T>::GLVector() :
  * @param size Number of elements to allocate.
  */
 template <typename T>
-GLVector<T>::GLVector(size_t size) :
+GLVector<T>::GLVector(size_t size, const T* data) :
     GLVector()
 {
     this->resize(size);
+    if(data)
+        this->set_data(size, data);
 }
 
 /**
