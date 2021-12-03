@@ -5,9 +5,11 @@
 
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Pose.h>
+#include <rtac_base/types/Point.h>
 
 #include <rtac_display/utils.h>
 #include <rtac_display/Color.h>
+#include <rtac_display/GLVector.h>
 #include <rtac_display/renderers/Renderer.h>
 #include <rtac_display/views/View.h>
 #include <rtac_display/views/View3D.h>
@@ -54,11 +56,53 @@ class NormalsRenderer : public Renderer
 
     void set_normals(size_t numPoints, GLuint input, bool normalizeNormals = true);
 
+    template <typename Derived1, typename Derived2>
+    void set_normals(const Eigen::DenseBase<Derived1>& points,
+                     const Eigen::DenseBase<Derived2>& normals,
+                     bool normalizeNormals = true);
+    
+
     void set_pose(const Pose& pose);
     void set_color(const Color::RGBAf& color);
 
     virtual void draw();
 };
+
+template <typename Derived1, typename Derived2>
+void NormalsRenderer::set_normals(const Eigen::DenseBase<Derived1>& points,
+                                  const Eigen::DenseBase<Derived2>& normals,
+                                  bool normalizeNormals)
+{
+    if(points.rows() != normals.rows()) {
+        std::ostringstream oss;
+        oss << "NormalsRenderer::set_points : number of points not "
+            << "equal to the number of normals";
+        throw std::runtime_error(oss.str());
+    }
+
+    if(points.cols() < 3 || normals.cols() < 3) {
+        std::ostringstream oss;
+        oss << "NormalsRenderer::set_points : invalid data shape.";
+        throw std::runtime_error(oss.str());
+    }
+
+    GLVector<types::Point3<float>> pdata(points.rows());
+    GLVector<types::Point3<float>> ndata(normals.rows());
+    {
+        auto p = pdata.map();
+        auto n = ndata.map();
+        for(int i = 0; i < pdata.size(); i++) {
+            p[i].x = points(i,0);
+            p[i].y = points(i,1);
+            p[i].z = points(i,2);
+            n[i].x = normals(i,0);
+            n[i].y = normals(i,1);
+            n[i].z = normals(i,2);
+        }
+    }
+    this->set_normals(points.rows(), pdata.gl_id(), ndata.gl_id(),
+                      normalizeNormals);
+}
 
 }; //namespace display
 }; //namespace rtac
