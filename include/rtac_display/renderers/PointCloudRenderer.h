@@ -131,7 +131,7 @@ template <typename PointT> template <typename Derived>
 void PointCloudRenderer<PointT>::set_points(const Eigen::DenseBase<Derived>& points)
 {
     //expects points on rows.
-    if(points.cols() != 3) {
+    if(points.cols() < 3) {
         throw std::runtime_error("PointCloudRenderer.set_points : Wrong matrix shape");
     }
     size_t numPoints = points.rows();
