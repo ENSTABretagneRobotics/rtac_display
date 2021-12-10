@@ -47,8 +47,7 @@ MeshRenderer::MeshRenderer(const View3D::Ptr& view, const Color::RGBAf& color) :
     points_(0),
     normals_(0),
     color_(color)
-{
-}
+{}
 
 void MeshRenderer::allocate_points(size_t numPoints)
 {

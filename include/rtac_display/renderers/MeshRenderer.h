@@ -90,6 +90,8 @@ void MeshRenderer::set_mesh(const types::Mesh<Tp,Tf>& mesh)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     numPoints_ = 9*mesh.num_faces();
+
+    GL_CHECK_LAST(); 
 }
 
 }; //namespace display
