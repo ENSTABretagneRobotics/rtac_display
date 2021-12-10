@@ -2,7 +2,8 @@
 
 namespace rtac { namespace display {
 
-Display::Display(size_t width, size_t height, const std::string& title) :
+Display::Display(size_t width, size_t height, const std::string& title,
+                 const Window& sharedContext) :
     DrawingSurface({width,height}),
     window_(NULL),
     frameCounterEnabled_(true)
@@ -10,12 +11,13 @@ Display::Display(size_t width, size_t height, const std::string& title) :
     if(!glfwInit()) {
         throw std::runtime_error("GLFW initialization failure.");
     }
-    window_ = Window(glfwCreateWindow(width, height, title.c_str(), NULL, NULL),
+    window_ = Window(glfwCreateWindow(width, height, title.c_str(), NULL, sharedContext.get()),
                      glfwDestroyWindow); //custom deleter
     if(!window_) {
         throw std::runtime_error("GLFW window creation failure.");
     }
-    glfwMakeContextCurrent(window_.get());
+    this->make_current();
+    //glfwMakeContextCurrent(window_.get());
     
     // init glew (no gl function availabel if not done)
     GLenum initGlewStatus(glewInit());
@@ -40,6 +42,10 @@ Display::Display(size_t width, size_t height, const std::string& title) :
                            | DrawingSurface::CLEAR_DEPTH);
 }
 
+Display::Display(const Window& sharedContext) :
+    Display(800, 600, "rtac_display", sharedContext)
+{}
+
 void Display::terminate()
 {
     glfwTerminate();
@@ -48,6 +54,11 @@ void Display::terminate()
 Display::Window Display::window()
 {
     return window_;
+}
+
+void Display::make_current()
+{
+    glfwMakeContextCurrent(window_.get());
 }
 
 /**
@@ -120,7 +131,8 @@ void Display::wait_for_close() const
  */
 void Display::draw()
 {
-    glfwMakeContextCurrent(window_.get());
+    //glfwMakeContextCurrent(window_.get());
+    this->make_current();
     this->view()->set_screen_size(this->window_shape());
     
     this->DrawingSurface::draw();

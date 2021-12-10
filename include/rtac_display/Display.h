@@ -80,10 +80,13 @@ class Display : public DrawingSurface
     public:
 
     Display(size_t width = 800, size_t height = 600,
-            const std::string& title = "optix render");
+            const std::string& title = "rtac_display",
+            const Window& sharedContext = nullptr);
+    Display(const Window& sharedContext);
     void terminate();
 
     Window window();
+    void make_current();
 
     Shape window_shape() const;
     int should_close() const;

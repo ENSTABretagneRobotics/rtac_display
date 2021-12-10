@@ -2,13 +2,19 @@
 
 namespace rtac { namespace display { namespace samples {
 
-Display3D::Display3D(int width, int height, const std::string& name) :
+Display3D::Display3D(int width, int height, const std::string& name,
+                     const Display::Window& sharedContext) :
+    Display(width,height,name,sharedContext),
     view_(PinholeView::New()),
     controls_(OrbitControls::Create(view_, {0,0,0}))
 {
     this->add_view(view_);
     this->add_event_handler(controls_);
 }
+
+Display3D::Display3D(const Display::Window& sharedContext) :
+    Display3D(800, 600, "rtac_display", sharedContext)
+{}
 
 PinholeView::Ptr Display3D::view()
 {

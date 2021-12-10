@@ -9,6 +9,7 @@ list(APPEND test_names
     imagedisplay_test.cpp
     userinput_test.cpp
     glfwinput_test.cpp
+    dual_window.cpp
 )
 list(APPEND test_deps
     rtac_display

@@ -152,7 +152,7 @@ void PointCloudRenderer<PointT>::draw()
     if(points_.size() == 0)
         return;
     
-    glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_DEPTH_TEST);
     Mat4 view = view_->view_matrix() * pose_.homogeneous_matrix();
 
     GLfloat pointSize;
