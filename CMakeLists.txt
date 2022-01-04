@@ -30,6 +30,7 @@ endif()
 
 list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/utils.h
+    include/rtac_display/GLState.h
     include/rtac_display/GLFormat.h
     include/rtac_display/Color.h
 
@@ -63,6 +64,7 @@ list(APPEND rtac_display_PUBLIC_HEADERS
 )
 list(APPEND rtac_display_SOURCES
     src/utils.cpp
+    src/GLState.cpp
 
     src/views/View.cpp
     src/views/ImageView.cpp

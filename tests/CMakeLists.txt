@@ -10,7 +10,6 @@ list(APPEND test_names
     userinput_test.cpp
     glfwinput_test.cpp
     dual_window.cpp
-    state_mirror.cpp
 )
 list(APPEND test_deps
     rtac_display
