@@ -66,6 +66,18 @@ void DrawingSurface::add_renderer(const text::TextRenderer::Ptr& renderer)
     views_.push_back(renderer->view());
 }
 
+void DrawingSurface::add_render_item(const RenderItem& item)
+{
+    renderItems_.push_back(item);
+    this->add_view(item.second);
+}
+
+void DrawingSurface::add_render_item(const Renderer::Ptr& renderer,
+                                     const View::Ptr& view)
+{
+    this->add_render_item(std::make_pair(renderer, view));
+}
+
 /**
  * Update all handled views with the current display size and draw all the
  * handled renderers after clearing the display area.
@@ -81,12 +93,17 @@ void DrawingSurface::draw()
                shape.width, shape.height);
 
     this->handle_display_flags();
-    for(auto renderer : renderers_) {
+    for(auto& renderer : renderers_) {
         if(renderer) {
             renderer->draw();
         }
     }
-    for(auto renderer : textRenderers_) {
+    for(auto& item : renderItems_) {
+        if(item.first) {
+            item.first->draw(item.second);
+        }
+    }
+    for(auto& renderer : textRenderers_) {
         if(renderer) {
             renderer->draw();
         }

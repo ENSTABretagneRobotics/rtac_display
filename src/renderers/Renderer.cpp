@@ -95,11 +95,16 @@ Renderer::Renderer(const std::string& vertexShader,
     Renderer(nullptr, vertexShader, fragmentShader, view)
 {}
 
+void Renderer::draw()
+{
+    this->draw(this->view());
+}
+
 /**
  * Performs the OpenGL API calls to draw an object. By default this draws a XYZ
  * frame at the origin.
  */
-void Renderer::draw()
+void Renderer::draw(View::ConstPtr view)
 {
     float vertices[] = {0,0,0,
                         1,0,0,
@@ -113,7 +118,7 @@ void Renderer::draw()
                       0,1,0,
                       0,0,1,
                       0,0,1};
-
+    
     GLfloat lineWidth;
     glGetFloatv(GL_LINE_WIDTH, &lineWidth);
     glLineWidth(3);
@@ -126,7 +131,7 @@ void Renderer::draw()
     glEnableVertexAttribArray(1);
 
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),
-        1, GL_FALSE, view_->view_matrix().data());
+        1, GL_FALSE, view->view_matrix().data());
 
     glDrawArrays(GL_LINES, 0, 6);
     

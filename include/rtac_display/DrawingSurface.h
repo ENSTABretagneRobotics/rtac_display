@@ -1,6 +1,8 @@
 #ifndef _DEF_RTAC_DISPLAY_DRAWING_SURFACE_H_
 #define _DEF_RTAC_DISPLAY_DRAWING_SURFACE_H_
 
+#include <utility>
+
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Point.h>
 
@@ -33,6 +35,9 @@ class DrawingSurface : public Renderer
     using Views     = std::vector<View::Ptr>;
     using Renderers = std::vector<Renderer::Ptr>;
 
+    using RenderItem  = std::pair<Renderer::Ptr, View::Ptr>;
+    using RenderItems = std::vector<RenderItem>;
+
     enum Flags : uint32_t {
         FLAGS_NONE  = 0x0,
 
@@ -45,6 +50,9 @@ class DrawingSurface : public Renderer
     protected:
     
     Point2         viewportOrigin_;
+    
+    RenderItems    renderItems_;
+
     Views          views_;
     Renderers      renderers_;
     Renderers      textRenderers_;
@@ -60,6 +68,10 @@ class DrawingSurface : public Renderer
     void add_view(const View::Ptr& view);
     void add_renderer(const Renderer::Ptr& renderer);
     void add_renderer(const text::TextRenderer::Ptr& renderer);
+
+    void add_render_item(const RenderItem& item);
+    void add_render_item(const Renderer::Ptr& renderer, const View::Ptr& view);
+
     virtual void draw();
 
     void set_viewport_origin(const Point2& origin);

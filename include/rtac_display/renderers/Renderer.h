@@ -72,6 +72,7 @@ class Renderer
     const GLContext::Ptr context() const { return context_; }
     
     virtual void draw();
+    virtual void draw(View::ConstPtr view);
     virtual void set_view(const View::Ptr& view) const; // Why const ?
 
     View::Ptr view() const;

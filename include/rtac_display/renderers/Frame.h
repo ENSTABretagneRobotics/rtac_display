@@ -37,6 +37,7 @@ class Frame : public Renderer
     void set_pose(const View3D::Pose& pose);
 
     virtual void draw();
+    virtual void draw(const View::Ptr& view);
 };
 
 }; //namespace display

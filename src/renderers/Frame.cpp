@@ -20,6 +20,11 @@ void Frame::set_pose(const View3D::Pose& pose)
 
 void Frame::draw()
 {
+    this->draw(this->view());
+}
+
+void Frame::draw(const View::Ptr& view)
+{
     float vertices[] = {0,0,0,
                         1,0,0,
                         0,0,0,
@@ -44,7 +49,7 @@ void Frame::draw()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors);
     glEnableVertexAttribArray(1);
     
-    View3D::Mat4 viewMatrix = view_->view_matrix()*pose_.homogeneous_matrix();
+    View3D::Mat4 viewMatrix = view->view_matrix()*pose_.homogeneous_matrix();
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),
         1, GL_FALSE, viewMatrix.data());
 
