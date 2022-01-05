@@ -4,6 +4,7 @@
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Point.h>
 
+#include <rtac_display/GLContext.h>
 #include <rtac_display/Color.h>
 #include <rtac_display/renderers/Renderer.h>
 #include <rtac_display/text/TextRenderer.h>
@@ -43,18 +44,18 @@ class DrawingSurface : public Renderer
 
     protected:
     
-    Point2       viewportOrigin_;
-    Views        views_;
-    Renderers    renderers_;
-    Renderers    textRenderers_;
-    Color::RGBAf clearColor_;
-    Flags        displayFlags_;
+    Point2         viewportOrigin_;
+    Views          views_;
+    Renderers      renderers_;
+    Renderers      textRenderers_;
+    Color::RGBAf   clearColor_;
+    Flags          displayFlags_;
 
-    DrawingSurface(const Shape& shape);
+    DrawingSurface(const GLContext::Ptr& context, const Shape& shape);
 
     public:
 
-    static Ptr New(const Shape& shape);
+    static Ptr New(const GLContext::Ptr& context, const Shape& shape);
 
     void add_view(const View::Ptr& view);
     void add_renderer(const Renderer::Ptr& renderer);

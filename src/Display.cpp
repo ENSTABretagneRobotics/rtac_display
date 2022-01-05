@@ -2,21 +2,42 @@
 
 namespace rtac { namespace display {
 
-Display::Display(size_t width, size_t height, const std::string& title,
-                 const Window& sharedContext) :
-    DrawingSurface({width,height}),
-    window_(NULL),
-    frameCounterEnabled_(true)
+std::tuple<GLFWContext::Ptr, Display::Window, Display::Shape> Display::create_window_data(
+                                        size_t width, size_t height,
+                                        const std::string& title,
+                                        const Context::Ptr& sharedContext)
 {
     if(!glfwInit()) {
         throw std::runtime_error("GLFW initialization failure.");
     }
-    window_ = Window(glfwCreateWindow(width, height, title.c_str(), NULL, sharedContext.get()),
-                     glfwDestroyWindow); //custom deleter
-    if(!window_) {
+
+    Window otherWindow;
+    if(sharedContext)
+        otherWindow = sharedContext->window();
+    auto newWindow = Window(glfwCreateWindow(width, height,
+                                             title.c_str(),
+                                             NULL, otherWindow.get()),
+                                             glfwDestroyWindow); //custom deleter
+    if(!newWindow) {
         throw std::runtime_error("GLFW window creation failure.");
     }
-    this->make_current();
+
+    if(sharedContext)
+        return std::make_tuple(sharedContext, newWindow, Shape({width, height}));
+    else
+        return std::make_tuple(GLFWContext::Create(newWindow), newWindow, Shape({width, height}));
+}
+
+Display::Display(const std::tuple<Context::Ptr, Window, Shape>& windowData) :
+    DrawingSurface(std::get<0>(windowData), std::get<2>(windowData)),
+    window_(std::get<1>(windowData)),
+    frameCounterEnabled_(false)
+{
+    if(!window_) {
+        throw std::runtime_error("Initialization failure");
+    }
+
+    this->grab_context();
     //glfwMakeContextCurrent(window_.get());
     
     // init glew (no gl function availabel if not done)
@@ -33,6 +54,9 @@ Display::Display(size_t width, size_t height, const std::string& title,
     // to measure fps
     glfwSwapInterval(0);
 
+    auto width  = std::get<2>(windowData).width;
+    auto height = std::get<2>(windowData).height;
+
     glViewport(0.0,0.0,width,height);
 
     // Making this the user pointer for callback related features.
@@ -42,7 +66,12 @@ Display::Display(size_t width, size_t height, const std::string& title,
                            | DrawingSurface::CLEAR_DEPTH);
 }
 
-Display::Display(const Window& sharedContext) :
+Display::Display(size_t width, size_t height, const std::string& title,
+                 const Context::Ptr& sharedContext) :
+    Display(Display::create_window_data(width, height, title, sharedContext))
+{}
+
+Display::Display(const Context::Ptr& sharedContext) :
     Display(800, 600, "rtac_display", sharedContext)
 {}
 
@@ -56,8 +85,15 @@ Display::Window Display::window()
     return window_;
 }
 
-void Display::make_current()
+void Display::grab_context() const
 {
+    //this->context()->make_current();
+    glfwMakeContextCurrent(window_.get());
+}
+
+void Display::release_context() const
+{
+    //this->context()->make_current();
     glfwMakeContextCurrent(window_.get());
 }
 
@@ -132,7 +168,7 @@ void Display::wait_for_close() const
 void Display::draw()
 {
     //glfwMakeContextCurrent(window_.get());
-    this->make_current();
+    this->grab_context();
     this->view()->set_screen_size(this->window_shape());
     
     this->DrawingSurface::draw();

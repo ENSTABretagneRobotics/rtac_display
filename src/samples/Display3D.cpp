@@ -3,7 +3,7 @@
 namespace rtac { namespace display { namespace samples {
 
 Display3D::Display3D(int width, int height, const std::string& name,
-                     const Display::Window& sharedContext) :
+                     const Display::Context::Ptr& sharedContext) :
     Display(width,height,name,sharedContext),
     view_(PinholeView::New()),
     controls_(OrbitControls::Create(view_, {0,0,0}))
@@ -12,7 +12,7 @@ Display3D::Display3D(int width, int height, const std::string& name,
     this->add_event_handler(controls_);
 }
 
-Display3D::Display3D(const Display::Window& sharedContext) :
+Display3D::Display3D(const Display::Context::Ptr& sharedContext) :
     Display3D(800, 600, "rtac_display", sharedContext)
 {}
 

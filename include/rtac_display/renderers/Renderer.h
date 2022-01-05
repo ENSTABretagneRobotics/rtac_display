@@ -1,13 +1,10 @@
 #ifndef _DEF_RTAC_DISPLAY_RENDER_H_
 #define _DEF_RTAC_DISPLAY_RENDER_H_
 
-#include <GL/glew.h>
-//#define GL3_PROTOTYPES 1
-#include <GL/gl.h>
-
 #include <rtac_base/types/Handle.h>
 
 #include <rtac_display/utils.h>
+#include <rtac_display/GLContext.h>
 #include <rtac_display/views/View.h>
 
 namespace rtac { namespace display {
@@ -40,8 +37,9 @@ class Renderer
 
     protected:
     
-    GLuint  renderProgram_;
-    mutable View::Ptr   view_;
+    GLContext::Ptr    context_;
+    GLuint            renderProgram_;
+    mutable View::Ptr view_;
 
     public:
 
@@ -51,11 +49,27 @@ class Renderer
                    //const View::Ptr& view = View::New());
                    const View::Ptr& view = View::New());
 
+    static Ptr New(const GLContext::Ptr& context,
+                   const std::string& vertexShader = vertexShader,
+                   const std::string& fragmentShader = fragmentShader,
+                   // Had to remove this because of eigen alignment issues. To be investigated
+                   //const View::Ptr& view = View::New());
+                   const View::Ptr& view = View::New());
+
+    Renderer(const GLContext::Ptr& context,
+             const std::string& vertexShader = vertexShader,
+             const std::string& fragmentShader = fragmentShader,
+             // Had to remove this because of eigen alignment issues. To be investigated
+             //const Viewi::Ptr& view = View::New());
+             const View::Ptr& view = View::New());
+
     Renderer(const std::string& vertexShader = vertexShader,
              const std::string& fragmentShader = fragmentShader,
              // Had to remove this because of eigen alignment issues. To be investigated
              //const Viewi::Ptr& view = View::New());
              const View::Ptr& view = View::New());
+
+    const GLContext::Ptr context() const { return context_; }
     
     virtual void draw();
     virtual void set_view(const View::Ptr& view) const; // Why const ?

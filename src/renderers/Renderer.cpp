@@ -56,7 +56,15 @@ Renderer::Ptr Renderer::New(const std::string& vertexShader,
                             const std::string& fragmentShader,
                             const View::Ptr& view)
 {
-    return Ptr(new Renderer(vertexShader, fragmentShader, view));
+    return Ptr(new Renderer(nullptr, vertexShader, fragmentShader, view));
+}
+
+Renderer::Ptr Renderer::New(const GLContext::Ptr& context,
+                            const std::string& vertexShader,
+                            const std::string& fragmentShader,
+                            const View::Ptr& view)
+{
+    return Ptr(new Renderer(context, vertexShader, fragmentShader, view));
 }
 
 /**
@@ -72,10 +80,19 @@ Renderer::Ptr Renderer::New(const std::string& vertexShader,
  *                       Identity (no geometric transformation for renderering
  *                       => rendering in the 2D x-y plane).
  */
-Renderer::Renderer(const std::string& vertexShader, const std::string& fragmentShader,
+Renderer::Renderer(const GLContext::Ptr& context,
+                   const std::string& vertexShader,
+                   const std::string& fragmentShader,
                    const View::Ptr& view) :
+    context_(context),
     renderProgram_(create_render_program(vertexShader, fragmentShader)),
     view_(view)
+{}
+
+Renderer::Renderer(const std::string& vertexShader,
+                   const std::string& fragmentShader,
+                   const View::Ptr& view) :
+    Renderer(nullptr, vertexShader, fragmentShader, view)
 {}
 
 /**

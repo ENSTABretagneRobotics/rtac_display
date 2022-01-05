@@ -19,7 +19,7 @@ int main()
     display0.add_renderer(renderer);
 
     //samples::Display3D display1; // this is not working (as expected)
-    samples::Display3D display1(display0.window());
+    samples::Display3D display1(display0.context());
     display1.view()->look_at({0,0,0}, {5,4,3});
 
     display1.add_renderer(renderer);

@@ -18,8 +18,8 @@ class Display3D : public Display
 
     Display3D(int width = 800, int height = 600,
               const std::string& name = "rtac_display",
-              const Display::Window& sharedContext = nullptr);
-    Display3D(const Display::Window& sharedContext);
+              const Display::Context::Ptr& sharedContext = nullptr);
+    Display3D(const Display::Context::Ptr& sharedContext);
 
     PinholeView::Ptr view();
     OrbitControls::Ptr controls();

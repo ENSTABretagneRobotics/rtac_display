@@ -2,8 +2,8 @@
 
 namespace rtac { namespace display {
 
-DrawingSurface::DrawingSurface(const Shape& shape) :
-    Renderer("", "", View::New()),
+DrawingSurface::DrawingSurface(const GLContext::Ptr& context, const Shape& shape) :
+    Renderer(context, "", "", View::New()),
     viewportOrigin_({0,0}),
     clearColor_({0,0,0,0}),
     displayFlags_(FLAGS_NONE)
@@ -18,9 +18,9 @@ DrawingSurface::DrawingSurface(const Shape& shape) :
  *
  * @return a shared pointer to the newly instanciated DrawingSurface.
  */
-DrawingSurface::Ptr DrawingSurface::New(const Shape& shape)
+DrawingSurface::Ptr DrawingSurface::New(const GLContext::Ptr& context, const Shape& shape)
 {
-    return Ptr(new DrawingSurface(shape));
+    return Ptr(new DrawingSurface(context, shape));
 }
 
 /**

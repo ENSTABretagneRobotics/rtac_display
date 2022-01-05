@@ -6,23 +6,17 @@
 #include <memory>
 #include <thread>
 #include <vector>
-
-#include <GL/glew.h>
-//#define GL3_PROTOTYPES 1
-#include <GL/gl.h>
-
-//#include <glm/glm.hpp>
-//#include <glm/gtx/transform.hpp>
-//#include <glm/gtc/type_ptr.hpp>
-
-#include <GLFW/glfw3.h>
+#include <tuple>
 
 #include <rtac_base/time.h>
 #include <rtac_base/types/CallbackQueue.h>
 
 #include <rtac_display/utils.h>
+#include <rtac_display/GLFWContext.h>
 #include <rtac_display/DrawingSurface.h>
 #include <rtac_display/EventHandler.h>
+
+#include <GLFW/glfw3.h>
 
 namespace rtac { namespace display {
 
@@ -45,8 +39,9 @@ namespace rtac { namespace display {
 class Display : public DrawingSurface
 {
     public:
-
-    using Window    = std::shared_ptr<GLFWwindow>;
+    
+    using Context   = GLFWContext;
+    using Window    = Context::Window;
     using Shape     = View::Shape;
     using Views     = std::vector<View::Ptr>;
     using Renderers = std::vector<Renderer::Ptr>;
@@ -77,16 +72,27 @@ class Display : public DrawingSurface
     MouseButtonCallbacks   mouseButtonCallbacks_;
     ScrollCallbacks        scrollCallbacks_;
 
+    static std::tuple<Context::Ptr, Window, Shape> create_window_data(
+                                                 size_t width, size_t height,
+                                                 const std::string& title,
+                                                 const Context::Ptr& sharedContext);
+    Display(const std::tuple<Context::Ptr, Window, Shape>& windowData);
+
     public:
 
     Display(size_t width = 800, size_t height = 600,
             const std::string& title = "rtac_display",
-            const Window& sharedContext = nullptr);
-    Display(const Window& sharedContext);
+            const Context::Ptr& sharedContext = nullptr);
+    Display(const Context::Ptr& sharedContext);
     void terminate();
 
+    Context::Ptr context() const {
+        return std::dynamic_pointer_cast<GLFWContext>(this->Renderer::context());
+    }
+
     Window window();
-    void make_current();
+    void grab_context() const;
+    void release_context() const;
 
     Shape window_shape() const;
     int should_close() const;
