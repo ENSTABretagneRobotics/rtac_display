@@ -68,10 +68,12 @@ class GLVector
     GLVector();
     GLVector(size_t size, const T* data = nullptr);
     GLVector(const GLVector<T>& other);
+    GLVector(GLVector<T>&& other);
     GLVector(const std::vector<T>& other);
     ~GLVector();
     
     GLVector& operator=(const GLVector<T>& other);
+    GLVector& operator=(GLVector<T>&& other);
     GLVector& operator=(const std::vector<T>& other);
     void set_data(unsigned int size, const T* data);
 
@@ -188,6 +190,19 @@ GLVector<T>::GLVector(const GLVector<T>& other) :
 }
 
 /**
+ * Instanciate a new GLVector, allocate data on the device and move data from
+ * another GLVector. No copy happens.
+ *
+ * @param other GLVector to be moved.
+ */
+template <typename T>
+GLVector<T>::GLVector(GLVector<T>&& other) :
+    GLVector()
+{
+    *this = std::move(other);
+}
+
+/**
  * Instanciate a new GLVector, allocate data on the device and transfert data
  * from the host to the device.
  *
@@ -233,6 +248,21 @@ GLVector<T>& GLVector<T>::operator=(const GLVector<T>& other)
     this->unbind(GL_COPY_WRITE_BUFFER);
     other.unbind(GL_COPY_READ_BUFFER);
 
+    return *this;
+}
+
+/**
+ * Reallocate data if needed and move an existing GLVector. No copy happen.
+ *
+ * @param other GLVector to be moved.
+ *
+ * @return A reference to this instance.
+ */
+template <typename T>
+GLVector<T>& GLVector<T>::operator=(GLVector<T>&& other)
+{
+    bufferId_ = std::exchange(other.bufferId_, bufferId_);
+    size_     = std::exchange(other.size_,     size_);
     return *this;
 }
 
