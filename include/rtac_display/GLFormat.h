@@ -15,7 +15,7 @@ struct GLFormatError : std::false_type {};
 
 /**
  * The purpose of the GLFormat struct is to infer at compile time some
- * information on a pixel type.
+ * information on a pixel (or a point) type.
  *
  * GLFormat<PixelT> is not usable as is. A template specialization **MUST** be
  * declared for each type it will be used with. Trying to use GLFormat with a
@@ -51,7 +51,7 @@ struct GLFormatError : std::false_type {};
      static constexpr GLenum Type        = GL_FLOAT; // Underlying scalar type.
  };
  \endverbatim
- * Caution : the specialization must be inside the namespace rtac::display.
+ * Caution : the specialization must be declared inside the namespace rtac::display.
  *
  * - Then the GLFormat object can be used in a generic templated function :
  * \verbatim
@@ -90,6 +90,8 @@ struct GLFormat {
 template<>
 struct GLFormat<float>
 {
+    using Scalar = float;
+
     static constexpr unsigned int Size  = 1;
     static constexpr GLenum PixelFormat = GL_RED;
     static constexpr GLenum Type        = GL_FLOAT;
@@ -98,6 +100,8 @@ struct GLFormat<float>
 template<>
 struct GLFormat<uint8_t>
 {
+    using Scalar = uint8_t;
+
     static constexpr unsigned int Size  = 1;
     static constexpr GLenum PixelFormat = GL_RED;
     static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
@@ -106,6 +110,8 @@ struct GLFormat<uint8_t>
 template<>
 struct GLFormat<types::Point3<float>>
 {
+    using Scalar = float;
+
     static constexpr unsigned int Size  = 3;
     static constexpr GLenum PixelFormat = GL_RGB;
     static constexpr GLenum Type        = GL_FLOAT;
@@ -114,6 +120,8 @@ struct GLFormat<types::Point3<float>>
 template<>
 struct GLFormat<types::Point3<uint32_t>>
 {
+    using Scalar = uint32_t;
+
     static constexpr unsigned int Size  = 3;
     static constexpr GLenum PixelFormat = GL_RGB;
     static constexpr GLenum Type        = GL_UNSIGNED_INT;
@@ -122,6 +130,8 @@ struct GLFormat<types::Point3<uint32_t>>
 template<>
 struct GLFormat<types::Point3<uint8_t>>
 {
+    using Scalar = uint8_t;
+
     static constexpr unsigned int Size  = 3;
     static constexpr GLenum PixelFormat = GL_RGB;
     static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
@@ -130,6 +140,8 @@ struct GLFormat<types::Point3<uint8_t>>
 template<>
 struct GLFormat<types::Point4<float>>
 {
+    using Scalar = float;
+
     static constexpr unsigned int Size  = 4;
     static constexpr GLenum PixelFormat = GL_RGBA;
     static constexpr GLenum Type        = GL_FLOAT;
@@ -138,6 +150,8 @@ struct GLFormat<types::Point4<float>>
 template<>
 struct GLFormat<types::Point4<uint8_t>>
 {
+    using Scalar = uint8_t;
+
     static constexpr unsigned int Size  = 4;
     static constexpr GLenum PixelFormat = GL_RGBA;
     static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
@@ -146,6 +160,8 @@ struct GLFormat<types::Point4<uint8_t>>
 template<>
 struct GLFormat<types::Point2<float>>
 {
+    using Scalar = float;
+
     static constexpr unsigned int Size  = 2;
     static constexpr GLenum PixelFormat = GL_RG;
     static constexpr GLenum Type        = GL_FLOAT;
