@@ -89,8 +89,8 @@ class PointCloudRenderer : public PointCloudRendererBase
     template <typename Derived>
     void set_points(const Eigen::DenseBase<Derived>& points);
     
-    virtual void draw();
-    virtual void draw(const View::ConstPtr& view);
+    virtual void draw() const;
+    virtual void draw(const View::ConstPtr& view) const;
 };
 
 // implementation
@@ -173,13 +173,13 @@ void PointCloudRenderer<PointT>::set_points(const Eigen::DenseBase<Derived>& poi
 
 
 template <typename PointT>
-void PointCloudRenderer<PointT>::draw()
+void PointCloudRenderer<PointT>::draw() const
 {
     this->draw(this->view());
 }
 
 template <typename PointT>
-void PointCloudRenderer<PointT>::draw(const View::ConstPtr& view)
+void PointCloudRenderer<PointT>::draw(const View::ConstPtr& view) const
 {
     if(points_.size() == 0)
         return;

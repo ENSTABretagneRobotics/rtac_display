@@ -53,12 +53,12 @@ class MeshRenderer : public Renderer
     static Ptr New(const View3D::Ptr& view,
                    const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
 
-    //void set_mesh(const Mesh& mesh);
+    //void set_mesh(const Mesh& mesrh);
     void set_pose(const Pose& pose);
     void set_color(const Color::RGBAf& color);
 
-    virtual void draw();
-    virtual void draw(const View::ConstPtr& view);
+    virtual void draw() const;
+    virtual void draw(const View::ConstPtr& view) const;
     
     template <typename Tp, typename Tf>
     void set_mesh(const types::Mesh<Tp,Tf>& mesh);

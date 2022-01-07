@@ -95,7 +95,7 @@ Renderer::Renderer(const std::string& vertexShader,
     Renderer(nullptr, vertexShader, fragmentShader, view)
 {}
 
-void Renderer::draw()
+void Renderer::draw() const
 {
     this->draw(this->view());
 }
@@ -104,7 +104,7 @@ void Renderer::draw()
  * Performs the OpenGL API calls to draw an object. By default this draws a XYZ
  * frame at the origin.
  */
-void Renderer::draw(const View::ConstPtr& view)
+void Renderer::draw(const View::ConstPtr& view) const
 {
     float vertices[] = {0,0,0,
                         1,0,0,

@@ -364,12 +364,12 @@ std::array<TextRenderer::Vec4,4> TextRenderer::compute_corners(const View::Const
     return corners;
 }
 
-void TextRenderer::draw()
+void TextRenderer::draw() const
 {
     this->draw(this->view());
 }
 
-void TextRenderer::draw(const View::ConstPtr& view)
+void TextRenderer::draw(const View::ConstPtr& view) const
 {
     auto corners = compute_corners(view);
     static const float uv[] = {0,1,

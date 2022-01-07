@@ -85,8 +85,8 @@ class TexturedMeshRenderer : public Renderer
     void set_color(const Color::RGBAf& color);
     void set_pose(const Pose& pose);
 
-    virtual void draw();
-    virtual void draw(const View::ConstPtr& view);
+    virtual void draw() const;
+    virtual void draw(const View::ConstPtr& view) const;
 
     static Ptr from_ply(const std::string& path, const View3D::Ptr& view,
                         bool transposeUVs = false);
@@ -270,7 +270,7 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::set_pose(const Pose& pose)
 }
 
 template <typename Tp, typename Tf, typename Tu>
-void TexturedMeshRenderer<Tp,Tf,Tu>::draw()
+void TexturedMeshRenderer<Tp,Tf,Tu>::draw() const
 {
     this->draw(this->view());
 }
@@ -283,7 +283,7 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw()
  * provided) or a solid-colored wired rendering.
  */
 template <typename Tp, typename Tf, typename Tu>
-void TexturedMeshRenderer<Tp,Tf,Tu>::draw(const View::ConstPtr& view)
+void TexturedMeshRenderer<Tp,Tf,Tu>::draw(const View::ConstPtr& view) const
 {
     if(!points_ || points_->size() == 0)
         return;

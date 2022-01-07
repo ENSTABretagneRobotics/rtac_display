@@ -29,12 +29,12 @@ void Frame::set_pose(const View3D::Pose& pose)
     pose_ = pose;
 }
 
-void Frame::draw()
+void Frame::draw() const
 {
     this->draw(this->view());
 }
 
-void Frame::draw(const View::ConstPtr& view)
+void Frame::draw(const View::ConstPtr& view) const
 {
     float vertices[] = {0,0,0,
                         1,0,0,

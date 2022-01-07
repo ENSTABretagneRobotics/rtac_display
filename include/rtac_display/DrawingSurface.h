@@ -33,10 +33,12 @@ class DrawingSurface : public Renderer
     using Shape     = View::Shape;
     using Point2    = types::Point2<int>;
     using Views     = std::vector<View::Ptr>;
-    using Renderers = std::vector<Renderer::Ptr>;
+    using Renderers = std::vector<Renderer::ConstPtr>;
 
-    using RenderItem  = std::pair<Renderer::Ptr, View::Ptr>;
+    using RenderItem  = std::pair<Renderer::ConstPtr, View::Ptr>;
     using RenderItems = std::vector<RenderItem>;
+    using TextItem    = std::pair<text::TextRenderer::ConstPtr, View::Ptr>;
+    using TextItems   = std::vector<RenderItem>;
 
     enum Flags : uint32_t {
         FLAGS_NONE  = 0x0,
@@ -49,16 +51,16 @@ class DrawingSurface : public Renderer
 
     protected:
     
-    Point2      viewportOrigin_;
+    Point2 viewportOrigin_;
     
     RenderItems renderItems_;
-    RenderItems textItems_;
+    TextItems   textItems_;
 
-    Views          views_;
-    Renderers      renderers_;
-    Renderers      textRenderers_;
-    Color::RGBAf   clearColor_;
-    Flags          displayFlags_;
+    Views        views_;
+    Renderers    renderers_;
+    Renderers    textRenderers_;
+    Color::RGBAf clearColor_;
+    Flags        displayFlags_;
 
     DrawingSurface(const GLContext::Ptr& context, const Shape& shape);
 
@@ -67,13 +69,15 @@ class DrawingSurface : public Renderer
     static Ptr New(const GLContext::Ptr& context, const Shape& shape);
 
     void add_view(const View::Ptr& view);
-    void add_renderer(const Renderer::Ptr& renderer);
-    void add_renderer(const text::TextRenderer::Ptr& renderer);
+    void add_renderer(const Renderer::ConstPtr& renderer);
+    void add_renderer(const text::TextRenderer::ConstPtr& renderer);
+    void add_renderer(const text::TextRenderer::Ptr& renderer) {
+        this->add_renderer(renderer);
+    }
 
     void add_render_item(const RenderItem& item);
-    void add_render_item(const Renderer::Ptr& renderer, const View::Ptr& view);
     void add_text_item(const RenderItem& item);
-    void add_render_item(const text::TextRenderer::Ptr& renderer,
+    void add_render_item(const Renderer::ConstPtr& renderer,
                          const View::Ptr& view);
 
     virtual void draw();

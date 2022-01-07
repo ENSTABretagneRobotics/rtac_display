@@ -161,7 +161,7 @@ void ImageRenderer::set_gray_colormap()
 /**
  * Generate screen coordinates of corner of image and displays the image.
  */
-void ImageRenderer::draw(const GLTexture& texture)
+void ImageRenderer::draw(const GLTexture& texture) const
 {
     imageView_->set_image_shape(texture.shape());
 
@@ -217,7 +217,7 @@ void ImageRenderer::draw(const GLTexture& texture)
     GL_CHECK_LAST();
 }
 
-void ImageRenderer::draw()
+void ImageRenderer::draw() const
 {
     this->draw(*texture_);
 }

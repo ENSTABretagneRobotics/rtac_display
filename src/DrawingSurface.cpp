@@ -48,7 +48,7 @@ void DrawingSurface::add_view(const View::Ptr& view)
  * The view associated to the renderer will automatically be added to the
  * handled views via DrawingSurface::add_view method.
  */
-void DrawingSurface::add_renderer(const Renderer::Ptr& renderer)
+void DrawingSurface::add_renderer(const Renderer::ConstPtr& renderer)
 {
     renderers_.push_back(renderer);
     views_.push_back(renderer->view());
@@ -60,7 +60,7 @@ void DrawingSurface::add_renderer(const Renderer::Ptr& renderer)
  * The view associated to the renderer will automatically be added to the
  * handled views via DrawingSurface::add_view method.
  */
-void DrawingSurface::add_renderer(const text::TextRenderer::Ptr& renderer)
+void DrawingSurface::add_renderer(const text::TextRenderer::ConstPtr& renderer)
 {
     textRenderers_.push_back(renderer);
     views_.push_back(renderer->view());
@@ -72,22 +72,25 @@ void DrawingSurface::add_render_item(const RenderItem& item)
     this->add_view(item.second);
 }
 
-void DrawingSurface::add_render_item(const Renderer::Ptr& renderer,
-                                     const View::Ptr& view)
-{
-    this->add_render_item(std::make_pair(renderer, view));
-}
-
 void DrawingSurface::add_text_item(const RenderItem& item)
 {
     textItems_.push_back(item);
     this->add_view(item.second);
 }
 
-void DrawingSurface::add_render_item(const text::TextRenderer::Ptr& renderer,
+void DrawingSurface::add_render_item(const Renderer::ConstPtr& renderer,
                                      const View::Ptr& view)
 {
-    this->add_text_item(std::make_pair(renderer, view));
+    if(!renderer || ! view) {
+        return;
+    }
+    auto text = std::dynamic_pointer_cast<const text::TextRenderer>(renderer);
+    if(text) {
+        this->add_text_item(std::make_pair(text, view));
+    }
+    else {
+        this->add_render_item(std::make_pair(renderer, view));
+    }
 }
 
 /**

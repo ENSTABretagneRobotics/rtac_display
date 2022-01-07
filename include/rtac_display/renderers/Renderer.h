@@ -37,9 +37,9 @@ class Renderer
 
     protected:
     
-    GLContext::Ptr    context_;
-    GLuint            renderProgram_;
-    mutable View::Ptr view_;
+    mutable GLContext::Ptr context_;
+    GLuint                 renderProgram_;
+    mutable View::Ptr      view_;
 
     Renderer(const GLContext::Ptr& context,
              const std::string& vertexShader = vertexShader,
@@ -63,8 +63,8 @@ class Renderer
 
     const GLContext::Ptr context() const { return context_; }
     
-    virtual void draw();
-    virtual void draw(const View::ConstPtr& view);
+    virtual void draw() const;
+    virtual void draw(const View::ConstPtr& view) const;
     virtual void set_view(const View::Ptr& view) const; // Why const ?
 
     View::Ptr view() const;

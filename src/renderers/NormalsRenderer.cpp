@@ -241,12 +241,12 @@ void NormalsRenderer::set_color(const Color::RGBAf& color)
     color_.a = std::max(0.0f, std::min(1.0f, color.a));
 }
 
-void NormalsRenderer::draw()
+void NormalsRenderer::draw() const
 {
     this->draw(this->view());
 }
 
-void NormalsRenderer::draw(const View::ConstPtr& view)
+void NormalsRenderer::draw(const View::ConstPtr& view) const
 {
     if(displayData_ == 0 || numPoints_ == 0)
         return;

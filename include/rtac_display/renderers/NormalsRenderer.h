@@ -73,8 +73,8 @@ class NormalsRenderer : public Renderer
     void set_pose(const Pose& pose);
     void set_color(const Color::RGBAf& color);
 
-    virtual void draw();
-    virtual void draw(const View::ConstPtr& view);
+    virtual void draw() const;
+    virtual void draw(const View::ConstPtr& view) const;
 };
 
 template <typename Derived1, typename Derived2>
