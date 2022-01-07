@@ -10,6 +10,7 @@ Display3D::Display3D(int width, int height, const std::string& name,
 {
     this->add_view(view_);
     this->add_event_handler(controls_);
+    this->view()->look_at({0,0,0},{5,4,3});
 }
 
 Display3D::Display3D(const Display::Context::Ptr& sharedContext) :
