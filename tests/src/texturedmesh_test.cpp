@@ -120,6 +120,8 @@ int main()
     display.add_renderer(meshRenderer);
 
 
+    display1.add_render_item(label0,       display1.view());
+    display1.add_render_item(label1,       display1.view());
     display1.add_render_item(renderer,     display1.view());
     display1.add_render_item(meshRenderer, display1.view());
 

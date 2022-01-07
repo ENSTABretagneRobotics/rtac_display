@@ -56,6 +56,36 @@ void main()
 }
 )");
 
+TextRenderer::TextRenderer(const GLContext::Ptr& context,
+                           const FontFace::ConstPtr& font,
+                           const View::Ptr& view) :
+    Renderer(context, vertexShader, fragmentShaderFlat, view),
+    font_(font),
+    origin_({0,0,0,1}),
+    anchor_({0,1.0f}),
+    textColor_({0,0,0}),
+    backColor_({0,0,0,0}),
+    renderProgramFlat_(renderProgram_),
+    renderProgramSubPix_(create_render_program(vertexShader, fragmentShaderSubPix))
+{
+    if(!font_) {
+        std::ostringstream oss;
+        oss << "Error rtac_display::text::TextRenderer : "
+            << "Invalid font face pointer.";
+        throw std::runtime_error(oss.str());
+    }
+}
+
+TextRenderer::Ptr TextRenderer::Create(const GLContext::Ptr& context,
+                                       const FontFace::ConstPtr& font,
+                                       const std::string& text,
+                                       const View::Ptr& view)
+{
+    auto renderer = Ptr(new TextRenderer(context, font, view));
+    renderer->set_text(text);
+    return renderer;
+}
+
 TextRenderer::TextRenderer(const FontFace::ConstPtr& font,
                            const View::Ptr& view) :
     Renderer(vertexShader, fragmentShaderFlat, view),
@@ -305,15 +335,15 @@ const Color::RGBAf& TextRenderer::back_color() const
     return backColor_;
 }
 
-std::array<TextRenderer::Vec4,4> TextRenderer::compute_corners() const
+std::array<TextRenderer::Vec4,4> TextRenderer::compute_corners(const View::ConstPtr& view) const
 {
-    float clipWidth  = (2.0f*texture_.width() ) / view_->screen_size().width;
-    float clipHeight = (2.0f*texture_.height()) / view_->screen_size().height;
-    //float clipWidth  = (2.0f*texture_.width() ) / (view_->screen_size().width - 1);
-    //float clipHeight = (2.0f*texture_.height()) / (view_->screen_size().height- 1);
+    float clipWidth  = (2.0f*texture_.width() ) / view->screen_size().width;
+    float clipHeight = (2.0f*texture_.height()) / view->screen_size().height;
+    //float clipWidth  = (2.0f*texture_.width() ) / (view->screen_size().width - 1);
+    //float clipHeight = (2.0f*texture_.height()) / (view->screen_size().height- 1);
 
     // OpenGL clip space origin.
-    Vec4 clipOrigin = view_->view_matrix() * origin_;
+    Vec4 clipOrigin = view->view_matrix() * origin_;
 
     // Anchor shift
     clipOrigin(0) -= anchor_(0)*clipWidth;
@@ -336,7 +366,12 @@ std::array<TextRenderer::Vec4,4> TextRenderer::compute_corners() const
 
 void TextRenderer::draw()
 {
-    auto corners = compute_corners();
+    this->draw(this->view());
+}
+
+void TextRenderer::draw(const View::ConstPtr& view)
+{
+    auto corners = compute_corners(view);
     static const float uv[] = {0,1,
                                1,1,
                                1,0,

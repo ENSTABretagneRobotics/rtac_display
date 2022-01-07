@@ -6,6 +6,7 @@
 #include <cmath>
 
 #include <rtac_display/utils.h>
+#include <rtac_display/GLContext.h>
 #include <rtac_display/views/View.h>
 #include <rtac_display/renderers/Renderer.h>
 #include <rtac_display/text/FontFace.h>
@@ -40,11 +41,18 @@ class TextRenderer : public Renderer
     GLuint renderProgramFlat_;
     GLuint renderProgramSubPix_;
     
+    TextRenderer(const GLContext::Ptr& context,
+                 const FontFace::ConstPtr& font,
+                 const View::Ptr& view);
     TextRenderer(const FontFace::ConstPtr& font,
                  const View::Ptr& view);
 
     public:
 
+    static Ptr Create(const GLContext::Ptr& context,
+                      const FontFace::ConstPtr& font,
+                      const std::string& text,
+                      const View::Ptr& view = View::New());
     static Ptr Create(const FontFace::ConstPtr& font,
                       const std::string& text,
                       const View::Ptr& view = View::New());
@@ -55,7 +63,7 @@ class TextRenderer : public Renderer
 
     void update_texture();
     Shape compute_text_area(const std::string& text);
-    std::array<Vec4,4> compute_corners() const;
+    std::array<Vec4,4> compute_corners(const View::ConstPtr& view) const;
 
     FontFace::ConstPtr font() const;
     const std::string& text() const;
@@ -69,6 +77,7 @@ class TextRenderer : public Renderer
     const Color::RGBAf& back_color() const;
 
     virtual void draw();
+    virtual void draw(const View::ConstPtr& view);
 };
 
 }; //namespace text

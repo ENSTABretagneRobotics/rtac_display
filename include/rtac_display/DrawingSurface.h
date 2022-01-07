@@ -49,9 +49,10 @@ class DrawingSurface : public Renderer
 
     protected:
     
-    Point2         viewportOrigin_;
+    Point2      viewportOrigin_;
     
-    RenderItems    renderItems_;
+    RenderItems renderItems_;
+    RenderItems textItems_;
 
     Views          views_;
     Renderers      renderers_;
@@ -71,6 +72,9 @@ class DrawingSurface : public Renderer
 
     void add_render_item(const RenderItem& item);
     void add_render_item(const Renderer::Ptr& renderer, const View::Ptr& view);
+    void add_text_item(const RenderItem& item);
+    void add_render_item(const text::TextRenderer::Ptr& renderer,
+                         const View::Ptr& view);
 
     virtual void draw();
 
