@@ -53,8 +53,10 @@ int main()
     samples::Display3D display1(display.context());
     display1.controls()->look_at({0,0,0}, {5,4,3});
     
-    auto renderer = Renderer::New();
-    renderer->set_view(display.view());
+    // auto renderer = Renderer::New();
+    // renderer->set_view(display.view());
+
+    auto renderer = display.create_renderer<Renderer>(display.view());
 
     std::string filename = "/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf";
     //std::string filename = "/usr/share/fonts/truetype/ubuntu/UbuntuMono-B.ttf";
@@ -62,17 +64,23 @@ int main()
     auto font = text::FontFace::Create(filename);
     font->set_char_size(12);
 
-    auto label0 = text::TextRenderer::Create(font, std::string("origin"), display.view());
+    // auto label0 = text::TextRenderer::Create(font, std::string("origin"), display.view());
+    // label0->set_anchor("top left");
+    // label0->set_text_color({1,1,1,1});
+    // auto label1 = text::TextRenderer::Create(font, std::string("y"), display.view());
+    // label1->set_anchor("top left");
+    // label1->set_text_color({1,1,1,1});
+    // label1->origin()(1) = 1.0f;
+    // display.add_renderer(label0);
+    // display.add_renderer(label1);
+
+    auto label0 = display.create_renderer<text::TextRenderer>(display.view(), font, std::string("origin"));
     label0->set_anchor("top left");
     label0->set_text_color({1,1,1,1});
-
-    auto label1 = text::TextRenderer::Create(font, std::string("y"), display.view());
+    auto label1 = display.create_renderer<text::TextRenderer>(display.view(), font, std::string("y"));
     label1->set_anchor("top left");
     label1->set_text_color({1,1,1,1});
     label1->origin()(1) = 1.0f;
-
-    display.add_renderer(label0);
-    display.add_renderer(label1);
 
     // auto meshRenderer = TexturedMeshRenderer<>::New(display.view());
     // auto mesh = Mesh::cube(0.5);
@@ -102,6 +110,7 @@ int main()
 
     auto meshPath = files::find_one(".*mummy_dtm_uav_withUV.ply");
     cout << "Mesh path : " << meshPath << endl;
+
     auto meshRenderer = TexturedMeshRenderer<>::from_ply(meshPath, display.view(), true);
 
     cout << "vertex count : " << meshRenderer->points()->size() << endl;
@@ -116,9 +125,8 @@ int main()
 
     meshRenderer->set_pose(Pose({0,0,3}));
 
-    display.add_renderer(renderer);
+    //display.add_renderer(renderer);
     display.add_renderer(meshRenderer);
-
 
     display1.add_render_item(label0,       display1.view());
     display1.add_render_item(label1,       display1.view());
@@ -129,7 +137,7 @@ int main()
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));
     
     FrameCounter counter;
-    while(!display.should_close()) {
+    while(!display.should_close() && !display1.should_close()) {
         //view3d->set_pose(R * view3d->pose());
         
         display.draw();

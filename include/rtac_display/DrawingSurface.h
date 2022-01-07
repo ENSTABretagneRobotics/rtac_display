@@ -89,7 +89,23 @@ class DrawingSurface : public Renderer
     void set_display_flags(Flags flags);
     void remove_display_flags(Flags flags);
     void handle_display_flags() const;
+
+    template <class RendererT, class... Args>
+    typename RendererT::Ptr create_renderer(const View::Ptr& view, const Args (&...args));
 };
+
+/**
+ * Helper function to create a renderer of any type without having to specify
+ * the GLContext or add it to the drawing surface.
+ */
+template <class RendererT, class... Args>
+typename RendererT::Ptr DrawingSurface::create_renderer(const View::Ptr& view,
+                                                        const Args &(...args))
+{
+    auto renderer =  RendererT::Create(this->context(), args...);
+    this->add_render_item(renderer, view);
+    return renderer;
+}
 
 }; //namespace display
 }; //namespace rtac
