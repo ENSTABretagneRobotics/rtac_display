@@ -313,7 +313,7 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_solid(const View::ConstPtr& view) cons
     glVertexAttribPointer(0, GLFormat<Tp>::Size, GLFormat<Tp>::Type, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(0);
 
-    auto view3d = std::dynamic_pointer_cast<const View3D>(view_);
+    auto view3d = std::dynamic_pointer_cast<const View3D>(view);
     Mat4 viewMatrix = (view3d->raw_view_matrix().inverse()) * pose_.homogeneous_matrix();
     glUniformMatrix4fv(glGetUniformLocation(solidRender_, "view"),
         1, GL_FALSE, viewMatrix.data());
@@ -354,7 +354,7 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_textured(const View::ConstPtr& view) c
     glVertexAttribPointer(1, GLFormat<Tu>::Size, GLFormat<Tu>::Type, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(1);
     
-    auto view3d = std::dynamic_pointer_cast<const View3D>(view_);
+    auto view3d = std::dynamic_pointer_cast<const View3D>(view);
     Mat4 viewMatrix = (view3d->raw_view_matrix().inverse()) * pose_.homogeneous_matrix();
     glUniformMatrix4fv(glGetUniformLocation(texturedRender_, "view"),
         1, GL_FALSE, viewMatrix.data());

@@ -49,6 +49,9 @@ int main()
 
     samples::Display3D display;
     display.controls()->look_at({0,0,0}, {5,4,3});
+
+    samples::Display3D display1(display.context());
+    display1.controls()->look_at({0,0,0}, {5,4,3});
     
     auto renderer = Renderer::New();
     renderer->set_view(display.view());
@@ -116,6 +119,10 @@ int main()
     display.add_renderer(renderer);
     display.add_renderer(meshRenderer);
 
+
+    display1.add_render_item(renderer,     display1.view());
+    display1.add_render_item(meshRenderer, display1.view());
+
     float dangle = 0.001;
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));
     
@@ -124,6 +131,7 @@ int main()
         //view3d->set_pose(R * view3d->pose());
         
         display.draw();
+        display1.draw();
         
         //cout << counter;
         //this_thread::sleep_for(10ms);
