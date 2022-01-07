@@ -5,6 +5,7 @@
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Mesh.h>
 
+#include <rtac_display/GLContext.h>
 #include <rtac_display/Color.h>
 #include <rtac_display/renderers/Renderer.h>
 #include <rtac_display/views/View3D.h>
@@ -38,18 +39,26 @@ class MeshRenderer : public Renderer
     void allocate_points(size_t numPoints);
     void delete_points();
 
-    public:
-
-    static Ptr New(const View3D::Ptr& view,
-                   const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
+    MeshRenderer(const GLContext::Ptr& context,
+                 const View3D::Ptr& view,
+                 const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
     MeshRenderer(const View3D::Ptr& view,
                  const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
+
+    public:
+
+    static Ptr Create(const GLContext::Ptr& context,
+                      const View3D::Ptr& view,
+                      const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
+    static Ptr New(const View3D::Ptr& view,
+                   const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
 
     //void set_mesh(const Mesh& mesh);
     void set_pose(const Pose& pose);
     void set_color(const Color::RGBAf& color);
 
     virtual void draw();
+    virtual void draw(const View::ConstPtr& view);
     
     template <typename Tp, typename Tf>
     void set_mesh(const types::Mesh<Tp,Tf>& mesh);

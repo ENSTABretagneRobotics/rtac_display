@@ -41,38 +41,30 @@ class Renderer
     GLuint            renderProgram_;
     mutable View::Ptr view_;
 
-    public:
-
-    static Ptr New(const std::string& vertexShader = vertexShader,
-                   const std::string& fragmentShader = fragmentShader,
-                   // Had to remove this because of eigen alignment issues. To be investigated
-                   //const View::Ptr& view = View::New());
-                   const View::Ptr& view = View::New());
-
-    static Ptr New(const GLContext::Ptr& context,
-                   const std::string& vertexShader = vertexShader,
-                   const std::string& fragmentShader = fragmentShader,
-                   // Had to remove this because of eigen alignment issues. To be investigated
-                   //const View::Ptr& view = View::New());
-                   const View::Ptr& view = View::New());
-
     Renderer(const GLContext::Ptr& context,
              const std::string& vertexShader = vertexShader,
              const std::string& fragmentShader = fragmentShader,
-             // Had to remove this because of eigen alignment issues. To be investigated
-             //const Viewi::Ptr& view = View::New());
              const View::Ptr& view = View::New());
 
     Renderer(const std::string& vertexShader = vertexShader,
              const std::string& fragmentShader = fragmentShader,
-             // Had to remove this because of eigen alignment issues. To be investigated
-             //const Viewi::Ptr& view = View::New());
              const View::Ptr& view = View::New());
+
+    public:
+
+    static Ptr Create(const GLContext::Ptr& context,
+                      const std::string& vertexShader = vertexShader,
+                      const std::string& fragmentShader = fragmentShader,
+                      const View::Ptr& view = View::New());
+
+    static Ptr New(const std::string& vertexShader = vertexShader,
+                   const std::string& fragmentShader = fragmentShader,
+                   const View::Ptr& view = View::New());
 
     const GLContext::Ptr context() const { return context_; }
     
     virtual void draw();
-    virtual void draw(View::ConstPtr view);
+    virtual void draw(const View::ConstPtr& view);
     virtual void set_view(const View::Ptr& view) const; // Why const ?
 
     View::Ptr view() const;

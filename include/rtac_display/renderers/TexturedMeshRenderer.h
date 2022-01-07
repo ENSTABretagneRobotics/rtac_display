@@ -9,6 +9,7 @@
 #include <rtac_base/types/Mesh.h>
 
 #include <rtac_display/utils.h>
+#include <rtac_display/GLContext.h>
 #include <rtac_display/Color.h>
 #include <rtac_display/GLVector.h>
 #include <rtac_display/GLTexture.h>
@@ -59,13 +60,17 @@ class TexturedMeshRenderer : public Renderer
     Color::RGBAf color_;
     Pose         pose_;
 
-    void draw_solid() const;
-    void draw_textured() const;
+    void draw_solid(const View::ConstPtr& view) const;
+    void draw_textured(const View::ConstPtr& view) const;
 
+    TexturedMeshRenderer(const GLContext::Ptr& context,
+                         const View3D::Ptr& view);
     TexturedMeshRenderer(const View3D::Ptr& view);
 
     public:
 
+    static Ptr Create(const GLContext::Ptr& context,
+                      const View3D::Ptr& view);
     static Ptr New(const View3D::Ptr& view);
     
     typename Points::Ptr&     points()       { return points_; }
@@ -81,6 +86,7 @@ class TexturedMeshRenderer : public Renderer
     void set_pose(const Pose& pose);
 
     virtual void draw();
+    virtual void draw(const View::ConstPtr& view);
 
     static Ptr from_ply(const std::string& path, const View3D::Ptr& view,
                         bool transposeUVs = false);
@@ -175,6 +181,43 @@ void main()
  * @param view a View instance to render this object.
  */
 template <typename Tp, typename Tf, typename Tu>
+TexturedMeshRenderer<Tp,Tf,Tu>::TexturedMeshRenderer(const GLContext::Ptr& context,
+                                                     const View3D::Ptr& view) :
+    Renderer(context, vertexShader, fragmentShader, view),
+    solidRender_(this->renderProgram_),
+    texturedRender_(create_render_program(vertexShaderTextured, fragmentShaderTextured)),
+    points_(new Points(0)),
+    faces_(new Faces(0)),
+    uvs_(new UVs(0)),
+    texture_(GLTexture::New()),
+    color_({1,1,0,1})
+{}
+
+/**
+ * Creates a new TexturedMeshRenderer object on the heap and outputs a shared_ptr.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param view a View instance to render this object.
+ *
+  @return a shader pointer to the newly created instance.
+ */
+template <typename Tp, typename Tf, typename Tu>
+typename TexturedMeshRenderer<Tp,Tf,Tu>::Ptr
+TexturedMeshRenderer<Tp,Tf,Tu>::Create(const GLContext::Ptr& context,
+                                       const View3D::Ptr& view)
+{
+    return Ptr(new TexturedMeshRenderer<Tp,Tf,Tu>(context, view));
+}
+
+/**
+ * Constructor of TexturedMeshRenderer.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param view a View instance to render this object.
+ */
+template <typename Tp, typename Tf, typename Tu>
 TexturedMeshRenderer<Tp,Tf,Tu>::TexturedMeshRenderer(const View3D::Ptr& view) :
     Renderer(vertexShader, fragmentShader, view),
     solidRender_(this->renderProgram_),
@@ -226,6 +269,12 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::set_pose(const Pose& pose)
     pose_ = pose;
 }
 
+template <typename Tp, typename Tf, typename Tu>
+void TexturedMeshRenderer<Tp,Tf,Tu>::draw()
+{
+    this->draw(this->view());
+}
+
 /**
  * Main drawing function.
  *
@@ -234,7 +283,7 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::set_pose(const Pose& pose)
  * provided) or a solid-colored wired rendering.
  */
 template <typename Tp, typename Tf, typename Tu>
-void TexturedMeshRenderer<Tp,Tf,Tu>::draw()
+void TexturedMeshRenderer<Tp,Tf,Tu>::draw(const View::ConstPtr& view)
 {
     if(!points_ || points_->size() == 0)
         return;
@@ -246,17 +295,17 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw()
     glEnable(GL_DEPTH_TEST);
 
     if(!uvs_ || uvs_->size() == 0 || !texture_) {
-        this->draw_solid();
+        this->draw_solid(view);
     }
     else {
-        this->draw_textured();
+        this->draw_textured(view);
     }
 
     glPointSize(pointSize);
 }
 
 template <typename Tp, typename Tf, typename Tu>
-void TexturedMeshRenderer<Tp,Tf,Tu>::draw_solid() const
+void TexturedMeshRenderer<Tp,Tf,Tu>::draw_solid(const View::ConstPtr& view) const
 {
     glUseProgram(solidRender_);
     
@@ -264,12 +313,12 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_solid() const
     glVertexAttribPointer(0, GLFormat<Tp>::Size, GLFormat<Tp>::Type, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(0);
 
-    auto view = std::dynamic_pointer_cast<View3D>(view_);
-    Mat4 viewMatrix = (view->raw_view_matrix().inverse()) * pose_.homogeneous_matrix();
+    auto view3d = std::dynamic_pointer_cast<const View3D>(view_);
+    Mat4 viewMatrix = (view3d->raw_view_matrix().inverse()) * pose_.homogeneous_matrix();
     glUniformMatrix4fv(glGetUniformLocation(solidRender_, "view"),
         1, GL_FALSE, viewMatrix.data());
     glUniformMatrix4fv(glGetUniformLocation(solidRender_, "projection"),
-        1, GL_FALSE, view->projection_matrix().data());
+        1, GL_FALSE, view3d->projection_matrix().data());
     glUniform4fv(glGetUniformLocation(solidRender_, "solidColor"), 1, 
                  reinterpret_cast<const float*>(&color_));
     
@@ -293,7 +342,7 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_solid() const
 }
 
 template <typename Tp, typename Tf, typename Tu>
-void TexturedMeshRenderer<Tp,Tf,Tu>::draw_textured() const
+void TexturedMeshRenderer<Tp,Tf,Tu>::draw_textured(const View::ConstPtr& view) const
 {
     glUseProgram(texturedRender_);
     
@@ -305,12 +354,12 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_textured() const
     glVertexAttribPointer(1, GLFormat<Tu>::Size, GLFormat<Tu>::Type, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(1);
     
-    auto view = std::dynamic_pointer_cast<View3D>(view_);
-    Mat4 viewMatrix = (view->raw_view_matrix().inverse()) * pose_.homogeneous_matrix();
+    auto view3d = std::dynamic_pointer_cast<const View3D>(view_);
+    Mat4 viewMatrix = (view3d->raw_view_matrix().inverse()) * pose_.homogeneous_matrix();
     glUniformMatrix4fv(glGetUniformLocation(texturedRender_, "view"),
         1, GL_FALSE, viewMatrix.data());
     glUniformMatrix4fv(glGetUniformLocation(texturedRender_, "projection"),
-        1, GL_FALSE, view->projection_matrix().data());
+        1, GL_FALSE, view3d->projection_matrix().data());
     
     glUniform1i(glGetUniformLocation(texturedRender_, "texIn"), 0);
     glActiveTexture(GL_TEXTURE0);

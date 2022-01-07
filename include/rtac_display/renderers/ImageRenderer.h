@@ -4,6 +4,7 @@
 #include <rtac_base/types/Handle.h>
 
 #include <rtac_display/utils.h>
+#include <rtac_display/GLContext.h>
 #include <rtac_display/renderers/Renderer.h>
 #include <rtac_display/views/ImageView.h>
 #include <rtac_display/GLVector.h>
@@ -51,11 +52,13 @@ class ImageRenderer : public Renderer
 
     bool verticalFlip_;
 
+    ImageRenderer(const GLContext::Ptr& context);
+    ImageRenderer();
+
     public:
 
+    static Ptr Create(const GLContext::Ptr& context);
     static Ptr New();
-
-    ImageRenderer();
 
     GLTexture::Ptr& texture();
     GLTexture::ConstPtr texture() const;

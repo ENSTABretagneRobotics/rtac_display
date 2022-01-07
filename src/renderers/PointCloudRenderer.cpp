@@ -31,7 +31,21 @@ void main()
 }
 )");
 
-PointCloudRendererBase::PointCloudRendererBase(const View3D::Ptr& view, const Color::RGBAf& color) :
+PointCloudRendererBase::PointCloudRendererBase(const GLContext::Ptr& context,
+                                               const View3D::Ptr& view,
+                                               const Color::RGBAf& color) :
+    Renderer(context, vertexShader, fragmentShader, view),
+    pose_(Pose()),
+    color_(color)
+{
+    std::cout << "Request : " << color << std::endl;
+    std::cout << "Color : " << color_ << std::endl;
+    this->set_color(color);
+    std::cout << "Color : " << color_ << std::endl;
+}
+
+PointCloudRendererBase::PointCloudRendererBase(const View3D::Ptr& view,
+                                               const Color::RGBAf& color) :
     Renderer(vertexShader, fragmentShader, view),
     pose_(Pose()),
     color_(color)

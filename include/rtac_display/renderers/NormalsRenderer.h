@@ -8,6 +8,7 @@
 #include <rtac_base/types/Point.h>
 
 #include <rtac_display/utils.h>
+#include <rtac_display/GLContext.h>
 #include <rtac_display/Color.h>
 #include <rtac_display/GLVector.h>
 #include <rtac_display/renderers/Renderer.h>
@@ -43,12 +44,19 @@ class NormalsRenderer : public Renderer
     void allocate_data(size_t numPoints);
     void delete_data();
 
-    public:
-
-    static Ptr New(const View::Ptr& view = View::New(),
-                   const Color::RGBAf& = {0.3,0.5,1.0,1.0});
+    NormalsRenderer(const GLContext::Ptr& context,
+                    const View::Ptr& view = View::New(),
+                    const Color::RGBAf& = {0.3,0.5,1.0,1.0});
     NormalsRenderer(const View::Ptr& view = View::New(),
                     const Color::RGBAf& = {0.3,0.5,1.0,1.0});
+
+    public:
+
+    static Ptr Create(const GLContext::Ptr& context,
+                      const View::Ptr& view = View::New(),
+                      const Color::RGBAf& = {0.3,0.5,1.0,1.0});
+    static Ptr New(const View::Ptr& view = View::New(),
+                   const Color::RGBAf& = {0.3,0.5,1.0,1.0});
     ~NormalsRenderer();
 
     void set_normals(size_t numPoints, GLuint points, GLuint normals,
@@ -66,6 +74,7 @@ class NormalsRenderer : public Renderer
     void set_color(const Color::RGBAf& color);
 
     virtual void draw();
+    virtual void draw(const View::ConstPtr& view);
 };
 
 template <typename Derived1, typename Derived2>

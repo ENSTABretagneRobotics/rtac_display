@@ -36,6 +36,23 @@ void main()
 }
 )");
 
+MeshRenderer::Ptr MeshRenderer::Create(const GLContext::Ptr& context,
+                                       const View3D::Ptr& view,
+                                       const Color::RGBAf& color)
+{
+    return Ptr(new MeshRenderer(context, view, color));
+}
+
+MeshRenderer::MeshRenderer(const GLContext::Ptr& context,
+                           const View3D::Ptr& view,
+                           const Color::RGBAf& color) :
+    Renderer(context, vertexShader, fragmentShader, view),
+    numPoints_(0),
+    points_(0),
+    normals_(0),
+    color_(color)
+{}
+
 MeshRenderer::Ptr MeshRenderer::New(const View3D::Ptr& view, const Color::RGBAf& color)
 {
     return Ptr(new MeshRenderer(view, color));
@@ -133,6 +150,11 @@ void MeshRenderer::set_color(const Color::RGBAf& color)
 
 void MeshRenderer::draw()
 {
+    this->draw(this->view());
+}
+
+void MeshRenderer::draw(const View::ConstPtr& view)
+{
     if(points_ == 0 || normals_ == 0|| numPoints_ == 0)
         return;
 
@@ -152,12 +174,12 @@ void MeshRenderer::draw()
     glEnableVertexAttribArray(1);
     
     //auto view = view_.downcast<View3D>();
-    auto view = std::dynamic_pointer_cast<View3D>(view_);
-    Mat4 viewMatrix = (view->raw_view_matrix().inverse()) * pose_.homogeneous_matrix();
+    auto view3d = std::dynamic_pointer_cast<const View3D>(view);
+    Mat4 viewMatrix = (view3d->raw_view_matrix().inverse()) * pose_.homogeneous_matrix();
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),
         1, GL_FALSE, viewMatrix.data());
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "projection"),
-        1, GL_FALSE, view->projection_matrix().data());
+        1, GL_FALSE, view3d->projection_matrix().data());
     glUniform4fv(glGetUniformLocation(renderProgram_, "color"),
         1, reinterpret_cast<const float*>(&color_));
 

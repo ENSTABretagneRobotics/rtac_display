@@ -2,6 +2,18 @@
 
 namespace rtac { namespace display {
 
+Frame::Ptr Frame::Create(const GLContext::Ptr& context,
+                         const View3D::Pose& pose, const View::Ptr& view)
+{
+    return Ptr(new Frame(context, pose, view));
+}
+
+Frame::Frame(const GLContext::Ptr& context,
+             const View3D::Pose& pose, const View::Ptr& view) :
+    Renderer(context, Renderer::vertexShader, Renderer::fragmentShader, view),
+    pose_(pose)
+{}
+
 Frame::Ptr Frame::New(const View3D::Pose& pose, const View::Ptr& view)
 {
     return Ptr(new Frame(pose, view));
@@ -10,8 +22,7 @@ Frame::Ptr Frame::New(const View3D::Pose& pose, const View::Ptr& view)
 Frame::Frame(const View3D::Pose& pose, const View::Ptr& view) :
     Renderer(Renderer::vertexShader, Renderer::fragmentShader, view),
     pose_(pose)
-{
-}
+{}
 
 void Frame::set_pose(const View3D::Pose& pose)
 {
@@ -23,7 +34,7 @@ void Frame::draw()
     this->draw(this->view());
 }
 
-void Frame::draw(const View::Ptr& view)
+void Frame::draw(const View::ConstPtr& view)
 {
     float vertices[] = {0,0,0,
                         1,0,0,

@@ -116,6 +116,24 @@ void main()
 
 )");
 
+NormalsRenderer::Ptr NormalsRenderer::Create(const GLContext::Ptr& context,
+                                             const View::Ptr& view,
+                                             const Color::RGBAf& color)
+{
+    return Ptr(new NormalsRenderer(context, view, color));
+}
+
+NormalsRenderer::NormalsRenderer(const GLContext::Ptr& context,
+                                 const View::Ptr& view,
+                                 const Color::RGBAf& color) :
+    Renderer(context, vertexShader, fragmentShader, view),
+    numPoints_(0),
+    displayData_(0),
+    generateLineProgram_(create_compute_program(generateLineDataShader)),
+    generateLineProgram2_(create_compute_program(generateLineDataShader2)),
+    color_(color)
+{}
+
 NormalsRenderer::Ptr NormalsRenderer::New(const View::Ptr& view,
                                           const Color::RGBAf& color)
 {
@@ -130,8 +148,7 @@ NormalsRenderer::NormalsRenderer(const View::Ptr& view,
     generateLineProgram_(create_compute_program(generateLineDataShader)),
     generateLineProgram2_(create_compute_program(generateLineDataShader2)),
     color_(color)
-{
-}
+{}
 
 NormalsRenderer::~NormalsRenderer()
 {
@@ -226,10 +243,15 @@ void NormalsRenderer::set_color(const Color::RGBAf& color)
 
 void NormalsRenderer::draw()
 {
+    this->draw(this->view());
+}
+
+void NormalsRenderer::draw(const View::ConstPtr& view)
+{
     if(displayData_ == 0 || numPoints_ == 0)
         return;
     
-    Mat4 view = view_->view_matrix() * pose_.homogeneous_matrix();
+    Mat4 fullView = view->view_matrix() * pose_.homogeneous_matrix();
 
     glUseProgram(renderProgram_);
     
@@ -239,7 +261,7 @@ void NormalsRenderer::draw()
     glEnableVertexAttribArray(0);
 
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),
-        1, GL_FALSE, view.data());
+        1, GL_FALSE, fullView.data());
     glUniform4fv(glGetUniformLocation(renderProgram_, "color"),
         1, reinterpret_cast<const float*>(&color_));
 

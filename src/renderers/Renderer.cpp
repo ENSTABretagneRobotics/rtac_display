@@ -52,17 +52,10 @@ void main()
  *
  * @return a shared pointer to the newly instanciated Renderer.
  */
-Renderer::Ptr Renderer::New(const std::string& vertexShader,
-                            const std::string& fragmentShader,
-                            const View::Ptr& view)
-{
-    return Ptr(new Renderer(nullptr, vertexShader, fragmentShader, view));
-}
-
-Renderer::Ptr Renderer::New(const GLContext::Ptr& context,
-                            const std::string& vertexShader,
-                            const std::string& fragmentShader,
-                            const View::Ptr& view)
+Renderer::Ptr Renderer::Create(const GLContext::Ptr& context,
+                               const std::string& vertexShader,
+                               const std::string& fragmentShader,
+                               const View::Ptr& view)
 {
     return Ptr(new Renderer(context, vertexShader, fragmentShader, view));
 }
@@ -89,6 +82,13 @@ Renderer::Renderer(const GLContext::Ptr& context,
     view_(view)
 {}
 
+Renderer::Ptr Renderer::New(const std::string& vertexShader,
+                            const std::string& fragmentShader,
+                            const View::Ptr& view)
+{
+    return Ptr(new Renderer(nullptr, vertexShader, fragmentShader, view));
+}
+
 Renderer::Renderer(const std::string& vertexShader,
                    const std::string& fragmentShader,
                    const View::Ptr& view) :
@@ -104,7 +104,7 @@ void Renderer::draw()
  * Performs the OpenGL API calls to draw an object. By default this draws a XYZ
  * frame at the origin.
  */
-void Renderer::draw(View::ConstPtr view)
+void Renderer::draw(const View::ConstPtr& view)
 {
     float vertices[] = {0,0,0,
                         1,0,0,

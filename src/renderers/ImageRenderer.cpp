@@ -65,6 +65,30 @@ void main()
  *
  * An OpenGL context must have been created beforehand.
  */
+ImageRenderer::Ptr ImageRenderer::Create(const GLContext::Ptr& context)
+{
+    return Ptr(new ImageRenderer(context));
+}
+
+/**
+ * ImageRenderer does not expects any parameters. It creates its own view.
+ *
+ * An OpenGL context must have been created before any instantiation.
+ */
+ImageRenderer::ImageRenderer(const GLContext::Ptr& context) :
+    Renderer(context, vertexShader, fragmentShader, ImageView::New()),
+    texture_(GLTexture::New()),
+    imageView_(std::dynamic_pointer_cast<ImageView>(view_)),
+    passThroughProgram_(this->renderProgram_),
+    colormapProgram_(create_render_program(vertexShader, colormapFragmentShader)),
+    verticalFlip_(true) // More natural for CPU texture
+{}
+
+/**
+ * Creates a new ImageRenderer object on the heap and outputs a shared_ptr.
+ *
+ * An OpenGL context must have been created beforehand.
+ */
 ImageRenderer::Ptr ImageRenderer::New()
 {
     return Ptr(new ImageRenderer());

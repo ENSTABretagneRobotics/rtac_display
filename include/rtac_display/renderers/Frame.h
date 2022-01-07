@@ -4,6 +4,7 @@
 #include <rtac_base/types/Handle.h>
 
 #include <rtac_display/utils.h>
+#include <rtac_display/GLContext.h>
 #include <rtac_display/renderers/Renderer.h>
 #include <rtac_display/views/View3D.h>
 
@@ -26,18 +27,26 @@ class Frame : public Renderer
 
     View3D::Pose pose_;
 
-    public:
-
-    static Ptr New(const View3D::Pose& pose = View3D::Pose(),
-                   const View::Ptr& view = View::New());
+    Frame(const GLContext::Ptr& context,
+          const View3D::Pose& pose = View3D::Pose(),
+          const View::Ptr& view = View::New());
 
     Frame(const View3D::Pose& pose = View3D::Pose(),
           const View::Ptr& view = View::New());
     
+    public:
+
+    static Ptr Create(const GLContext::Ptr& context,
+                      const View3D::Pose& pose = View3D::Pose(),
+                      const View::Ptr& view = View::New());
+
+    static Ptr New(const View3D::Pose& pose = View3D::Pose(),
+                   const View::Ptr& view = View::New());
+
     void set_pose(const View3D::Pose& pose);
 
     virtual void draw();
-    virtual void draw(const View::Ptr& view);
+    virtual void draw(const View::ConstPtr& view);
 };
 
 }; //namespace display
