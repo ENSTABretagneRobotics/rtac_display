@@ -25,14 +25,10 @@ int main()
     Display3D display;
     display.disable_frame_counter();
     
-    auto renderer = Renderer::New();
-    renderer->set_view(display.view());
-    display.add_renderer(renderer);
-
-    auto meshRenderer = MeshRenderer::New(display.view());
+    auto renderer     = display.create_renderer<Renderer>(display.view());
+    auto meshRenderer = display.create_renderer<MeshRenderer>(display.view());
     meshRenderer->set_mesh(Mesh::cube(0.5));
     meshRenderer->set_pose(Pose({0,0,3}));
-    display.add_renderer(meshRenderer);
 
     float dangle = 0.001;
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));

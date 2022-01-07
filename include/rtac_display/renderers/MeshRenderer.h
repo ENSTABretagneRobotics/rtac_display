@@ -40,7 +40,7 @@ class MeshRenderer : public Renderer
     void delete_points();
 
     MeshRenderer(const GLContext::Ptr& context,
-                 const View3D::Ptr& view,
+                 const View3D::Ptr& view = nullptr,
                  const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
     MeshRenderer(const View3D::Ptr& view,
                  const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
@@ -48,7 +48,7 @@ class MeshRenderer : public Renderer
     public:
 
     static Ptr Create(const GLContext::Ptr& context,
-                      const View3D::Ptr& view,
+                      const View3D::Ptr& view = nullptr,
                       const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
     static Ptr New(const View3D::Ptr& view,
                    const Color::RGBAf& color = {1.0,1.0,1.0,1.0});

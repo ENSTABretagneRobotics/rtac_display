@@ -32,9 +32,8 @@ void main()
 )");
 
 PointCloudRendererBase::PointCloudRendererBase(const GLContext::Ptr& context,
-                                               const View3D::Ptr& view,
                                                const Color::RGBAf& color) :
-    Renderer(context, vertexShader, fragmentShader, view),
+    Renderer(context, vertexShader, fragmentShader, nullptr),
     pose_(Pose()),
     color_(color)
 {

@@ -16,15 +16,10 @@ using Pose   = OrthoView::Pose;
 int main()
 {
     Display display;
-    auto view = OrthoView::New(Bounds({-3,3,-3,3}));
-    //auto view = PinholeView::New();
-    auto axes = Renderer::New();
-    axes->set_view(view);
-    display.add_renderer(axes);
-
-    auto r = MeshRenderer::New(view);
-    r->set_mesh(Mesh::cube(1));
-    display.add_renderer(r);
+    //auto view = OrthoView::New(Bounds({-3,3,-3,3}));
+    auto view = PinholeView::New();
+    auto axes = display.create_renderer<Renderer>(view);
+    auto r = display.create_renderer<MeshRenderer>(view);
 
     view->look_at({0,0,0}, {5,4,3});
 

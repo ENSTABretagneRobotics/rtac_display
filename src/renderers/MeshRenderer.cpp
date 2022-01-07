@@ -150,6 +150,9 @@ void MeshRenderer::set_color(const Color::RGBAf& color)
 
 void MeshRenderer::draw() const
 {
+    if(!this->view()) {
+        throw std::runtime_error("No view in renderer");
+    }
     this->draw(this->view());
 }
 

@@ -15,16 +15,11 @@ int main()
     samples::Display3D display0;
     display0.view()->look_at({0,0,0}, {5,4,3});
     
-    auto renderer = Frame::New(Frame::Pose(), display0.view());
-
-    //display0.add_renderer(renderer);
-    display0.add_render_item(renderer, display0.view());
+    auto renderer = display0.create_renderer<Frame>(display0.view(), Frame::Pose());
 
     //samples::Display3D display1; // this is not working (as expected)
     samples::Display3D display1(display0.context());
     display1.view()->look_at({0,0,0}, {5,4,3});
-
-    //display1.add_renderer(renderer);
     display1.add_render_item(renderer, display1.view());
 
     while(!display0.should_close() && !display1.should_close()) {

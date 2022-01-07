@@ -24,17 +24,14 @@ int main()
 
     Display display;
     
-    auto renderer = Renderer::New();
     auto view3d = PinholeView::New();
     view3d->look_at({0,0,0}, {5,4,3});
-    renderer->set_view(view3d);
-    display.add_renderer(renderer);
+    auto renderer = display.create_renderer<Renderer>(view3d);
 
-    auto meshRenderer = MeshRenderer::New(view3d);
+    auto meshRenderer = display.create_renderer<MeshRenderer>(view3d);
     meshRenderer->set_mesh(Mesh::cube(0.5));
     meshRenderer->set_pose(Pose({0,0,3}));
     meshRenderer->set_color({1,1,0,1});
-    display.add_renderer(meshRenderer);
 
     float dangle = 0.001;
     Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));

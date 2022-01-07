@@ -30,15 +30,12 @@ int main()
 
     Display display;
     
-    auto renderer = Renderer::New();
-    auto view3d = PinholeView::New();
+    auto view3d   = PinholeView::New();
+    auto renderer = display.create_renderer<Renderer>(view3d);
     view3d->look_at({0,0,0}, {5,4,3});
-    renderer->set_view(view3d);
-    display.add_renderer(renderer);
     
-    //auto pcRenderer = PointCloudRenderer<PointCloud::PointType>::New(view3d);
-    auto pcRenderer = PointCloudRenderer<PointTest>::New(view3d);
-    display.add_renderer(pcRenderer);
+    //auto pcRenderer = display.create_renderer<PointCloudRenderer<PointCloud::PointType>>(view3d);
+    auto pcRenderer = display.create_renderer<PointCloudRenderer<PointTest>>(view3d);
 
     std::vector<float> cubePoints({-1,-1,-1,
                                     1,-1,-1,

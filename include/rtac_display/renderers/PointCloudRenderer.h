@@ -36,7 +36,6 @@ class PointCloudRendererBase : public Renderer
     Color::RGBAf color_;
 
     PointCloudRendererBase(const GLContext::Ptr& context,
-                           const View3D::Ptr& view,
                            const Color::RGBAf& color = {0.7,0.7,1.0,1.0});
     PointCloudRendererBase(const View3D::Ptr& view,
                            const Color::RGBAf& color = {0.7,0.7,1.0,1.0});
@@ -67,7 +66,6 @@ class PointCloudRenderer : public PointCloudRendererBase
     GLVector<PointT> points_;
 
     PointCloudRenderer(const GLContext::Ptr& context,
-                       const View3D::Ptr& view,
                        const Color::RGBAf& color = {0.7,0.7,1.0,1.0});
     PointCloudRenderer(const View3D::Ptr& view,
                        const Color::RGBAf& color = {0.7,0.7,1.0,1.0});
@@ -75,7 +73,6 @@ class PointCloudRenderer : public PointCloudRendererBase
     public:
     
     static Ptr Create(const GLContext::Ptr& context,
-                      const View3D::Ptr& view,
                       const Color::RGBAf& color = {0.7,0.7,1.0,1.0});
     static Ptr New(const View3D::Ptr& view,
                    const Color::RGBAf& color = {0.7,0.7,1.0,1.0});
@@ -96,16 +93,15 @@ class PointCloudRenderer : public PointCloudRendererBase
 // implementation
 template <typename PointT> typename
 PointCloudRenderer<PointT>::Ptr PointCloudRenderer<PointT>::Create(
-    const GLContext::Ptr& context, const View3D::Ptr& view, const Color::RGBAf& color)
+    const GLContext::Ptr& context, const Color::RGBAf& color)
 {
-    return Ptr(new PointCloudRenderer<PointT>(context, view, color));
+    return Ptr(new PointCloudRenderer<PointT>(context, color));
 }
 
 template <typename PointT>
 PointCloudRenderer<PointT>::PointCloudRenderer(const GLContext::Ptr& context,
-                                               const View3D::Ptr& view,
                                                const Color::RGBAf& color) :
-    PointCloudRendererBase(context, view, color)
+    PointCloudRendererBase(context, color)
 {}
 
 template <typename PointT> typename
@@ -175,6 +171,9 @@ void PointCloudRenderer<PointT>::set_points(const Eigen::DenseBase<Derived>& poi
 template <typename PointT>
 void PointCloudRenderer<PointT>::draw() const
 {
+    if(!this->view()) {
+        throw std::runtime_error("No view in renderer");
+    }
     this->draw(this->view());
 }
 

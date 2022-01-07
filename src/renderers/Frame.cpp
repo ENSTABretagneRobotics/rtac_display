@@ -31,6 +31,9 @@ void Frame::set_pose(const View3D::Pose& pose)
 
 void Frame::draw() const
 {
+    if(!this->view()) {
+        throw std::runtime_error("No view in renderer");
+    }
     this->draw(this->view());
 }
 

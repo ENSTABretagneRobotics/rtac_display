@@ -97,6 +97,9 @@ Renderer::Renderer(const std::string& vertexShader,
 
 void Renderer::draw() const
 {
+    if(!this->view()) {
+        throw std::runtime_error("No view in renderer");
+    }
     this->draw(this->view());
 }
 

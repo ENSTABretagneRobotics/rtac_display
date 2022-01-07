@@ -74,10 +74,12 @@ int main()
     // display.add_renderer(label0);
     // display.add_renderer(label1);
 
-    auto label0 = display.create_renderer<text::TextRenderer>(display.view(), font, std::string("origin"));
+    auto label0 = display.create_renderer<text::TextRenderer>(
+        display.view(), font, std::string("origin"));
     label0->set_anchor("top left");
     label0->set_text_color({1,1,1,1});
-    auto label1 = display.create_renderer<text::TextRenderer>(display.view(), font, std::string("y"));
+    auto label1 = display.create_renderer<text::TextRenderer>(
+        display.view(), font, std::string("y"));
     label1->set_anchor("top left");
     label1->set_text_color({1,1,1,1});
     label1->origin()(1) = 1.0f;
@@ -111,7 +113,7 @@ int main()
     auto meshPath = files::find_one(".*mummy_dtm_uav_withUV.ply");
     cout << "Mesh path : " << meshPath << endl;
 
-    auto meshRenderer = TexturedMeshRenderer<>::from_ply(meshPath, display.view(), true);
+    auto meshRenderer = TexturedMeshRenderer<>::from_ply(display.context(), meshPath, true);
 
     cout << "vertex count : " << meshRenderer->points()->size() << endl;
     cout << "face count   : " << meshRenderer->faces()->size() << endl;
@@ -126,7 +128,7 @@ int main()
     meshRenderer->set_pose(Pose({0,0,3}));
 
     //display.add_renderer(renderer);
-    display.add_renderer(meshRenderer);
+    display.add_render_item(meshRenderer, display.view());
 
     display1.add_render_item(label0,       display1.view());
     display1.add_render_item(label1,       display1.view());

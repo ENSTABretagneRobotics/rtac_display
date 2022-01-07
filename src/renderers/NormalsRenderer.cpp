@@ -243,6 +243,9 @@ void NormalsRenderer::set_color(const Color::RGBAf& color)
 
 void NormalsRenderer::draw() const
 {
+    if(!this->view()) {
+        throw std::runtime_error("No view in renderer");
+    }
     this->draw(this->view());
 }
 

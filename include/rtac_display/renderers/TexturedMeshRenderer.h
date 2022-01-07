@@ -63,14 +63,12 @@ class TexturedMeshRenderer : public Renderer
     void draw_solid(const View::ConstPtr& view) const;
     void draw_textured(const View::ConstPtr& view) const;
 
-    TexturedMeshRenderer(const GLContext::Ptr& context,
-                         const View3D::Ptr& view);
+    TexturedMeshRenderer(const GLContext::Ptr& context);
     TexturedMeshRenderer(const View3D::Ptr& view);
 
     public:
 
-    static Ptr Create(const GLContext::Ptr& context,
-                      const View3D::Ptr& view);
+    static Ptr Create(const GLContext::Ptr& context);
     static Ptr New(const View3D::Ptr& view);
     
     typename Points::Ptr&     points()       { return points_; }
@@ -88,7 +86,8 @@ class TexturedMeshRenderer : public Renderer
     virtual void draw() const;
     virtual void draw(const View::ConstPtr& view) const;
 
-    static Ptr from_ply(const std::string& path, const View3D::Ptr& view,
+    static Ptr from_ply(const GLContext::Ptr& context,
+                        const std::string& path,
                         bool transposeUVs = false);
 };
 
@@ -181,9 +180,8 @@ void main()
  * @param view a View instance to render this object.
  */
 template <typename Tp, typename Tf, typename Tu>
-TexturedMeshRenderer<Tp,Tf,Tu>::TexturedMeshRenderer(const GLContext::Ptr& context,
-                                                     const View3D::Ptr& view) :
-    Renderer(context, vertexShader, fragmentShader, view),
+TexturedMeshRenderer<Tp,Tf,Tu>::TexturedMeshRenderer(const GLContext::Ptr& context) :
+    Renderer(context, vertexShader, fragmentShader, nullptr),
     solidRender_(this->renderProgram_),
     texturedRender_(create_render_program(vertexShaderTextured, fragmentShaderTextured)),
     points_(new Points(0)),
@@ -204,10 +202,9 @@ TexturedMeshRenderer<Tp,Tf,Tu>::TexturedMeshRenderer(const GLContext::Ptr& conte
  */
 template <typename Tp, typename Tf, typename Tu>
 typename TexturedMeshRenderer<Tp,Tf,Tu>::Ptr
-TexturedMeshRenderer<Tp,Tf,Tu>::Create(const GLContext::Ptr& context,
-                                       const View3D::Ptr& view)
+TexturedMeshRenderer<Tp,Tf,Tu>::Create(const GLContext::Ptr& context)
 {
-    return Ptr(new TexturedMeshRenderer<Tp,Tf,Tu>(context, view));
+    return Ptr(new TexturedMeshRenderer<Tp,Tf,Tu>(context));
 }
 
 /**
@@ -272,6 +269,9 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::set_pose(const Pose& pose)
 template <typename Tp, typename Tf, typename Tu>
 void TexturedMeshRenderer<Tp,Tf,Tu>::draw() const
 {
+    if(!this->view()) {
+        throw std::runtime_error("No view in renderer");
+    }
     this->draw(this->view());
 }
 
@@ -410,7 +410,8 @@ void TexturedMeshRenderer<Tp,Tf,Tu>::draw_textured(const View::ConstPtr& view) c
  */
 template <typename Tp, typename Tf, typename Tu>
 typename TexturedMeshRenderer<Tp,Tf,Tu>::Ptr
-TexturedMeshRenderer<Tp,Tf,Tu>::from_ply(const std::string& path, const View3D::Ptr& view,
+TexturedMeshRenderer<Tp,Tf,Tu>::from_ply(const GLContext::Ptr& context,
+                                         const std::string& path,
                                          bool transposeUVs)
 {
     std::ifstream f(path, std::ios::binary | std::ios::in);
@@ -425,7 +426,7 @@ TexturedMeshRenderer<Tp,Tf,Tu>::from_ply(const std::string& path, const View3D::
             "Invalid ply file : No vertex defined in \"" + path + "\"");
     }
 
-    auto mesh = New(view);
+    auto mesh = Create(context);
     
     {
         // Loading vertices
