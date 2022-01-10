@@ -15,27 +15,31 @@ using namespace rtac::cuda;
 
 int main()
 {
-    std::vector<float> data(1024*1024*32 + 1, 1.0f);
-    int N = 100;
+    std::vector<float> data(1024*1024*64 + 1, 1.0f);
+    int N = 1000;
     Clock clock;
     double tGl, tCuda;
 
     Display display;
     
     GLVector<float> glData(data);
+    HostVector<float> glDump(glData.size());
     clock.reset();
     for(int n = 0; n < N; n++) {
         sum(glData);
     }
+    glData.copy_to(glDump);
     tGl = clock.now();
     
     
     
     DeviceVector<float> cudaData(data);
+    HostVector<float> cudaDump(cudaData.size());
     clock.reset();
     for(int n = 0; n < N; n++) {
         sum(cudaData);
     }
+    cudaDump = cudaData;
     tCuda = clock.now();
 
     cout << "OpenGL time : " << tGl << endl;
