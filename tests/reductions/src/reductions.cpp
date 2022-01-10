@@ -1,0 +1,184 @@
+#include "reductions.h"
+
+namespace rtac { namespace display {
+
+const std::string elementfShader = std::string( R"(
+#version 430 core
+
+layout(local_size_x = 1, local_size_y = 1) in;
+//layout(std140, binding = 0) buffer input
+layout(std430, binding = 0) buffer input
+{
+    float data[];
+};
+
+void main() {
+    data[gl_GlobalInvocationID.x] = 1;
+}
+
+)");
+
+const std::string element3fShader = std::string( R"(
+#version 430 core
+
+layout(local_size_x = 1, local_size_y = 1) in;
+//layout(std140, binding = 0) buffer input
+layout(std430, binding = 0) buffer input
+{
+    vec3 data[];
+};
+
+void main() {
+    data[gl_GlobalInvocationID.x].x = 1;
+    data[gl_GlobalInvocationID.x].y = 0;
+    data[gl_GlobalInvocationID.x].z = 0;
+}
+)");
+
+const std::string element4fShader = std::string( R"(
+#version 430 core
+
+layout(local_size_x = 1, local_size_y = 1) in;
+//layout(std140, binding = 0) buffer input
+layout(std430, binding = 0) buffer input
+{
+    vec4 data[];
+};
+
+void main() {
+    data[gl_GlobalInvocationID.x].x = 1;
+    data[gl_GlobalInvocationID.x].y = 0;
+    data[gl_GlobalInvocationID.x].z = 0;
+    data[gl_GlobalInvocationID.x].w = 1;
+}
+)");
+
+void element(const GLVector<float>& data)
+{
+    static const GLuint program = create_compute_program(elementfShader);
+    //static const GLuint program = create_compute_program(element4fShader);
+    
+    // fail as it should (alignement issues)
+    // static const GLuint program = create_compute_program(element3fShader); 
+    
+    glUseProgram(program);
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, data.gl_id());
+    
+    glDispatchCompute(data.size(), 1, 1);
+    //glDispatchCompute(data.size() / 3, 1, 1);
+    //glDispatchCompute(data.size() / 4, 1, 1);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+    data.unbind(GL_SHADER_STORAGE_BUFFER);
+
+    glUseProgram(0);
+
+    GL_CHECK_LAST();
+}
+
+
+
+const std::string sumfShader = std::string( R"(
+#version 430 core
+
+layout(local_size_x = 256, local_size_y = 1) in;
+layout(location = 0) uniform unsigned int N;
+layout(std430, binding = 0) buffer input
+{
+    float inputData[];
+};
+layout(std430, binding = 1) buffer outpt
+{
+    float outputData[];
+};
+
+shared float s[256];
+
+void main() 
+{
+    unsigned int idx      = gl_GlobalInvocationID.x;
+    unsigned int gridSize = gl_NumWorkGroups.x*gl_WorkGroupSize.x;
+
+    s[gl_LocalInvocationID.x] = 0;
+    while(idx < N) {
+        s[gl_LocalInvocationID.x] += inputData[idx];
+        idx += gridSize;
+    }
+    barrier();
+
+    if(gl_LocalInvocationID.x < 128) {
+        s[gl_LocalInvocationID.x] += s[gl_LocalInvocationID.x + 128];
+        barrier();
+    }
+    if(gl_LocalInvocationID.x < 64) {
+        s[gl_LocalInvocationID.x] += s[gl_LocalInvocationID.x + 64];
+        barrier();
+    }
+    if(gl_LocalInvocationID.x < 32) {
+        s[gl_LocalInvocationID.x] += s[gl_LocalInvocationID.x + 32];
+        barrier();
+    }
+    if(gl_LocalInvocationID.x < 16) {
+        s[gl_LocalInvocationID.x] += s[gl_LocalInvocationID.x + 16];
+        barrier();
+    }
+    if(gl_LocalInvocationID.x < 8) {
+        s[gl_LocalInvocationID.x] += s[gl_LocalInvocationID.x + 8];
+        barrier();
+    }
+    if(gl_LocalInvocationID.x < 4) {
+        s[gl_LocalInvocationID.x] += s[gl_LocalInvocationID.x + 4];
+        barrier();
+    }
+    if(gl_LocalInvocationID.x < 2) {
+        s[gl_LocalInvocationID.x] += s[gl_LocalInvocationID.x + 2];
+        barrier();
+    }
+
+    if(gl_LocalInvocationID.x == 0) {
+        outputData[gl_LocalInvocationID.x + gl_WorkGroupID.x] 
+            = s[gl_LocalInvocationID.x] + s[gl_LocalInvocationID.x + 1];
+    }
+}
+
+)");
+
+float sum(const GLVector<float>& data)
+{
+    static const GLuint program = create_compute_program(sumfShader);
+
+    glUseProgram(program);
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, data.gl_id());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, data.gl_id());
+    
+    unsigned int N = data.size();
+    while(N > 0) {
+        unsigned int blockCount = N / (2*256);
+
+        glUniform1ui(0, N);
+        if(blockCount == 0)
+            glDispatchCompute(1,1,1);
+        else
+            glDispatchCompute(blockCount,1,1);
+
+        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+        N = blockCount;
+    }
+
+    data.unbind(GL_SHADER_STORAGE_BUFFER);
+
+    glUseProgram(0);
+
+    GL_CHECK_LAST();
+
+    return 0.0;
+}
+
+}; //namespace display
+}; //namespace rtac
+
+
+
+
