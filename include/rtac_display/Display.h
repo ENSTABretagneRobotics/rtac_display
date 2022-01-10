@@ -64,7 +64,7 @@ class Display : public DrawingSurface
     EventHandler eventHandler_;
     
     rtac::time::FrameCounter frameCounter_;
-    bool frameCounterEnabled_;
+    bool displayFrameRate_;
 
     // Event callback queues
     KeyCallbacks           keyCallbacks_;

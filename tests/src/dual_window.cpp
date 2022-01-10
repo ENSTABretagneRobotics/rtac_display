@@ -13,6 +13,7 @@ using namespace rtac::display;
 int main()
 {
     samples::Display3D display0;
+    display0.enable_frame_counter();
     display0.view()->look_at({0,0,0}, {5,4,3});
     
     auto renderer = display0.create_renderer<Frame>(display0.view(), Frame::Pose());

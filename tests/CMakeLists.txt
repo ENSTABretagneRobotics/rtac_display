@@ -33,4 +33,6 @@ if(TARGET Freetype::Freetype)
     add_subdirectory(freetype_test)
 endif()
 
+add_subdirectory(reductions)
+
 

@@ -31,7 +31,7 @@ std::tuple<GLFWContext::Ptr, Display::Window, Display::Shape> Display::create_wi
 Display::Display(const std::tuple<Context::Ptr, Window, Shape>& windowData) :
     DrawingSurface(std::get<0>(windowData), std::get<2>(windowData)),
     window_(std::get<1>(windowData)),
-    frameCounterEnabled_(false)
+    displayFrameRate_(false)
 {
     if(!window_) {
         throw std::runtime_error("Initialization failure");
@@ -64,6 +64,8 @@ Display::Display(const std::tuple<Context::Ptr, Window, Shape>& windowData) :
 
     this->add_display_flags( DrawingSurface::CLEAR_COLOR 
                            | DrawingSurface::CLEAR_DEPTH);
+
+    this->limit_frame_rate(60.0);
 }
 
 Display::Display(size_t width, size_t height, const std::string& title,
@@ -175,8 +177,11 @@ void Display::draw()
 
     glfwSwapBuffers(window_.get());
 
-    if(frameCounterEnabled_) {
+    if(displayFrameRate_) {
         std::cout << frameCounter_;
+    }
+    else {
+        frameCounter_.get();
     }
 }
 
@@ -185,12 +190,12 @@ void Display::draw()
  */
 void Display::enable_frame_counter()
 {
-    frameCounterEnabled_ = true;
+    displayFrameRate_ = true;
 }
 
 void Display::disable_frame_counter()
 {
-    frameCounterEnabled_ = false;
+    displayFrameRate_ = false;
 }
 
 /**
