@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <memory>
+#include <vector>
 
 #include <GL/glew.h>
 //#define GL3_PROTOTYPES 1
@@ -51,6 +52,7 @@ GLuint create_render_program(const std::string& vertexShaderSource,
                              const std::string& fragmentShaderSource);
 
 GLuint create_compute_program(const std::string& computeShaderSource);
+GLuint create_compute_program(const std::vector<std::string>& computeShaderSources);
 
 template <typename T>
 inline void infer_gl_format(GLenum& format, GLenum& type)

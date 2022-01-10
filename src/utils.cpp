@@ -126,5 +126,42 @@ GLuint create_compute_program(const std::string& computeShaderSource)
 
     return programId;
 }
+
+GLuint create_compute_program(const std::vector<std::string>& computeShaderSources)
+{
+    GLuint programId = glCreateProgram();
+    check_gl("Program creation failure.");
+
+    if(programId == 0)
+        throw std::runtime_error("Could not create program.");
+
+    for(auto& s : computeShaderSources) {
+        glAttachShader(programId, compile_shader(GL_COMPUTE_SHADER, s));
+    }
+
+    glLinkProgram(programId);
+
+    GLint linkStatus(0);
+    glGetProgramiv(programId, GL_LINK_STATUS, &linkStatus);
+    if(linkStatus != GL_TRUE)
+    {
+        //std::cout << "Compute shader :\n" << computeShaderSource << std::endl;
+        for(auto& s : computeShaderSources) {
+            std::cout << "Compute shader :\n" << s << std::endl;
+        }
+        GLint errorSize(0);
+        glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &errorSize);
+        std::shared_ptr<char> error(new char[errorSize + 1]);
+        glGetProgramInfoLog(programId, errorSize, &errorSize, error.get());
+        error.get()[errorSize] = '\0';
+        glDeleteProgram(programId);
+        programId = 0;
+
+        throw std::runtime_error("Program link error :\n" + std::string(error.get()));
+    }
+    //glDeleteShader(computeShader);
+
+    return programId;
+}
 }; //namespace display
 }; //namespace rtac

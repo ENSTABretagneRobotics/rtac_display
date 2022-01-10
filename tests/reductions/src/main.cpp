@@ -16,6 +16,7 @@ using namespace rtac::cuda;
 int main()
 {
     std::vector<float> data(1024*1024*64 + 1, 1.0f);
+    data[1001] = 1002;
     int N = 1000;
     Clock clock;
     double tGl, tCuda;
