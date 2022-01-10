@@ -76,6 +76,10 @@ class GLVector
     GLVector& operator=(GLVector<T>&& other);
     GLVector& operator=(const std::vector<T>& other);
     void set_data(unsigned int size, const T* data);
+    
+    template <template <typename> class VectorT>
+    void copy_to(VectorT<T>& other) const;
+    void copy_to(T* dst) const;
 
     void resize(size_t size);
     size_t size() const;
@@ -299,6 +303,34 @@ void GLVector<T>::set_data(unsigned int size, const T* data)
     this->bind(GL_ARRAY_BUFFER);
     glBufferSubData(GL_ARRAY_BUFFER, 0, this->size()*sizeof(T), data);
     this->unbind(GL_ARRAY_BUFFER);
+}
+
+/**
+ * Copy data to client memory (host memory in CUDA terminology)
+ *
+ * @param other a std::vector compliant container.
+ */
+template <typename T> template <template <typename> class VectorT>
+void GLVector<T>::copy_to(VectorT<T>& other) const
+{
+    other.resize(this->size());
+    this->copy_to(other.data());
+}
+
+/**
+ * Copy data to client memory (host memory in CUDA terminology)
+ *
+ * @param dst client size memory buffer already allocated.
+ */
+template <typename T>
+void GLVector<T>::copy_to(T* dst) const
+{
+    this->bind(GL_COPY_READ_BUFFER);
+
+    glGetBufferSubData(GL_COPY_READ_BUFFER, 0,
+                        this->size()*sizeof(T), dst);
+
+    this->unbind(GL_COPY_READ_BUFFER);
 }
 
 /**
