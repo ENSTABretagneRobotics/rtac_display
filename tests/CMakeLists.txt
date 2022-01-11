@@ -11,6 +11,7 @@ list(APPEND test_names
     glfwinput_test.cpp
     dual_window.cpp
     gl_mesh_test.cpp
+    glsl_types.cpp
 )
 list(APPEND test_deps
     rtac_display

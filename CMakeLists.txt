@@ -33,6 +33,7 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/GLState.h
     include/rtac_display/GLContext.h
     include/rtac_display/GLFormat.h
+    include/rtac_display/GLSLType.h
     include/rtac_display/Color.h
 
     include/rtac_display/views/View.h
