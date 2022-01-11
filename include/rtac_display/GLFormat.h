@@ -98,13 +98,13 @@ struct GLFormat<float>
 };
 
 template<>
-struct GLFormat<uint8_t>
+struct GLFormat<types::Point2<float>>
 {
-    using Scalar = uint8_t;
+    using Scalar = float;
 
-    static constexpr unsigned int Size  = 1;
-    static constexpr GLenum PixelFormat = GL_RED;
-    static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
+    static constexpr unsigned int Size  = 2;
+    static constexpr GLenum PixelFormat = GL_RG;
+    static constexpr GLenum Type        = GL_FLOAT;
 };
 
 template<>
@@ -118,26 +118,6 @@ struct GLFormat<types::Point3<float>>
 };
 
 template<>
-struct GLFormat<types::Point3<uint32_t>>
-{
-    using Scalar = uint32_t;
-
-    static constexpr unsigned int Size  = 3;
-    static constexpr GLenum PixelFormat = GL_RGB;
-    static constexpr GLenum Type        = GL_UNSIGNED_INT;
-};
-
-template<>
-struct GLFormat<types::Point3<uint8_t>>
-{
-    using Scalar = uint8_t;
-
-    static constexpr unsigned int Size  = 3;
-    static constexpr GLenum PixelFormat = GL_RGB;
-    static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
-};
-
-template<>
 struct GLFormat<types::Point4<float>>
 {
     using Scalar = float;
@@ -148,23 +128,203 @@ struct GLFormat<types::Point4<float>>
 };
 
 template<>
-struct GLFormat<types::Point4<uint8_t>>
+struct GLFormat<int32_t>
 {
-    using Scalar = uint8_t;
+    using Scalar = int32_t;
+
+    static constexpr unsigned int Size  = 1;
+    static constexpr GLenum PixelFormat = GL_RED;
+    static constexpr GLenum Type        = GL_INT;
+};
+
+template<>
+struct GLFormat<types::Point2<int32_t>>
+{
+    using Scalar = int32_t;
+
+    static constexpr unsigned int Size  = 2;
+    static constexpr GLenum PixelFormat = GL_RG;
+    static constexpr GLenum Type        = GL_INT;
+};
+
+template<>
+struct GLFormat<types::Point3<int32_t>>
+{
+    using Scalar = int32_t;
+
+    static constexpr unsigned int Size  = 3;
+    static constexpr GLenum PixelFormat = GL_RGB;
+    static constexpr GLenum Type        = GL_INT;
+};
+
+template<>
+struct GLFormat<types::Point4<int32_t>>
+{
+    using Scalar = int32_t;
+
+    static constexpr unsigned int Size  = 4;
+    static constexpr GLenum PixelFormat = GL_RGBA;
+    static constexpr GLenum Type        = GL_INT;
+};
+
+template<>
+struct GLFormat<uint32_t>
+{
+    using Scalar = uint32_t;
+
+    static constexpr unsigned int Size  = 1;
+    static constexpr GLenum PixelFormat = GL_RED;
+    static constexpr GLenum Type        = GL_UNSIGNED_INT;
+};
+
+template<>
+struct GLFormat<types::Point2<uint32_t>>
+{
+    using Scalar = uint32_t;
+
+    static constexpr unsigned int Size  = 2;
+    static constexpr GLenum PixelFormat = GL_RG;
+    static constexpr GLenum Type        = GL_UNSIGNED_INT;
+};
+
+template<>
+struct GLFormat<types::Point3<uint32_t>>
+{
+    using Scalar = uint32_t;
+
+    static constexpr unsigned int Size  = 3;
+    static constexpr GLenum PixelFormat = GL_RGB;
+    static constexpr GLenum Type        = GL_UNSIGNED_INT;
+};
+
+template<>
+struct GLFormat<types::Point4<uint32_t>>
+{
+    using Scalar = uint32_t;
+
+    static constexpr unsigned int Size  = 4;
+    static constexpr GLenum PixelFormat = GL_RGBA;
+    static constexpr GLenum Type        = GL_UNSIGNED_INT;
+};
+
+template<>
+struct GLFormat<char>
+{
+    using Scalar = char;
+
+    static constexpr unsigned int Size  = 1;
+    static constexpr GLenum PixelFormat = GL_RED;
+    static constexpr GLenum Type        = GL_BYTE;
+};
+
+template<>
+struct GLFormat<types::Point2<char>>
+{
+    using Scalar = char;
+
+    static constexpr unsigned int Size  = 2;
+    static constexpr GLenum PixelFormat = GL_RG;
+    static constexpr GLenum Type        = GL_BYTE;
+};
+
+template<>
+struct GLFormat<types::Point3<char>>
+{
+    using Scalar = char;
+
+    static constexpr unsigned int Size  = 3;
+    static constexpr GLenum PixelFormat = GL_RGB;
+    static constexpr GLenum Type        = GL_BYTE;
+};
+
+template<>
+struct GLFormat<types::Point4<char>>
+{
+    using Scalar = char;
+
+    static constexpr unsigned int Size  = 4;
+    static constexpr GLenum PixelFormat = GL_RGBA;
+    static constexpr GLenum Type        = GL_BYTE;
+};
+
+template<>
+struct GLFormat<unsigned char>
+{
+    using Scalar = unsigned char;
+
+    static constexpr unsigned int Size  = 1;
+    static constexpr GLenum PixelFormat = GL_RED;
+    static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
+};
+
+template<>
+struct GLFormat<types::Point2<unsigned char>>
+{
+    using Scalar = unsigned char;
+
+    static constexpr unsigned int Size  = 2;
+    static constexpr GLenum PixelFormat = GL_RG;
+    static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
+};
+
+template<>
+struct GLFormat<types::Point3<unsigned char>>
+{
+    using Scalar = unsigned char;
+
+    static constexpr unsigned int Size  = 3;
+    static constexpr GLenum PixelFormat = GL_RGB;
+    static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
+};
+
+template<>
+struct GLFormat<types::Point4<unsigned char>>
+{
+    using Scalar = unsigned char;
 
     static constexpr unsigned int Size  = 4;
     static constexpr GLenum PixelFormat = GL_RGBA;
     static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
 };
 
-template<>
-struct GLFormat<types::Point2<float>>
+template <>
+struct GLFormat<double>
 {
-    using Scalar = float;
+    using Scalar = double;
+
+    static constexpr unsigned int Size  = 1;
+    static constexpr GLenum PixelFormat = GL_RED;
+    static constexpr GLenum Type        = GL_DOUBLE;
+};
+
+template <>
+struct GLFormat<types::Point2<double>>
+{
+    using Scalar = double;
 
     static constexpr unsigned int Size  = 2;
     static constexpr GLenum PixelFormat = GL_RG;
-    static constexpr GLenum Type        = GL_FLOAT;
+    static constexpr GLenum Type        = GL_DOUBLE;
+};
+
+template <>
+struct GLFormat<types::Point3<double>>
+{
+    using Scalar = double;
+
+    static constexpr unsigned int Size  = 3;
+    static constexpr GLenum PixelFormat = GL_RGB;
+    static constexpr GLenum Type        = GL_DOUBLE;
+};
+
+template <>
+struct GLFormat<types::Point4<double>>
+{
+    using Scalar = double;
+
+    static constexpr unsigned int Size  = 4;
+    static constexpr GLenum PixelFormat = GL_RGBA;
+    static constexpr GLenum Type        = GL_DOUBLE;
 };
 
 }; //namespace display
