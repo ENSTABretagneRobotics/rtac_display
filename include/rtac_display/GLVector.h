@@ -61,7 +61,7 @@ class GLVector
     mutable T*     mappedPtr_;
 
     void allocate(size_t size);
-    void free();
+    void clear();
 
     public:
 
@@ -224,7 +224,7 @@ GLVector<T>::GLVector(const std::vector<T>& other) :
 template <typename T>
 GLVector<T>::~GLVector()
 {
-    this->free();
+    this->clear();
 }
 
 /**
@@ -357,7 +357,7 @@ void GLVector<T>::allocate(size_t size)
  * An OpenGL context must have been created beforehand.
  */
 template <typename T>
-void GLVector<T>::free()
+void GLVector<T>::clear()
 {
     if(bufferId_)
         glDeleteBuffers(1, &bufferId_);
