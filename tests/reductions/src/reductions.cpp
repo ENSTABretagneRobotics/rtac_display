@@ -334,17 +334,18 @@ float sum(const GLVector<float>& data)
 {
     //static const GLuint program = create_compute_program(sumShaderf);
     //static const GLuint program = create_compute_program(reductionShaderf);
-    // static const GLuint program = create_compute_program({
-    //     //plusOperatorShader,
-    //     maxOperatorShader,
-    //     reductionShaderf});
-    // unsigned int N = data.size();
 
     static const GLuint program = create_compute_program({
-        //plusOperatorShader,
-        maxOperatorShader,
-        reductionShader4f});
-    unsigned int N = data.size() / 4;
+        plusOperatorShader,
+        //maxOperatorShader,
+        reductionShaderf});
+    unsigned int N = data.size();
+
+    // static const GLuint program = create_compute_program({
+    //     plusOperatorShader,
+    //     //maxOperatorShader,
+    //     reductionShader4f});
+    // unsigned int N = data.size() / 4;
 
     glUseProgram(program);
 
