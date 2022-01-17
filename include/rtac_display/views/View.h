@@ -5,6 +5,7 @@
 
 #include <rtac_base/types/common.h>
 #include <rtac_base/types/Shape.h>
+#include <rtac_base/types/Point.h>
 #include <rtac_base/types/Handle.h>
 
 #include <rtac_display/utils.h>
@@ -50,8 +51,10 @@ class View
     using Ptr      = rtac::types::Handle<View>;
     using ConstPtr = rtac::types::Handle<const View>;
 
-    using Mat4 = rtac::types::Matrix4<float>;
-    using Shape = rtac::display::Shape;
+    using Mat4   = rtac::types::Matrix4<float>;
+    using Shape  = rtac::display::Shape;
+    using Point2 = rtac::types::Point2<float>;
+    using Point3 = rtac::types::Point3<float>;
 
     protected:
 
@@ -72,7 +75,38 @@ class View
     virtual Mat4 view_matrix() const;
 
     Shape screen_size() const;
+
+    // below here are math helpers to create some projection matrices.
+    public:
+
+    static Mat4 from_corners(const Point2& lowerleft, const Point2& topRight);
 };
+
+inline View::Mat4 View::from_corners(const Point2& lowerLeft, const Point2& topRight)
+{
+    Mat4 view = Mat4::Identity();
+
+    view(0,0) = 2.0f / (topRight.x - lowerLeft.x);
+    view(0,3) = -0.5f*view(0,0) * (lowerLeft.x + topRight.x);
+    view(1,1) = 2.0f / (topRight.y - lowerLeft.y);
+    view(1,3) = -0.5f*view(1,1) * (lowerLeft.y + topRight.y);
+
+    return view;
+}
+
+// inline View::Mat4 View::from_corners(const Point3& lowerleft, const Point3& topRight)
+// {
+//     Mat4 view = Mat4::Identity();
+// 
+//     view(0,0) = 2.0f / (topRight.x - lowerLeft.x);
+//     view(0,3) = -0.5f*view(0,0) * (lowerLeft.x + topRight.x);
+//     view(1,1) = 2.0f / (topRight.y - lowerLeft.y);
+//     view(1,3) = -0.5f*view(1,1) * (lowerLeft.y + topRight.y);
+//     view(2,2) = 2.0f / (topRight.z - lowerLeft.z);
+//     view(2,3) = -0.5f*view(1,1) * (lowerLeft.z + topRight.z);
+// 
+//     return view;
+// }
 
 }; //namespace display
 }; //namespace rtac
