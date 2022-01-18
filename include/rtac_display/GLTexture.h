@@ -33,6 +33,18 @@ class GLTexture
     using Ptr      = rtac::types::Handle<GLTexture>;
     using ConstPtr = rtac::types::Handle<const GLTexture>;
 
+    enum WrapMode : GLint {
+        Repeat        = GL_REPEAT,
+        Mirror        = GL_MIRRORED_REPEAT,
+        Clamp         = GL_CLAMP_TO_EDGE,
+        ClampToEdge   = GL_CLAMP_TO_EDGE,
+        ClampToBorder = GL_CLAMP_TO_BORDER,
+    };
+    enum FilterMode : GLint {
+        Nearest = GL_NEAREST,
+        Linear  = GL_LINEAR,
+    };
+
     protected:
     
     Shape  shape_;
@@ -72,9 +84,19 @@ class GLTexture
 
     void bind(GLenum target = GL_TEXTURE_2D);
     void unbind(GLenum target = GL_TEXTURE_2D);
+    
+    // some configuration helpers
+    void set_filter_mode(FilterMode mode);
+    void set_filter_mode(FilterMode minMode, FilterMode magMode);
+    void set_wrap_mode(WrapMode xyWrap);
+    void set_wrap_mode(WrapMode xWrap, WrapMode yWrap);
+    void set_wrap_mode(WrapMode xWrap, WrapMode yWrap, WrapMode zWrap);
 
     // various loaders.
     static Ptr from_ppm(const std::string& path);
+    template <typename T>
+    static Ptr checkerboard(const Shape& shape, const T& c0, const T& c1,
+                            unsigned int oversampling = 1);
 };
 
 /**
@@ -163,6 +185,61 @@ void GLTexture::set_image(const Shape& shape, const GLVector<T>& data)
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
     shape_ = shape;
+}
+
+inline void GLTexture::set_filter_mode(FilterMode mode)
+{
+    this->bind(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode);
+}
+
+inline void GLTexture::set_filter_mode(FilterMode minMode, FilterMode magMode)
+{
+    this->bind(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minMode);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magMode);
+}
+
+inline void GLTexture::set_wrap_mode(WrapMode xyWrap)
+{
+    this->bind(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, xyWrap);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, xyWrap);
+}
+
+inline void GLTexture::set_wrap_mode(WrapMode xWrap, WrapMode yWrap)
+{
+    this->bind(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, xWrap);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, yWrap);
+}
+
+inline void GLTexture::set_wrap_mode(WrapMode xWrap, WrapMode yWrap, WrapMode zWrap)
+{
+    this->bind(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, xWrap);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, yWrap);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, zWrap);
+}
+
+template <typename T>
+GLTexture::Ptr GLTexture::checkerboard(const Shape& shape, const T& c0, const T& c1,
+                                       unsigned int oversampling)
+{
+    std::vector<T> data(shape.area()*oversampling*oversampling);
+    for(unsigned int i = 0; i < shape.height*oversampling; i++) {
+        for(unsigned int j = 0; j < shape.width*oversampling; j++) {
+            if((i / oversampling + j / oversampling) & 0x1)
+                data[shape.width*oversampling*i + j] = c0;
+            else
+                data[shape.width*oversampling*i + j] = c1;
+        }
+    }
+
+    auto tex = GLTexture::New();
+    tex->set_image({shape.width*oversampling, shape.height*oversampling}, data.data());
+    return tex;
 }
 
 }; //namespace display
