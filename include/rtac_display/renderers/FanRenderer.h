@@ -37,10 +37,10 @@ class FanRenderer : public Renderer
     static const std::string& fragmentShader;
 
     enum class Direction : uint8_t {
-        Left   = 0,
-        Right  = 1,
-        Top    = 2,
-        Bottom = 3,
+        Left  = 0,
+        Right = 1,
+        Up    = 2,
+        Down  = 3,
     };
 
 
@@ -60,12 +60,16 @@ class FanRenderer : public Renderer
     static Ptr Create(const GLContext::Ptr& context);
 
     void set_geometry_degrees(const Interval& angle, const Interval& range,
-                              Direction dir = Direction::Top);
+                              Direction dir = Direction::Up);
     void set_geometry(Interval angle, const Interval& range,
-                      Direction dir = Direction::Top);
+                      Direction dir = Direction::Up);
+
+    void set_data(const GLTexture::Ptr& tex);
+    void set_data(const Shape& shape, const float* data);
+    void set_data(const Shape& shape, const GLVector<float>& data);
 
     virtual void draw(const View::ConstPtr& view) const;
-    virtual void draw() const { std::cout << "There" << std::endl;}
+    //virtual void draw() const {}
 
     Mat4 compute_view(const Shape& screen) const;
 };

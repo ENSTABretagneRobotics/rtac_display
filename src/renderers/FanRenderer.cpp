@@ -21,33 +21,36 @@ const std::string& FanRenderer::fragmentShader = std::string(R"(
 #version 430 core
 
 in      vec2 xyPos;
+uniform sampler2D fanData;
+uniform sampler2D colormap;
+
 uniform vec2 angleBounds;
 uniform vec2 rangeBounds;
 
-//uniform sampler2D fanData;
-uniform sampler2D colormap;
-
 out vec4 outColor;
 
-bool angle_inside(float angle, vec2 bounds) {
-    if(bounds.x < bounds.y) {
-        return bounds.x <= angle && angle <= bounds.y;
-    }
-    else {
-        return !(bounds.y < angle && angle < bounds.x);
-    }
-}
+#define M_2PI 6.283185307179586
 
 void main()
 {
     float r     = length(xyPos);
     float theta = atan(xyPos.y, xyPos.x);
-    if(r >= rangeBounds.x && r <= rangeBounds.y && angle_inside(theta, angleBounds))
-    {
-        outColor = texture(colormap, vec2(1.0f,0.0f));
+    
+    vec2 normalized;
+    normalized.x = atan(xyPos.y, xyPos.x);
+    if(normalized.x < angleBounds.x)
+        normalized.x += M_2PI;
+    normalized.x = (normalized.x  - angleBounds.x)
+                 / (angleBounds.y - angleBounds.x);
+    normalized.y = (length(xyPos) - rangeBounds.x)
+                 / (rangeBounds.y - rangeBounds.x);
+
+    if(normalized.x >= 0.0f && normalized.x <= 1.0f &&
+       normalized.y >= 0.0f && normalized.y <= 1.0f) {
+        outColor = texture(colormap, vec2(texture(fanData,normalized).x,0.0f));
+        //outColor = vec4(0.0f, normalized.x, normalized.y, 1.0f);
     }
-    else
-    {
+    else {
         outColor = texture(colormap, vec2(0.0f,0.0f));
     }
 }
@@ -62,6 +65,8 @@ FanRenderer::FanRenderer(const GLContext::Ptr& context) :
     colormap_(colormap::Viridis())
 {
     this->set_geometry(angle_, range_);
+    data_->set_wrap_mode(GLTexture::WrapMode::Clamp);
+    data_->set_filter_mode(GLTexture::FilterMode::Linear);
 }
 
 FanRenderer::Ptr FanRenderer::Create(const GLContext::Ptr& context)
@@ -72,7 +77,6 @@ FanRenderer::Ptr FanRenderer::Create(const GLContext::Ptr& context)
 void FanRenderer::set_geometry_degrees(const Interval& angle, const Interval& range,
                                        Direction dir)
 {
-    std::cout << angle  << std::endl;
     this->set_geometry({(float)(angle.min * M_PI / 180.0f),
                         (float)(angle.max * M_PI / 180.0f)},
                        range, dir);
@@ -82,14 +86,13 @@ void FanRenderer::set_geometry(Interval angle, const Interval& range, Direction 
 {
     using Point2 = rtac::types::Point2<float>;
 
-    std::cout << angle  << std::endl;
     switch(dir) {
         default:break;
-        case Direction::Bottom:
+        case Direction::Down:
             angle.min -= 0.5f*M_PI;
             angle.max -= 0.5f*M_PI;
             break;
-        case Direction::Top:
+        case Direction::Up:
             angle.min += 0.5f*M_PI;
             angle.max += 0.5f*M_PI;
             break;
@@ -98,32 +101,49 @@ void FanRenderer::set_geometry(Interval angle, const Interval& range, Direction 
             angle.max += M_PI;
             break;
     };
-    
+    // Normalizing angle bounds
+    // (angle.min in [-pi,pi] and angle.max in ]angle.min, angle.min + 2pi])
+    while(angle.max > angle.min + 2*M_PI) angle.max -= 2*M_PI;
+    while(angle.max <= angle.min + 0.01f) angle.max += 2*M_PI;
+    while(angle.min >  M_PI) {
+        angle.min -= 2*M_PI;
+        angle.max -= 2*M_PI;
+    }
+    while(angle.min < -M_PI) { 
+        angle.min += 2*M_PI;
+        angle.max += 2*M_PI;
+    }
+
     // finding extermas of the fan display area.
     std::vector<Point2> poi;
     poi.push_back({range.min*std::cos(angle.min), range.min*std::sin(angle.min)});
     poi.push_back({range.min*std::cos(angle.max), range.min*std::sin(angle.max)});
     poi.push_back({range.max*std::cos(angle.min), range.max*std::sin(angle.min)});
     poi.push_back({range.max*std::cos(angle.max), range.max*std::sin(angle.max)});
-    if(angle.is_inside(0.0f)) {
+
+    auto is_inside = [](float angle, const Interval& bounds) { 
+        if(angle < bounds.min) angle += 2*M_PI;
+        return angle <= bounds.max; 
+    };
+    if(is_inside(0.0f, angle)) {
         poi.push_back({range.min, 0.0});
         poi.push_back({range.max, 0.0});
     }
-    if(angle.is_inside(M_PI)) {
+    if(is_inside(M_PI, angle)) {
         poi.push_back({-range.min, 0.0});
         poi.push_back({-range.max, 0.0});
     }
-    if(angle.is_inside(0.5f*M_PI)) {
+    if(is_inside(0.5f*M_PI, angle)) {
         poi.push_back({0.0, range.min});
         poi.push_back({0.0, range.max});
     }
-    if(angle.is_inside(1.5f*M_PI) || angle.is_inside(-0.5f*M_PI)) {
+    if(is_inside(-0.5f*M_PI, angle)) {
         poi.push_back({0.0, -range.min});
         poi.push_back({0.0, -range.max});
     }
 
     bounds_.left   = poi[0].x;
-    bounds_.right  = poi[0].y;
+    bounds_.right  = poi[0].x;
     bounds_.top    = poi[0].y;
     bounds_.bottom = poi[0].y;
     for(auto p : poi) {
@@ -133,13 +153,9 @@ void FanRenderer::set_geometry(Interval angle, const Interval& range, Direction 
         bounds_.bottom = std::min(bounds_.bottom, p.y);
     }
 
-    while(angle.min >  M_PI) angle.min -= 2*M_PI;
-    while(angle.min < -M_PI) angle.min += 2*M_PI;
-    while(angle.max >  M_PI) angle.max -= 2*M_PI;
-    while(angle.max < -M_PI) angle.max += 2*M_PI;
     angle_ = angle;
     range_ = range;
-    
+
     auto p = corners_.map();
     p[0] = Point4({bounds_.left,  bounds_.bottom, 0.0f, 1.0f});
     p[1] = Point4({bounds_.right, bounds_.bottom, 0.0f, 1.0f});
@@ -147,6 +163,23 @@ void FanRenderer::set_geometry(Interval angle, const Interval& range, Direction 
     p[3] = Point4({bounds_.left,  bounds_.bottom, 0.0f, 1.0f});
     p[4] = Point4({bounds_.right, bounds_.top,    0.0f, 1.0f});
     p[5] = Point4({bounds_.left,  bounds_.top,    0.0f, 1.0f});
+}
+
+void FanRenderer::set_data(const GLTexture::Ptr& tex)
+{
+    data_ = tex;
+    data_->set_wrap_mode(GLTexture::WrapMode::Clamp);
+    data_->set_filter_mode(GLTexture::FilterMode::Linear);
+}
+
+void FanRenderer::set_data(const Shape& shape, const float* data)
+{
+    data_->set_image(shape, data);
+}
+
+void FanRenderer::set_data(const Shape& shape, const GLVector<float>& data)
+{
+    data_->set_image(shape, data);
 }
 
 FanRenderer::Mat4 FanRenderer::compute_view(const Shape& screen) const
@@ -190,8 +223,12 @@ void FanRenderer::draw(const View::ConstPtr& view) const
     glUniform2f(glGetUniformLocation(renderProgram_, "rangeBounds"),
                 range_.min, range_.max);
 
-    glUniform1i(glGetUniformLocation(renderProgram_, "colormap"), 0);
+    glUniform1i(glGetUniformLocation(renderProgram_, "fanData"), 0);
     glActiveTexture(GL_TEXTURE0);
+    data_->bind(GL_TEXTURE_2D);
+
+    glUniform1i(glGetUniformLocation(renderProgram_, "colormap"), 1);
+    glActiveTexture(GL_TEXTURE1);
     colormap_->texture().bind(GL_TEXTURE_2D);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
