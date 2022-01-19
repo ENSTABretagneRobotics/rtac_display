@@ -53,7 +53,7 @@ class FanRenderer : public Renderer
     GLTexture::Ptr data_;
     Colormap::Ptr  colormap_;
     Interval       valueRange_;
-    //GLReductor     reductor_;
+    GLReductor     reductor_;
 
     Interval         angle_;
     Interval         range_;
@@ -64,6 +64,8 @@ class FanRenderer : public Renderer
     GLTexture::Ptr bearingMap_;
     GLuint         linearBearingsProgram_;
     GLuint         nonlinearBearingsProgram_;
+
+    void compute_scale(const GLVector<float>& data);
 
     FanRenderer(const GLContext::Ptr& context);
 
@@ -81,7 +83,8 @@ class FanRenderer : public Renderer
 
     void set_data(const GLTexture::Ptr& tex);
     void set_data(const Shape& shape, const float* data);
-    void set_data(const Shape& shape, const GLVector<float>& data);
+    void set_data(const Shape& shape, const GLVector<float>& data,
+                  bool computeScale = true);
 
     void set_bearings(unsigned int nBeams, const float* bearings,
                       unsigned int mapSize = 0);

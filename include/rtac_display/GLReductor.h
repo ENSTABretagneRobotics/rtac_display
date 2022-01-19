@@ -34,8 +34,6 @@ class GLReductor
     static constexpr const char*  Typename  = "Typename";
     static constexpr unsigned int BlockSize = 256;
 
-    template <typename T, typename T2>
-    static T reduce(const GLVector<T>& input, GLuint reductionProgram);
     template <typename T>
     static void reduce_in_place(GLVector<T>& input, GLuint reductionProgram);
     template <typename T, typename T2>
@@ -130,17 +128,6 @@ inline GLuint GLReductor::program(const std::string& glslType, const std::string
 inline std::string GLReductor::key(const std::string& glslType, const std::string& op) const
 {
     return glslType + "_" + op;
-}
-
-template <typename T, typename T2>
-T GLReductor::reduce(const GLVector<T>& input, GLuint reductionProgram)
-{
-    GLVector<T> tmpData;
-    return GLReductor::reduce(input, reductionProgram, tmpData);
-
-    T res;
-    res = tmpData.map()[0];
-    return res;
 }
 
 template <typename T>

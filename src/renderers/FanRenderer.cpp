@@ -223,9 +223,12 @@ void FanRenderer::set_data(const Shape& shape, const float* data)
     data_->set_image(shape, data);
 }
 
-void FanRenderer::set_data(const Shape& shape, const GLVector<float>& data)
+void FanRenderer::set_data(const Shape& shape, const GLVector<float>& data,
+                           bool computeScale)
 {
     data_->set_image(shape, data);
+    if(computeScale)
+        this->compute_scale(data);
 }
 
 void FanRenderer::set_bearings(unsigned int nBeams, const float* bearings,
@@ -323,6 +326,12 @@ FanRenderer::Mat4 FanRenderer::compute_view(const Shape& screen) const
                    + 0.5f*bounds.height() * screen.ratio<float>();
     }
     return View::from_corners(screenLL,screenUR)*rotation;
+}
+
+void FanRenderer::compute_scale(const GLVector<float>& data)
+{
+    this->set_value_range({reductor_.min(data),
+                           reductor_.max(data)});
 }
 
 void FanRenderer::draw(const View::ConstPtr& view) const
