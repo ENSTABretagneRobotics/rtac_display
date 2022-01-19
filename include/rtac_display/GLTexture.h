@@ -95,6 +95,9 @@ class GLTexture
     // various loaders.
     static Ptr from_ppm(const std::string& path);
     template <typename T>
+    static std::vector<T> checkerboard_data(const Shape& shape, const T& c0, const T& c1,
+                                            unsigned int oversampling = 1);
+    template <typename T>
     static Ptr checkerboard(const Shape& shape, const T& c0, const T& c1,
                             unsigned int oversampling = 1);
 };
@@ -224,8 +227,8 @@ inline void GLTexture::set_wrap_mode(WrapMode xWrap, WrapMode yWrap, WrapMode zW
 }
 
 template <typename T>
-GLTexture::Ptr GLTexture::checkerboard(const Shape& shape, const T& c0, const T& c1,
-                                       unsigned int oversampling)
+std::vector<T> GLTexture::checkerboard_data(const Shape& shape, const T& c0, const T& c1,
+                                            unsigned int oversampling)
 {
     std::vector<T> data(shape.area()*oversampling*oversampling);
     for(unsigned int i = 0; i < shape.height*oversampling; i++) {
@@ -236,7 +239,15 @@ GLTexture::Ptr GLTexture::checkerboard(const Shape& shape, const T& c0, const T&
                 data[shape.width*oversampling*i + j] = c1;
         }
     }
+    
+    return data;
+}
 
+template <typename T>
+GLTexture::Ptr GLTexture::checkerboard(const Shape& shape, const T& c0, const T& c1,
+                                       unsigned int oversampling)
+{
+    auto data = checkerboard_data(shape, c0, c1, oversampling);
     auto tex = GLTexture::New();
     tex->set_image({shape.width*oversampling, shape.height*oversampling}, data.data());
     return tex;

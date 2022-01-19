@@ -24,6 +24,7 @@ in      vec2 xyPos;
 uniform sampler2D fanData;
 uniform sampler2D colormap;
 
+uniform vec2 valueScaling;
 uniform vec2 angleBounds;
 uniform vec2 rangeBounds;
 
@@ -47,8 +48,8 @@ void main()
 
     if(normalized.x >= 0.0f && normalized.x <= 1.0f &&
        normalized.y >= 0.0f && normalized.y <= 1.0f) {
-        outColor = texture(colormap, vec2(texture(fanData,normalized).x,0.0f));
-        //outColor = vec4(0.0f, normalized.x, normalized.y, 1.0f);
+        float value = valueScaling.x*texture(fanData,normalized).x + valueScaling.y;
+        outColor = texture(colormap, vec2(value, 0.0f));
     }
     else {
         outColor = texture(colormap, vec2(0.0f,0.0f));
@@ -64,6 +65,7 @@ uniform sampler2D fanData;
 uniform sampler2D colormap;
 uniform sampler2D bearingMap;
 
+uniform vec2 valueScaling;
 uniform vec2 angleBounds;
 uniform vec2 rangeBounds;
 
@@ -88,7 +90,8 @@ void main()
     if(normalized.x >= 0.0f && normalized.x <= 1.0f &&
        normalized.y >= 0.0f && normalized.y <= 1.0f) {
         normalized.x = texture(bearingMap, vec2(normalized.x,0.0)).x;
-        outColor = texture(colormap, vec2(texture(fanData,normalized).x,0.0f));
+        float value = valueScaling.x*texture(fanData,normalized).x + valueScaling.y;
+        outColor = texture(colormap, vec2(value, 0.0f));
     }
     else {
         outColor = texture(colormap, vec2(0.0f,0.0f));
@@ -100,6 +103,7 @@ FanRenderer::FanRenderer(const GLContext::Ptr& context) :
     Renderer(context, vertexShader, fragmentShader),
     data_(GLTexture::New()),
     colormap_(colormap::Viridis()),
+    valueRange_({0.0f,1.0f}),
     angle_({-M_PI, M_PI}),
     range_({0.0f,1.0f}),
     corners_(6),
@@ -115,6 +119,13 @@ FanRenderer::FanRenderer(const GLContext::Ptr& context) :
 FanRenderer::Ptr FanRenderer::Create(const GLContext::Ptr& context)
 {
     return Ptr(new FanRenderer(context));
+}
+
+void FanRenderer::set_value_range(Interval valueRange)
+{
+    if(fabs(valueRange.max - valueRange.min) < 1.0e-6)
+        return;
+    valueRange_ = valueRange;
 }
 
 void FanRenderer::set_geometry_degrees(const Interval& angle, const Interval& range)
@@ -327,6 +338,9 @@ void FanRenderer::draw(const View::ConstPtr& view) const
     glUniformMatrix4fv(glGetUniformLocation(renderProgram_, "view"),
         1, GL_FALSE, mat.data());
 
+    glUniform2f(glGetUniformLocation(renderProgram_, "valueScaling"),
+                1.0f / (valueRange_.max - valueRange_.min),
+               -valueRange_.min / (valueRange_.max - valueRange_.min));
     glUniform2f(glGetUniformLocation(renderProgram_, "angleBounds"),
                 angle_.min, angle_.max);
     glUniform2f(glGetUniformLocation(renderProgram_, "rangeBounds"),

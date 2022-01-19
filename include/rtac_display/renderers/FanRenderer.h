@@ -50,8 +50,10 @@ class FanRenderer : public Renderer
 
     protected:
 
-    GLTexture::Ptr   data_;
-    Colormap::Ptr    colormap_;
+    GLTexture::Ptr data_;
+    Colormap::Ptr  colormap_;
+    Interval       valueRange_;
+    //GLReductor     reductor_;
 
     Interval         angle_;
     Interval         range_;
@@ -68,6 +70,8 @@ class FanRenderer : public Renderer
     public:
 
     static Ptr Create(const GLContext::Ptr& context);
+
+    void set_value_range(Interval valueRange);
 
     void set_geometry_degrees(const Interval& angle, const Interval& range);
     void set_geometry(Interval angle, const Interval& range);

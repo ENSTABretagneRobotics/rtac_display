@@ -29,8 +29,15 @@ int main()
     renderer->set_geometry_degrees({-65,65}, {0,20});
 
     //auto texture = create_texture(16,16);
-    auto texture = GLTexture::checkerboard({16,16}, 1.0f, 0.0f);
-
+    //auto texture = GLTexture::checkerboard({16,16}, 1.0f, 0.0f);
+    auto data = GLTexture::checkerboard_data({16,16}, 1.0f, 0.0f);
+    for(auto& v : data) v *= 2;
+    for(auto& v : data) {
+        std::cout << v << " ";
+    }
+    std::cout << std::endl;
+    auto texture = GLTexture::New();
+    texture->set_image({16,16}, data.data());
     texture->set_filter_mode(GLTexture::FilterMode::Linear);
     //texture->set_filter_mode(GLTexture::FilterMode::Nearest);
     texture->set_wrap_mode(GLTexture::WrapMode::Clamp);
@@ -49,6 +56,10 @@ int main()
     //renderer->set_direction(FanRenderer::Direction::Down);
     //renderer->set_direction(FanRenderer::Direction::Left);
     //renderer->set_direction(FanRenderer::Direction::Right);
+
+    //renderer->set_value_range({0.0f,2.0f});
+    //renderer->set_value_range({0.2f,1.0f});
+    //renderer->set_value_range({1.0f, 0.0f});
 
     while(!display.should_close()) {
         display.draw();
