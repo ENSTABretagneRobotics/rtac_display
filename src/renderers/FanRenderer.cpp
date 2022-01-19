@@ -59,10 +59,11 @@ void main()
 FanRenderer::FanRenderer(const GLContext::Ptr& context) :
     Renderer(context, vertexShader, fragmentShader),
     data_(GLTexture::New()),
+    colormap_(colormap::Viridis()),
     angle_({-M_PI, M_PI}),
     range_({0.0f,1.0f}),
     corners_(6),
-    colormap_(colormap::Viridis())
+    direction_(Direction::Up)
 {
     this->set_geometry(angle_, range_);
     data_->set_wrap_mode(GLTexture::WrapMode::Clamp);
@@ -74,33 +75,17 @@ FanRenderer::Ptr FanRenderer::Create(const GLContext::Ptr& context)
     return Ptr(new FanRenderer(context));
 }
 
-void FanRenderer::set_geometry_degrees(const Interval& angle, const Interval& range,
-                                       Direction dir)
+void FanRenderer::set_geometry_degrees(const Interval& angle, const Interval& range)
 {
     this->set_geometry({(float)(angle.min * M_PI / 180.0f),
                         (float)(angle.max * M_PI / 180.0f)},
-                       range, dir);
+                       range);
 }
 
-void FanRenderer::set_geometry(Interval angle, const Interval& range, Direction dir)
+void FanRenderer::set_geometry(Interval angle, const Interval& range)
 {
     using Point2 = rtac::types::Point2<float>;
 
-    switch(dir) {
-        default:break;
-        case Direction::Down:
-            angle.min -= 0.5f*M_PI;
-            angle.max -= 0.5f*M_PI;
-            break;
-        case Direction::Up:
-            angle.min += 0.5f*M_PI;
-            angle.max += 0.5f*M_PI;
-            break;
-        case Direction::Right:
-            angle.min += M_PI;
-            angle.max += M_PI;
-            break;
-    };
     // Normalizing angle bounds
     // (angle.min in [-pi,pi] and angle.max in ]angle.min, angle.min + 2pi])
     while(angle.max > angle.min + 2*M_PI) angle.max -= 2*M_PI;
@@ -165,6 +150,16 @@ void FanRenderer::set_geometry(Interval angle, const Interval& range, Direction 
     p[5] = Point4({bounds_.left,  bounds_.top,    0.0f, 1.0f});
 }
 
+void FanRenderer::set_aperture(Interval angle)
+{
+    this->set_geometry(angle, range_);
+}
+
+void FanRenderer::set_range(Interval range)
+{
+    this->set_geometry(angle_, range);
+}
+
 void FanRenderer::set_data(const GLTexture::Ptr& tex)
 {
     data_ = tex;
@@ -184,25 +179,56 @@ void FanRenderer::set_data(const Shape& shape, const GLVector<float>& data)
 
 FanRenderer::Mat4 FanRenderer::compute_view(const Shape& screen) const
 {
-    Mat4 view = Mat4::Identity();
+    Mat4 rotation = Mat4::Identity();
+    auto bounds = bounds_;
+    switch(direction_) {
+        case Direction::Left:
+            rotation(0,0) = -1;
+            rotation(1,1) = -1;
+            bounds.left   = -bounds_.right;
+            bounds.bottom = -bounds_.top;
+            bounds.right  = -bounds_.left;
+            bounds.top    = -bounds_.bottom;
+            break;
+        case Direction::Up:
+            rotation(0,0) = 0;
+            rotation(1,1) = 0;
+            rotation(1,0) = 1;
+            rotation(0,1) = -1;
+            bounds.left   = -bounds_.top;
+            bounds.bottom =  bounds_.left;
+            bounds.right  = -bounds_.bottom;
+            bounds.top    =  bounds_.right;
+            break;
+        case Direction::Down:
+            rotation(0,0) = 0;
+            rotation(1,1) = 0;
+            rotation(1,0) = -1;
+            rotation(0,1) = 1;
+            bounds.left   =  bounds_.bottom;
+            bounds.bottom = -bounds_.right;
+            bounds.right  =  bounds_.top;
+            bounds.top    = -bounds_.left;
+            break;
+    }
     Point2 screenLL, screenUR;
-    if(screen.ratio<float>() < bounds_.shape().ratio<float>()) {
-        screenLL.x = bounds_.left;
-        screenUR.x = bounds_.right;
-        screenLL.y = 0.5f*(bounds_.bottom + bounds_.top) 
-                   - 0.5f*bounds_.width() / screen.ratio<float>();
-        screenUR.y = 0.5f*(bounds_.bottom + bounds_.top) 
-                   + 0.5f*bounds_.width() / screen.ratio<float>();
+    if(screen.ratio<float>() < bounds.shape().ratio<float>()) {
+        screenLL.x = bounds.left;
+        screenUR.x = bounds.right;
+        screenLL.y = 0.5f*(bounds.bottom + bounds.top) 
+                   - 0.5f*bounds.width() / screen.ratio<float>();
+        screenUR.y = 0.5f*(bounds.bottom + bounds.top) 
+                   + 0.5f*bounds.width() / screen.ratio<float>();
     }
     else {
-        screenLL.y = bounds_.bottom;
-        screenUR.y = bounds_.top;
-        screenLL.x = 0.5f*(bounds_.left + bounds_.right)
-                   - 0.5f*bounds_.height() * screen.ratio<float>();
-        screenUR.x = 0.5f*(bounds_.left + bounds_.right)
-                   + 0.5f*bounds_.height() * screen.ratio<float>();
+        screenLL.y = bounds.bottom;
+        screenUR.y = bounds.top;
+        screenLL.x = 0.5f*(bounds.left + bounds.right)
+                   - 0.5f*bounds.height() * screen.ratio<float>();
+        screenUR.x = 0.5f*(bounds.left + bounds.right)
+                   + 0.5f*bounds.height() * screen.ratio<float>();
     }
-    return View::from_corners(screenLL, screenUR);
+    return View::from_corners(screenLL,screenUR)*rotation;
 }
 
 void FanRenderer::draw(const View::ConstPtr& view) const

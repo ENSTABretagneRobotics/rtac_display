@@ -47,11 +47,13 @@ class FanRenderer : public Renderer
     protected:
 
     GLTexture::Ptr   data_;
+    Colormap::Ptr    colormap_;
+
     Interval         angle_;
     Interval         range_;
     Rectangle        bounds_;
     GLVector<Point4> corners_;
-    Colormap::Ptr    colormap_;
+    Direction        direction_;
 
     FanRenderer(const GLContext::Ptr& context);
 
@@ -59,10 +61,11 @@ class FanRenderer : public Renderer
 
     static Ptr Create(const GLContext::Ptr& context);
 
-    void set_geometry_degrees(const Interval& angle, const Interval& range,
-                              Direction dir = Direction::Up);
-    void set_geometry(Interval angle, const Interval& range,
-                      Direction dir = Direction::Up);
+    void set_geometry_degrees(const Interval& angle, const Interval& range);
+    void set_geometry(Interval angle, const Interval& range);
+    void set_aperture(Interval angle);
+    void set_range(Interval range);
+    void set_direction(Direction dir) { direction_ = dir; }
 
     void set_data(const GLTexture::Ptr& tex);
     void set_data(const Shape& shape, const float* data);
