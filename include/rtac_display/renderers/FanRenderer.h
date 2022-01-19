@@ -95,6 +95,9 @@ class FanRenderer : public Renderer
     //virtual void draw() const {}
 
     Mat4 compute_view(const Shape& screen) const;
+
+    GLTexture::Ptr      texture()       { return data_; }
+    GLTexture::ConstPtr texture() const { return data_; }
 };
 
 }; //namespace display
