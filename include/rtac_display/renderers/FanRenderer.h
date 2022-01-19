@@ -7,6 +7,7 @@
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Bounds.h>
 #include <rtac_base/types/Rectangle.h>
+#include <rtac_base/interpolation.h>
 
 #include <rtac_display/GLFormat.h>
 #include <rtac_display/GLVector.h>
@@ -33,8 +34,12 @@ class FanRenderer : public Renderer
     using Interval  = rtac::types::Interval<float>;
     using Rectangle = rtac::types::Rectangle<float>;
 
+    //using Interpolator = rtac::algorithm::InterpolatorLinear<float>;
+    using Interpolator = rtac::algorithm::InterpolatorCubicSpline<float>;
+
     static const std::string& vertexShader;
     static const std::string& fragmentShader;
+    static const std::string& fragmentShaderNonLinear;
 
     enum class Direction : uint8_t {
         Left  = 0,
@@ -42,7 +47,6 @@ class FanRenderer : public Renderer
         Up    = 2,
         Down  = 3,
     };
-
 
     protected:
 
@@ -54,6 +58,10 @@ class FanRenderer : public Renderer
     Rectangle        bounds_;
     GLVector<Point4> corners_;
     Direction        direction_;
+
+    GLTexture::Ptr bearingMap_;
+    GLuint         linearBearingsProgram_;
+    GLuint         nonlinearBearingsProgram_;
 
     FanRenderer(const GLContext::Ptr& context);
 
@@ -70,6 +78,11 @@ class FanRenderer : public Renderer
     void set_data(const GLTexture::Ptr& tex);
     void set_data(const Shape& shape, const float* data);
     void set_data(const Shape& shape, const GLVector<float>& data);
+
+    void set_bearings(unsigned int nBeams, const float* bearings,
+                      unsigned int mapSize = 0);
+    void enable_bearing_map();
+    void disable_bearing_map();
 
     virtual void draw(const View::ConstPtr& view) const;
     //virtual void draw() const {}

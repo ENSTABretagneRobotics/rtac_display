@@ -56,6 +56,46 @@ void main()
 }
 )");
 
+const std::string& FanRenderer::fragmentShaderNonLinear = std::string(R"(
+#version 430 core
+
+in      vec2 xyPos;
+uniform sampler2D fanData;
+uniform sampler2D colormap;
+uniform sampler2D bearingMap;
+
+uniform vec2 angleBounds;
+uniform vec2 rangeBounds;
+
+out vec4 outColor;
+
+#define M_2PI 6.283185307179586
+
+void main()
+{
+    float r     = length(xyPos);
+    float theta = atan(xyPos.y, xyPos.x);
+    
+    vec2 normalized;
+    normalized.x = atan(xyPos.y, xyPos.x);
+    if(normalized.x < angleBounds.x)
+        normalized.x += M_2PI;
+    normalized.x = (normalized.x  - angleBounds.x)
+                 / (angleBounds.y - angleBounds.x);
+    normalized.y = (length(xyPos) - rangeBounds.x)
+                 / (rangeBounds.y - rangeBounds.x);
+
+    if(normalized.x >= 0.0f && normalized.x <= 1.0f &&
+       normalized.y >= 0.0f && normalized.y <= 1.0f) {
+        normalized.x = texture(bearingMap, vec2(normalized.x,0.0)).x;
+        outColor = texture(colormap, vec2(texture(fanData,normalized).x,0.0f));
+    }
+    else {
+        outColor = texture(colormap, vec2(0.0f,0.0f));
+    }
+}
+)");
+
 FanRenderer::FanRenderer(const GLContext::Ptr& context) :
     Renderer(context, vertexShader, fragmentShader),
     data_(GLTexture::New()),
@@ -63,7 +103,9 @@ FanRenderer::FanRenderer(const GLContext::Ptr& context) :
     angle_({-M_PI, M_PI}),
     range_({0.0f,1.0f}),
     corners_(6),
-    direction_(Direction::Up)
+    direction_(Direction::Up),
+    linearBearingsProgram_(renderProgram_),
+    nonlinearBearingsProgram_(create_render_program(vertexShader, fragmentShaderNonLinear))
 {
     this->set_geometry(angle_, range_);
     data_->set_wrap_mode(GLTexture::WrapMode::Clamp);
@@ -163,8 +205,6 @@ void FanRenderer::set_range(Interval range)
 void FanRenderer::set_data(const GLTexture::Ptr& tex)
 {
     data_ = tex;
-    data_->set_wrap_mode(GLTexture::WrapMode::Clamp);
-    data_->set_filter_mode(GLTexture::FilterMode::Linear);
 }
 
 void FanRenderer::set_data(const Shape& shape, const float* data)
@@ -175,6 +215,49 @@ void FanRenderer::set_data(const Shape& shape, const float* data)
 void FanRenderer::set_data(const Shape& shape, const GLVector<float>& data)
 {
     data_->set_image(shape, data);
+}
+
+void FanRenderer::set_bearings(unsigned int nBeams, const float* bearings,
+                               unsigned int mapSize)
+{
+    Interpolator::Vector x0(nBeams);
+    Interpolator::Vector y0(nBeams);
+    
+    for(int i = 0; i < nBeams; i++) {
+        x0[i] = ((float)i) / (nBeams - 1);
+        y0[i] = bearings[i];
+    }
+
+    if(!mapSize)
+        mapSize = nBeams;
+    Interpolator::Vector b(mapSize);
+    for(int i = 0; i < mapSize; i++) {
+        b[i]  = ((bearings[nBeams-1] - bearings[0])*i) / (mapSize - 1) + bearings[0];
+    }
+
+    Interpolator interp(y0,x0);
+    auto ib = interp(b);
+
+    if(!bearingMap_) {
+        bearingMap_ = GLTexture::New();
+        bearingMap_->set_filter_mode(GLTexture::FilterMode::Linear);
+        bearingMap_->set_wrap_mode(GLTexture::WrapMode::Clamp);
+        GL_CHECK_LAST();
+    }
+    bearingMap_->set_image({(unsigned int)mapSize, 1}, ib.data());
+    this->enable_bearing_map();
+    this->set_aperture({bearings[0], bearings[nBeams-1]});
+}
+
+void FanRenderer::enable_bearing_map()
+{
+    if(bearingMap_)
+        renderProgram_ = nonlinearBearingsProgram_;
+}
+
+void FanRenderer::disable_bearing_map()
+{
+    renderProgram_ = linearBearingsProgram_;
 }
 
 FanRenderer::Mat4 FanRenderer::compute_view(const Shape& screen) const
@@ -256,6 +339,12 @@ void FanRenderer::draw(const View::ConstPtr& view) const
     glUniform1i(glGetUniformLocation(renderProgram_, "colormap"), 1);
     glActiveTexture(GL_TEXTURE1);
     colormap_->texture().bind(GL_TEXTURE_2D);
+
+    if(renderProgram_ == nonlinearBearingsProgram_ && bearingMap_) {
+        glUniform1i(glGetUniformLocation(renderProgram_, "bearingMap"), 2);
+        glActiveTexture(GL_TEXTURE2);
+        bearingMap_->bind(GL_TEXTURE_2D);
+    }
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
