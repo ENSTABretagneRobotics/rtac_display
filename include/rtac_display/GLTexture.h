@@ -144,14 +144,15 @@ template <typename T>
 void GLTexture::set_image(const Shape& shape, const T* data)
 {
     format_ = GLFormat<T>::PixelFormat;
+    using Format = GLFormat<T>;
 
     // ensuring no buffer bound to GL_PIXEL_UNPACK_BUFFER for data to be read
     // from CPU side memory.
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
     glBindTexture(GL_TEXTURE_2D, texId_);
-    glTexImage2D(GL_TEXTURE_2D, 0, format_, shape.width, shape.height,
-        0, format_, GLFormat<T>::Type, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, Format::InternalFormat, shape.width, shape.height,
+        0, Format::PixelFormat, Format::Type, data);
     GL_CHECK_LAST();
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -174,6 +175,7 @@ void GLTexture::set_image(const Shape& shape, const GLVector<T>& data)
     if(shape.area() > data.size()) {
         throw std::runtime_error("Too few data for requested texture size");
     }
+    using Format = GLFormat<T>;
     format_ = GLFormat<T>::PixelFormat;
 
     // ensuring no buffer bound to GL_PIXEL_UNPACK_BUFFER for data to be read
@@ -181,8 +183,8 @@ void GLTexture::set_image(const Shape& shape, const GLVector<T>& data)
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, data.gl_id());
 
     glBindTexture(GL_TEXTURE_2D, texId_);
-    glTexImage2D(GL_TEXTURE_2D, 0, format_, shape.width, shape.height,
-        0, format_, GLFormat<T>::Type, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, Format::InternalFormat, shape.width, shape.height,
+        0, Format::PixelFormat, Format::Type, 0);
     GL_CHECK_LAST();
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);

@@ -16,7 +16,7 @@ struct RGB
 {
     T r; T g; T b;
 };
-using RGB8 = RGB<uint8_t>;
+using RGB8 = RGB<unsigned char>;
 using RGBf = RGB<float>;
 
 template <typename T>
@@ -24,41 +24,57 @@ struct RGBA
 {
     T r; T g; T b; T a;
 };
-using RGBA8 = RGBA<uint8_t>;
+using RGBA8 = RGBA<unsigned char>;
 using RGBAf = RGBA<float>;
 
 }; //struct Color
 
 template<>
-struct GLFormat<Color::RGB<uint8_t>>
-{
-    static constexpr unsigned int Size  = 3;
-    static constexpr GLenum PixelFormat = GL_RGB;
-    static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
-};
-
-template<>
 struct GLFormat<Color::RGB<float>>
 {
+    using Scalar = float;
+
     static constexpr unsigned int Size  = 3;
     static constexpr GLenum PixelFormat = GL_RGB;
     static constexpr GLenum Type        = GL_FLOAT;
+
+    static constexpr GLenum InternalFormat = GL_RGB32F;
 };
 
 template<>
 struct GLFormat<Color::RGBA<float>>
 {
+    using Scalar = float;
+
     static constexpr unsigned int Size  = 3;
     static constexpr GLenum PixelFormat = GL_RGBA;
     static constexpr GLenum Type        = GL_FLOAT;
+
+    static constexpr GLenum InternalFormat = GL_RGBA32F;
 };
 
 template<>
-struct GLFormat<Color::RGBA<uint8_t>>
+struct GLFormat<Color::RGB<unsigned char>>
 {
+    using Scalar = unsigned char;
+
+    static constexpr unsigned int Size  = 3;
+    static constexpr GLenum PixelFormat = GL_RGB;
+    static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
+
+    static constexpr GLenum InternalFormat = GL_RGB8UI;
+};
+
+template<>
+struct GLFormat<Color::RGBA<unsigned char>>
+{
+    using Scalar = unsigned char;
+
     static constexpr unsigned int Size  = 3;
     static constexpr GLenum PixelFormat = GL_RGBA;
     static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
+
+    static constexpr GLenum InternalFormat = GL_RGBA8UI;
 };
 
 }; //namespace display

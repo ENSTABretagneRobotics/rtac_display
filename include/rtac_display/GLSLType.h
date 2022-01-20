@@ -24,22 +24,6 @@ struct GLSLTypeFloat
 };
 
 template <unsigned int Size>
-struct GLSLTypeDouble
-{
-    static_assert(Size > 0 && Size <= 4, "Invalid GLSL type size");
-
-    struct Double1 { static constexpr const char* value = "double"; };
-    struct Double2 { static constexpr const char* value = "dvec2"; };
-    struct Double3 { static constexpr const char* value = "dvec3"; };
-    struct Double4 { static constexpr const char* value = "dvec4"; };
-    
-    static constexpr const char* value = std::conditional<Size == 1, Double1,
-                                typename std::conditional<Size == 2, Double2,
-                                typename std::conditional<Size == 3, Double3, Double4
-                                >::type>::type>::type::value;
-};
-
-template <unsigned int Size>
 struct GLSLTypeInt
 {
     static_assert(Size > 0 && Size <= 4, "Invalid GLSL type size");
@@ -96,8 +80,7 @@ struct GLSLType
         std::is_integral<Scalar>::value,
             typename std::conditional<std::is_signed<Scalar>::value,
                 GLSLTypeInt<Size>, GLSLTypeUint<Size>>::type,
-            typename std::conditional<std::is_same<Scalar,float>::value,
-                GLSLTypeFloat<Size>, GLSLTypeDouble<Size>>::type
+            GLSLTypeFloat<Size>
         >::type::value;
 };
 

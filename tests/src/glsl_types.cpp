@@ -13,11 +13,6 @@ int main()
     cout << GLSLTypeFloat<3>::value << endl;
     cout << GLSLTypeFloat<4>::value << endl;
 
-    cout << GLSLTypeDouble<1>::value << endl;
-    cout << GLSLTypeDouble<2>::value << endl;
-    cout << GLSLTypeDouble<3>::value << endl;
-    cout << GLSLTypeDouble<4>::value << endl;
-
     cout << GLSLTypeInt<1>::value << endl;
     cout << GLSLTypeInt<2>::value << endl;
     cout << GLSLTypeInt<3>::value << endl;
@@ -33,11 +28,6 @@ int main()
     cout << GLSLType<Point2<float>>::value << endl;
     cout << GLSLType<Point3<float>>::value << endl;
     cout << GLSLType<Point4<float>>::value << endl;
-
-    cout << GLSLType<double>::value << endl;
-    cout << GLSLType<Point2<double>>::value << endl;
-    cout << GLSLType<Point3<double>>::value << endl;
-    cout << GLSLType<Point4<double>>::value << endl;
 
     cout << GLSLType<unsigned char>::value << endl;
     cout << GLSLType<Point2<unsigned char>>::value << endl;
