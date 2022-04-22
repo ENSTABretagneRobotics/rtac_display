@@ -165,10 +165,6 @@ void ImageRenderer::draw(const GLTexture& texture) const
 {
     imageView_->set_image_shape(texture.shape());
 
-    static const float vertices[] = {-1.0,-1.0,
-                                      1.0,-1.0,
-                                      1.0, 1.0,
-                                     -1.0, 1.0};
     static const float uvNoFlip[] = {0.0, 0.0,
                                      1.0, 0.0,
                                      1.0, 1.0,
@@ -179,12 +175,17 @@ void ImageRenderer::draw(const GLTexture& texture) const
                                    0.0, 0.0};
     unsigned int indexes[] = {0, 1, 2,
                               0, 2, 3};
+    std::vector<float> vertices(8);
+    vertices[0] = 0.0f;                  vertices[1] = 0.0f;
+    vertices[2] = texture.shape().width; vertices[3] = 0.0f;
+    vertices[4] = texture.shape().width; vertices[5] = texture.shape().height;
+    vertices[6] = 0.0f;                  vertices[7] = texture.shape().height;
     
 
 
     glUseProgram(renderProgram_);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices.data());
     glEnableVertexAttribArray(0);
     if(verticalFlip_)
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, uvNoFlip);

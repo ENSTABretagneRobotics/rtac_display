@@ -40,11 +40,22 @@ void ImageView::update_projection()
     projectionMatrix_ = Mat4::Identity();
     
     float metaRatio = screenSize_.ratio<float>() / image_.ratio<float>();
-    if(metaRatio > 1.0f) {
-        projectionMatrix_(0,0) = 1.0f / metaRatio;
+    float screenRatio = screenSize_.ratio<float>();
+    float imageRatio  = image_.ratio<float>();
+
+    if(screenRatio > imageRatio) {
+        // here the screen is wider than the image.
+        projectionMatrix_(0,0) = 2.0f / (screenRatio * image_.height);
+        projectionMatrix_(0,3) = -0.5f*image_.width * projectionMatrix_(0,0);
+        projectionMatrix_(1,1) = 2.0f / image_.height;
+        projectionMatrix_(1,3) = -1.0f;
     }
     else {
-        projectionMatrix_(1,1) = metaRatio;
+        // here the image is wider then the screen
+        projectionMatrix_(0,0) = 2.0f / image_.width;
+        projectionMatrix_(0,3) = -1.0f;
+        projectionMatrix_(1,1) = 2.0f * screenRatio / image_.width;
+        projectionMatrix_(1,3) = -0.5f*image_.height * projectionMatrix_(1,1);
     }
 }
 
