@@ -288,7 +288,8 @@ struct GLFormat<unsigned char>
     static constexpr GLenum PixelFormat = GL_RED;
     static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
 
-    static constexpr GLenum InternalFormat = GL_R8UI;
+    static constexpr GLenum InternalFormat = GL_RED;
+    //static constexpr GLenum InternalFormat = GL_R8UI;
 };
 
 template<>
@@ -300,7 +301,8 @@ struct GLFormat<types::Point2<unsigned char>>
     static constexpr GLenum PixelFormat = GL_RG;
     static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
 
-    static constexpr GLenum InternalFormat = GL_RG8UI;
+    //static constexpr GLenum InternalFormat = GL_RG8UI;
+    static constexpr GLenum InternalFormat = GL_RG;
 };
 
 template<>
@@ -312,7 +314,7 @@ struct GLFormat<types::Point3<unsigned char>>
     static constexpr GLenum PixelFormat = GL_RGB;
     static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
 
-    static constexpr GLenum InternalFormat = GL_RGB8UI;
+    static constexpr GLenum InternalFormat = GL_RGB;
 };
 
 template<>
@@ -324,7 +326,8 @@ struct GLFormat<types::Point4<unsigned char>>
     static constexpr GLenum PixelFormat = GL_RGBA;
     static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
 
-    static constexpr GLenum InternalFormat = GL_RGBA8UI;
+    //static constexpr GLenum InternalFormat = GL_RGBA8UI;
+    static constexpr GLenum InternalFormat = GL_RGBA;
 };
 
 // template <>
