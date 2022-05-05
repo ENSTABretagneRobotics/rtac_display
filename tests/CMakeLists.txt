@@ -13,6 +13,7 @@ list(APPEND test_names
     gl_mesh_test.cpp
     glsl_types.cpp
     fan_renderer.cpp
+    instances_renderer.cpp
 )
 list(APPEND test_deps
     rtac_display
