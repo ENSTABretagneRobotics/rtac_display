@@ -18,8 +18,8 @@ class Frame : public Renderer
 {
     public:
 
-    using Ptr      = rtac::types::Handle<Renderer>;
-    using ConstPtr = rtac::types::Handle<const Renderer>;
+    using Ptr      = rtac::types::Handle<Frame>;
+    using ConstPtr = rtac::types::Handle<const Frame>;
 
     using Pose = View3D::Pose;
 
