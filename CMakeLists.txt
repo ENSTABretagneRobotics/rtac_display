@@ -146,3 +146,5 @@ set_target_properties(rtac_display PROPERTIES
 rtac_install_target(rtac_display
     ADDITIONAL_CONFIG_COMMANDS ${CONFIG_COMMANDS}
 )
+
+add_subdirectory(bin)
