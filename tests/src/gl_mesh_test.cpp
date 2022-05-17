@@ -11,8 +11,8 @@ int main()
     samples::Display3D display;
     display.create_renderer<Renderer>(display.view());
 
-    auto mesh0 = GLMesh<>::cube();
-    auto mesh1 = GLMesh<>::Create();
+    auto mesh0 = GLMesh::cube();
+    auto mesh1 = GLMesh::Create();
 
     cout << "mesh0 : " << *mesh0 << endl;
     cout << "mesh1 : " << *mesh1 << endl;

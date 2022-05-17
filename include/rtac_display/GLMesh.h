@@ -10,21 +10,17 @@
 
 namespace rtac { namespace display {
 
-template <typename P = types::Point3<float>,
-          typename F = types::Point3<uint32_t>,
-          typename U = types::Point2<float>,
-          typename N = types::Point3<float>>
 class GLMesh
 {
     public:
 
-    using Point    = P;
-    using Face     = F;
-    using UV       = U;
-    using Normal   = N;
-
     using Ptr      = rtac::types::Handle<GLMesh>;
     using ConstPtr = rtac::types::Handle<const GLMesh>;
+
+    using Point    = types::Point3<float>;
+    using Face     = types::Point3<uint32_t>;
+    using UV       = types::Point2<float>;
+    using Normal   = types::Point3<float>;
 
     using BaseMesh = types::Mesh<Point,Face>;
 
@@ -45,9 +41,9 @@ class GLMesh
     GLMesh& operator=(GLMesh&& other);
 
     template <template <typename> class VectorT>
-    GLMesh(const types::Mesh<P,F,VectorT>& other);
+    GLMesh(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other);
     template <template <typename> class VectorT>
-    GLMesh& operator=(const types::Mesh<P,F,VectorT>& other);
+    GLMesh& operator=(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other);
 
     GLVector<Point>&  points()        { return points_; }
     GLVector<Face>&   faces()         { return faces_; }
@@ -66,15 +62,13 @@ class GLMesh
     }
 };
 
-template <typename P, typename F, typename U, typename N>
-GLMesh<P,F,U,N>::GLMesh(GLMesh<P,F,U,N>&& other) :
+inline GLMesh::GLMesh(GLMesh&& other) :
     GLMesh()
 {
     *this = std::move(other);
 }
 
-template <typename P, typename F, typename U, typename N>
-GLMesh<P,F,U,N>& GLMesh<P,F,U,N>::operator=(GLMesh<P,F,U,N>&& other)
+inline GLMesh& GLMesh::operator=(GLMesh&& other)
 {
     points_       = std::move(other.points_);
     faces_        = std::move(other.faces_);
@@ -85,17 +79,15 @@ GLMesh<P,F,U,N>& GLMesh<P,F,U,N>::operator=(GLMesh<P,F,U,N>&& other)
     return *this;
 }
 
-template <typename P, typename F, typename U, typename N>
 template <template <typename> class VectorT>
-GLMesh<P,F,U,N>::GLMesh(const types::Mesh<P,F,VectorT>& other) :
+inline GLMesh::GLMesh(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other) :
     GLMesh()
 {
     *this = other;
 }
 
-template <typename P, typename F, typename U, typename N>
 template <template <typename> class VectorT>
-GLMesh<P,F,U,N>& GLMesh<P,F,U,N>::operator=(const types::Mesh<P,F,VectorT>& other)
+inline GLMesh& GLMesh::operator=(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other)
 {
     points_ = other.points();
     faces_  = other.faces();
@@ -110,9 +102,8 @@ GLMesh<P,F,U,N>& GLMesh<P,F,U,N>::operator=(const types::Mesh<P,F,VectorT>& othe
 }; //namespace display
 }; //namespace rtac
 
-template <typename P, typename F, typename U, typename N>
 inline std::ostream& operator<<(std::ostream& os,
-                                const rtac::display::GLMesh<P,F,U,N>& mesh)
+                                const rtac::display::GLMesh& mesh)
 {
     os << "GLMesh :"
        << "\n- " << mesh.points().size()       << " points"
