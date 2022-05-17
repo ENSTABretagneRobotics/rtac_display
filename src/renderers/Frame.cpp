@@ -1,6 +1,39 @@
 #include <rtac_display/renderers/Frame.h>
 
 namespace rtac { namespace display {
+/**
+ * Simple GLSL Vertex shader. This shader pass the color c to the fragment
+ * shader and multiplies a vector by the view matrix.
+ */
+const std::string Frame::vertexShader = std::string( R"(
+#version 430 core
+
+in vec3 point;
+in vec3 color;
+uniform mat4 view;
+out vec3 c;
+
+void main()
+{
+    gl_Position = view*vec4(point, 1.0f);
+    c = color;
+}
+)");
+
+/**
+ * Simple GLSL Fragment shader. Simply outputs the color passed as parameter.
+ */
+const std::string Frame::fragmentShader = std::string(R"(
+#version 430 core
+
+in vec3 c;
+out vec4 outColor;
+
+void main()
+{
+    outColor = vec4(c, 1.0f);
+}
+)");
 
 Frame::Ptr Frame::Create(const GLContext::Ptr& context,
                          const View3D::Pose& pose, const View::Ptr& view)
@@ -10,7 +43,7 @@ Frame::Ptr Frame::Create(const GLContext::Ptr& context,
 
 Frame::Frame(const GLContext::Ptr& context,
              const View3D::Pose& pose, const View::Ptr& view) :
-    Renderer(context, Renderer::vertexShader, Renderer::fragmentShader, view),
+    Renderer(context, vertexShader, fragmentShader, view),
     pose_(pose)
 {}
 
@@ -20,7 +53,7 @@ Frame::Ptr Frame::New(const View3D::Pose& pose, const View::Ptr& view)
 }
 
 Frame::Frame(const View3D::Pose& pose, const View::Ptr& view) :
-    Renderer(Renderer::vertexShader, Renderer::fragmentShader, view),
+    Renderer(vertexShader, fragmentShader, view),
     pose_(pose)
 {}
 

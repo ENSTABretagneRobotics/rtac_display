@@ -23,6 +23,9 @@ class Frame : public Renderer
 
     using Pose = View3D::Pose;
 
+    static const std::string vertexShader;
+    static const std::string fragmentShader;
+
     protected:
 
     View3D::Pose pose_;
