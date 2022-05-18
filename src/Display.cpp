@@ -14,12 +14,18 @@ std::tuple<GLFWContext::Ptr, Display::Window, Display::Shape> Display::create_wi
     Window otherWindow;
     if(sharedContext)
         otherWindow = sharedContext->window();
+
     auto newWindow = Window(glfwCreateWindow(width, height,
                                              title.c_str(),
                                              NULL, otherWindow.get()),
                                              glfwDestroyWindow); //custom deleter
     if(!newWindow) {
-        throw std::runtime_error("GLFW window creation failure.");
+        const char* desc;
+        int code = glfwGetError(&desc);
+        std::ostringstream oss;
+        oss << "GLFW creation failure (code:"
+            << std::hex << code << ") : " << desc;
+        throw std::runtime_error(oss.str());
     }
 
     if(sharedContext)
