@@ -25,6 +25,7 @@ class GLMesh
     using BaseMesh = types::Mesh<Point,Face>;
 
     static const unsigned int GroupSize;
+    static const std::string expandVerticesShader;
     static const std::string computeNormalsShader;
 
     protected:
@@ -62,6 +63,7 @@ class GLMesh
     }
 
     void compute_normals();
+    void expand_vertices();
 };
 
 inline GLMesh::GLMesh(GLMesh&& other) :
@@ -101,28 +103,89 @@ inline GLMesh& GLMesh::operator=(const types::Mesh<GLMesh::Point,GLMesh::Face,Ve
 
 inline void GLMesh::compute_normals()
 {
-    if(faces_.size() == 0) return;
+    static const GLuint computeProgram = create_compute_program(computeNormalsShader);
 
-    static GLuint computeProgram = create_compute_program(computeNormalsShader);
+    this->expand_vertices();
 
-    normals_.resize(3*faces_.size());
-    GLVector<Point> p(3*faces_.size());
+    if(points_.size() % 3 != 0) {
+        std::ostringstream oss;
+        oss << "GLMesh::compute_normals : number of point after expansion ("
+            << points_.size() << ") is not a mutiple of 3. "
+            << "Cannot compute normals.";
+        std::runtime_error(oss.str());
+    }
+
+    normals_.resize(points_.size());
 
     glUseProgram(computeProgram);
 
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, points_.gl_id());
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, faces_.gl_id());
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, p.gl_id());
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, normals_.gl_id());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, normals_.gl_id());
 
+    glUniform1ui(0, points_.size() / 3);
+
+    glDispatchCompute(((points_.size() / 3) / GroupSize) + 1, 1, 1);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    glUseProgram(0);
+}
+
+inline void GLMesh::expand_vertices()
+{
+    if(faces_.size() == 0) return;
+
+    static const GLuint computeProgram = create_compute_program(expandVerticesShader);
+    glUseProgram(computeProgram);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, faces_.gl_id());
     glUniform1ui(0, faces_.size());
+    
+    if(normals_.size() == points_.size()) { 
+        GLVector<Point> normals(3*faces_.size());
+
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, normals_.gl_id());
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, normals.gl_id());
+
+        glUniform1ui(1, 3);
+
+        glDispatchCompute((faces_.size() / GroupSize) + 1, 1, 1);
+        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+        normals_ = std::move(normals);
+    }
+    else {
+        normals_.resize(0);
+    }
+    
+    if(uvs_.size() == points_.size()) { 
+        GLVector<UV> uvs(3*faces_.size());
+
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, uvs_.gl_id());
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, uvs.gl_id());
+
+        glUniform1ui(1, 2);
+
+        glDispatchCompute((faces_.size() / GroupSize) + 1, 1, 1);
+        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+        uvs_ = std::move(uvs);
+    }
+    else {
+        uvs_.resize(0);
+    }
+
+    GLVector<Point> points(3*faces_.size());
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, points_.gl_id());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, points.gl_id());
+
+    glUniform1ui(1, 3);
 
     glDispatchCompute((faces_.size() / GroupSize) + 1, 1, 1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
     glUseProgram(0);
 
-    points_ = p;
+    points_ = std::move(points);
     faces_.resize(0);
 }
 

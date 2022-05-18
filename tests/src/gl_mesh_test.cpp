@@ -22,7 +22,7 @@ int main()
 
     cout << "mesh0 : " << *mesh0 << endl;
     cout << "mesh1 : " << *mesh1 << endl;
-
+    
     mesh1->compute_normals();
     cout << "mesh1 : " << *mesh1 << endl;
 
