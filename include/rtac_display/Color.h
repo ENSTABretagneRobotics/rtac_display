@@ -62,7 +62,8 @@ struct GLFormat<Color::RGB<unsigned char>>
     static constexpr GLenum PixelFormat = GL_RGB;
     static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
 
-    static constexpr GLenum InternalFormat = GL_RGB8UI;
+    //static constexpr GLenum InternalFormat = GL_RGB8UI;
+    static constexpr GLenum InternalFormat = GL_RGB;
 };
 
 template<>
@@ -74,7 +75,8 @@ struct GLFormat<Color::RGBA<unsigned char>>
     static constexpr GLenum PixelFormat = GL_RGBA;
     static constexpr GLenum Type        = GL_UNSIGNED_BYTE;
 
-    static constexpr GLenum InternalFormat = GL_RGBA8UI;
+    //static constexpr GLenum InternalFormat = GL_RGBA8UI;
+    static constexpr GLenum InternalFormat = GL_RGBA;
 };
 
 }; //namespace display
