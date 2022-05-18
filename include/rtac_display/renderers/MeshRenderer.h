@@ -10,6 +10,7 @@
 #include <rtac_display/renderers/Renderer.h>
 #include <rtac_display/views/View3D.h>
 #include <rtac_display/GLMesh.h>
+#include <rtac_display/GLTexture.h>
 
 namespace rtac { namespace display {
 
@@ -37,10 +38,13 @@ class MeshRenderer : public Renderer
     static const std::string vertexShaderNormals;
     static const std::string vertexShaderDisplayNormals;
     static const std::string fragmentShaderSolid;
+    static const std::string vertexShaderTextured;
+    static const std::string fragmentShaderTextured;
     
-    GLMesh::ConstPtr mesh_;
-    Pose             pose_;
-    Color::RGBAf     color_;
+    GLMesh::ConstPtr    mesh_;
+    Pose                pose_;
+    Color::RGBAf        color_;
+    GLTexture::ConstPtr texture_;
 
     Mode   renderMode_;
     GLuint solidRender_;
@@ -67,13 +71,15 @@ class MeshRenderer : public Renderer
     static Ptr New(const View3D::Ptr& view,
                    const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
 
-    void set_pose(const Pose& pose);
     void set_color(const Color::RGBAf& color);
+    void set_pose(const Pose& pose)                      { pose_ = pose; }
+    void set_texture(const GLTexture::ConstPtr& texture) { texture_ = texture; }
 
     virtual void draw() const;
     virtual void draw(const View::ConstPtr& view) const;
     void draw_solid(const View::ConstPtr& view, GLenum primitiveMode) const;
     void draw_normal_shading(const View::ConstPtr& view) const;
+    void draw_textured(const View::ConstPtr& view) const;
     void draw_normals(const View::ConstPtr& view) const;
     
     template <typename Tp, typename Tf>

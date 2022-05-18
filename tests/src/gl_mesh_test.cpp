@@ -32,8 +32,18 @@ int main()
 
     auto renderer1 = display.create_renderer<MeshRenderer>(display.view());
     renderer1->mesh() = mesh1;
-    renderer1->set_pose(MeshRenderer::Pose({1.0,1.0,0.0}));
+    renderer1->set_pose(MeshRenderer::Pose({1.0,1.0,0.1}));
     renderer1->set_color({1.0,1.0,0.0,1.0});
+
+    auto mesh2 = GLMesh::cube_with_uvs();
+    cout << "mesh2 : " << *mesh2 << endl;
+    auto renderer2 = display.create_renderer<MeshRenderer>(display.view());
+    renderer2->mesh() = mesh2;
+    renderer2->set_texture(GLTexture::checkerboard({4,4},
+                                                   Color::RGBAf({1.0f,1.0f,0.0,1.0f}),
+                                                   Color::RGBAf({0.0f,0.0f,1.0,1.0f}),
+                                                   64));
+    renderer2->set_pose(MeshRenderer::Pose({3.1,1.0,1.1}));
 
     while(!display.should_close()) {
         display.draw();

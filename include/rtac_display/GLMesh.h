@@ -58,12 +58,12 @@ class GLMesh
     const GLVector<UV>&     uvs()      const { return uvs_; }
     const GLVector<Normal>& normals()  const { return normals_; }
 
-    static GLMesh::Ptr cube(float scale = 1.0f) {
-        return Ptr(new GLMesh(BaseMesh::cube(scale)));
-    }
-
     void compute_normals();
     void expand_vertices();
+
+    static GLMesh::Ptr cube(float scale = 1.0f);
+
+    static GLMesh::Ptr cube_with_uvs(float scale = 1.0f);
 };
 
 inline GLMesh::GLMesh(GLMesh&& other) :
@@ -187,6 +187,29 @@ inline void GLMesh::expand_vertices()
 
     points_ = std::move(points);
     faces_.resize(0);
+}
+
+inline GLMesh::Ptr GLMesh::cube(float scale) {
+    return Ptr(new GLMesh(BaseMesh::cube(scale)));
+}
+
+inline GLMesh::Ptr GLMesh::cube_with_uvs(float scale) {
+    Ptr mesh(new GLMesh(BaseMesh::cube(scale)));
+    mesh->compute_normals();
+
+    std::vector<UV> uvs(mesh->points().size());
+
+    for(int i = 0; i < 36; i+=6) {
+        uvs[i]     = UV({0.0,0.0});
+        uvs[i + 1] = UV({1.0,0.0});
+        uvs[i + 2] = UV({1.0,1.0});
+        uvs[i + 3] = UV({0.0,0.0});
+        uvs[i + 4] = UV({1.0,1.0});
+        uvs[i + 5] = UV({0.0,1.0});
+    }
+    mesh->uvs() = uvs;
+
+    return mesh;
 }
 
 }; //namespace display
