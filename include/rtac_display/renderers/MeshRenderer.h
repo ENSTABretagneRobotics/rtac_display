@@ -30,6 +30,7 @@ class MeshRenderer : public Renderer
         WireFrame,
         NormalShading,
         Textured,
+        TexturedNormal,
     };
 
     protected:
@@ -40,6 +41,8 @@ class MeshRenderer : public Renderer
     static const std::string fragmentShaderSolid;
     static const std::string vertexShaderTextured;
     static const std::string fragmentShaderTextured;
+    static const std::string vertexShaderTexturedNormal;
+    static const std::string fragmentShaderTexturedNormal;
     
     GLMesh::ConstPtr    mesh_;
     Pose                pose_;
@@ -50,6 +53,7 @@ class MeshRenderer : public Renderer
     GLuint solidRender_;
     GLuint normalShading_;
     GLuint texturedShading_;
+    GLuint texturedNormalShading_;
 
     bool         displayNormals_;
     GLuint       displayNormalsProgram_;
@@ -81,6 +85,7 @@ class MeshRenderer : public Renderer
     void draw_normal_shading(const View::ConstPtr& view) const;
     void draw_textured(const View::ConstPtr& view) const;
     void draw_normals(const View::ConstPtr& view) const;
+    void draw_textured_normal(const View::ConstPtr& view) const;
     
     template <typename Tp, typename Tf>
     void set_mesh(const types::Mesh<Tp,Tf>& mesh);

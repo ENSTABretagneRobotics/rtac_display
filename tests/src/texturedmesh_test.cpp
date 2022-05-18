@@ -26,6 +26,7 @@ int main()
     display.create_renderer<Frame>(display.view());
 
     auto mesh = GLMesh::from_ply(meshPath, true);
+    mesh->compute_normals();
     cout << "vertex count : " << mesh->points().size() << endl;
     cout << "face count   : " << mesh->faces().size() << endl;
 

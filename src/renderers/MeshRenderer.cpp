@@ -102,6 +102,41 @@ void main()
 }
 )");
 
+const std::string MeshRenderer::vertexShaderTexturedNormal = std::string( R"(
+#version 430 core
+
+in vec3 point;
+in vec3 n;
+in vec2 uvIn;
+
+uniform mat4 view;
+
+out float c;
+out vec2  uv;
+
+void main()
+{
+    gl_Position = view*vec4(point, 1.0f);
+    c = abs(normalize((view*vec4(n, 0.0f)).xyz).z);
+    uv = uvIn;
+}
+)");
+
+const std::string MeshRenderer::fragmentShaderTexturedNormal = std::string(R"(
+#version 430 core
+
+in  float c;
+in  vec2  uv;
+out vec4 outColor;
+
+uniform sampler2D texIn;
+
+void main()
+{
+    outColor = c*texture(texIn, uv);
+}
+)");
+
 
 MeshRenderer::Ptr MeshRenderer::Create(const GLContext::Ptr& context,
                                        const View3D::Ptr& view,
@@ -115,10 +150,12 @@ MeshRenderer::MeshRenderer(const GLContext::Ptr& context,
                            const Color::RGBAf& color) :
     Renderer(context, vertexShaderSolid, fragmentShaderSolid, view),
     color_(color),
-    renderMode_(Mode::Textured),
+    renderMode_(Mode::TexturedNormal),
     solidRender_(this->renderProgram_),
     normalShading_(create_render_program(vertexShaderNormals, fragmentShaderSolid)),
     texturedShading_(create_render_program(vertexShaderTextured, fragmentShaderTextured)),
+    texturedNormalShading_(create_render_program(vertexShaderTexturedNormal,
+                                                 fragmentShaderTexturedNormal)),
     displayNormals_(false),
     displayNormalsProgram_(create_render_program(vertexShaderDisplayNormals, fragmentShaderSolid)),
     normalsColor_({0.0f,0.0f,1.0f,1.0f})
@@ -132,10 +169,12 @@ MeshRenderer::Ptr MeshRenderer::New(const View3D::Ptr& view, const Color::RGBAf&
 MeshRenderer::MeshRenderer(const View3D::Ptr& view, const Color::RGBAf& color) :
     Renderer(vertexShader, fragmentShader, view),
     color_(color),
-    renderMode_(Mode::Textured),
+    renderMode_(Mode::TexturedNormal),
     solidRender_(this->renderProgram_),
     normalShading_(create_render_program(vertexShaderNormals,  fragmentShaderSolid)),
     texturedShading_(create_render_program(vertexShaderTextured, fragmentShaderTextured)),
+    texturedNormalShading_(create_render_program(vertexShaderTexturedNormal,
+                                                 fragmentShaderTexturedNormal)),
     displayNormals_(false),
     displayNormalsProgram_(create_render_program(vertexShaderDisplayNormals, fragmentShaderSolid)),
     normalsColor_({0.0f,0.0f,1.0f,1.0f})
@@ -177,6 +216,9 @@ void MeshRenderer::draw(const View::ConstPtr& view) const
             break;
         case Mode::Textured:
             this->draw_textured(view);
+            break;
+        case Mode::TexturedNormal:
+            this->draw_textured_normal(view);
             break;
     }
 
@@ -284,6 +326,50 @@ void MeshRenderer::draw_textured(const View::ConstPtr& view) const
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glUseProgram(0);
+}
+
+void MeshRenderer::draw_textured_normal(const View::ConstPtr& view) const
+{
+    if(!texture_ || mesh_->uvs().size()     != mesh_->points().size()
+                 || mesh_->normals().size() != mesh_->points().size()) {
+        this->draw_textured(view);
+        return;
+    }
+    glUseProgram(texturedNormalShading_);
+    
+    mesh_->points().bind(GL_ARRAY_BUFFER);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(0);
+    mesh_->normals().bind(GL_ARRAY_BUFFER);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(1);
+    mesh_->uvs().bind(GL_ARRAY_BUFFER);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(2);
+
+    View3D::Mat4 viewMatrix = view->view_matrix()*pose_.homogeneous_matrix();
+    glUniformMatrix4fv(glGetUniformLocation(texturedNormalShading_, "view"),
+        1, GL_FALSE, viewMatrix.data());
+    glUniform1i(glGetUniformLocation(texturedNormalShading_, "texIn"), 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture_->gl_id());
+
+    if(mesh_->faces().size() == 0) {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glDrawArrays(GL_TRIANGLES, 0, mesh_->points().size());
+    }
+    else {
+        mesh_->faces().bind(GL_ELEMENT_ARRAY_BUFFER);
+        glDrawElements(GL_TRIANGLES, 3*mesh_->faces().size(), GL_UNSIGNED_INT, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+    glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
