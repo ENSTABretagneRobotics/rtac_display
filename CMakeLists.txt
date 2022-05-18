@@ -73,6 +73,8 @@ list(APPEND rtac_display_SOURCES
     src/utils.cpp
     src/GLState.cpp
 
+    src/GLMesh.cpp
+
     src/views/View.cpp
     src/views/ImageView.cpp
     src/views/View3D.cpp

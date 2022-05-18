@@ -23,8 +23,12 @@ int main()
     cout << "mesh0 : " << *mesh0 << endl;
     cout << "mesh1 : " << *mesh1 << endl;
 
+    mesh1->compute_normals();
+    cout << "mesh1 : " << *mesh1 << endl;
+
     auto renderer0 = display.create_renderer<MeshRenderer>(display.view());
     renderer0->mesh() = mesh1;
+    //renderer0->set_render_mode(MeshRenderer::NormalShading);
 
     auto renderer1 = display.create_renderer<MeshRenderer>(display.view());
     renderer1->mesh() = mesh1;
@@ -37,3 +41,5 @@ int main()
 
     return 0;
 }
+
+

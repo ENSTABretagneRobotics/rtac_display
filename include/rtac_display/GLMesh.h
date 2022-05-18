@@ -24,13 +24,15 @@ class GLMesh
 
     using BaseMesh = types::Mesh<Point,Face>;
 
+    static const unsigned int GroupSize;
+    static const std::string computeNormalsShader;
+
     protected:
     
     GLVector<Point>  points_;
     GLVector<Face>   faces_;
     GLVector<UV>     uvs_;
-    GLVector<Normal> faceNormals_;
-    GLVector<Normal> pointNormals_;
+    GLVector<Normal> normals_;
 
     public:
 
@@ -45,21 +47,21 @@ class GLMesh
     template <template <typename> class VectorT>
     GLMesh& operator=(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other);
 
-    GLVector<Point>&  points()        { return points_; }
-    GLVector<Face>&   faces()         { return faces_; }
-    GLVector<UV>&     uvs()           { return uvs_; }
-    GLVector<Normal>& face_normals()  { return faceNormals_; }
-    GLVector<Normal>& point_normals() { return pointNormals_; }
+    GLVector<Point>&  points()  { return points_; }
+    GLVector<Face>&   faces()   { return faces_; }
+    GLVector<UV>&     uvs()     { return uvs_; }
+    GLVector<Normal>& normals() { return normals_; }
 
-    const GLVector<Point>&  points()        const { return points_; }
-    const GLVector<Face>&   faces()         const { return faces_; }
-    const GLVector<UV>&     uvs()           const { return uvs_; }
-    const GLVector<Normal>& face_normals()  const { return faceNormals_; }
-    const GLVector<Normal>& point_normals() const { return pointNormals_; }
+    const GLVector<Point>&  points()   const { return points_; }
+    const GLVector<Face>&   faces()    const { return faces_; }
+    const GLVector<UV>&     uvs()      const { return uvs_; }
+    const GLVector<Normal>& normals()  const { return normals_; }
 
     static GLMesh::Ptr cube(float scale = 1.0f) {
         return Ptr(new GLMesh(BaseMesh::cube(scale)));
     }
+
+    void compute_normals();
 };
 
 inline GLMesh::GLMesh(GLMesh&& other) :
@@ -70,11 +72,10 @@ inline GLMesh::GLMesh(GLMesh&& other) :
 
 inline GLMesh& GLMesh::operator=(GLMesh&& other)
 {
-    points_       = std::move(other.points_);
-    faces_        = std::move(other.faces_);
-    uvs_          = std::move(other.uvs_);
-    faceNormals_  = std::move(other.faceNormals_);
-    pointNormals_ = std::move(other.pointNormals_);
+    points_   = std::move(other.points_);
+    faces_    = std::move(other.faces_);
+    uvs_      = std::move(other.uvs_);
+    normals_  = std::move(other.normals_);
 
     return *this;
 }
@@ -93,10 +94,36 @@ inline GLMesh& GLMesh::operator=(const types::Mesh<GLMesh::Point,GLMesh::Face,Ve
     faces_  = other.faces();
 
     uvs_.resize(0);
-    faceNormals_.resize(0);
-    pointNormals_.resize(0);
+    normals_.resize(0);
 
     return *this;
+}
+
+inline void GLMesh::compute_normals()
+{
+    if(faces_.size() == 0) return;
+
+    static GLuint computeProgram = create_compute_program(computeNormalsShader);
+
+    normals_.resize(3*faces_.size());
+    GLVector<Point> p(3*faces_.size());
+
+    glUseProgram(computeProgram);
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, points_.gl_id());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, faces_.gl_id());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, p.gl_id());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, normals_.gl_id());
+
+    glUniform1ui(0, faces_.size());
+
+    glDispatchCompute((faces_.size() / GroupSize) + 1, 1, 1);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    glUseProgram(0);
+
+    points_ = p;
+    faces_.resize(0);
 }
 
 }; //namespace display
@@ -106,11 +133,10 @@ inline std::ostream& operator<<(std::ostream& os,
                                 const rtac::display::GLMesh& mesh)
 {
     os << "GLMesh :"
-       << "\n- " << mesh.points().size()       << " points"
-       << "\n- " << mesh.faces().size()        << " faces"
-       << "\n- " << mesh.uvs().size()          << " uvs"
-       << "\n- " << mesh.face_normals().size()  << " faceNormals"
-       << "\n- " << mesh.point_normals().size() << " pointNormals";
+       << "\n- " << mesh.points().size()   << " points"
+       << "\n- " << mesh.faces().size()    << " faces"
+       << "\n- " << mesh.uvs().size()      << " uvs"
+       << "\n- " << mesh.normals().size()  << " faceNormals";
     return os;
 }
 

@@ -23,16 +23,28 @@ class MeshRenderer : public Renderer
     using Mat4  = View3D::Mat4;
     using Pose  = View3D::Pose;
 
+    enum Mode {
+        Points,
+        Solid,
+        WireFrame,
+        NormalShading,
+        Textured,
+    };
+
     protected:
 
     static const std::string vertexShaderSolid;
+    static const std::string vertexShaderNormals;
     static const std::string fragmentShaderSolid;
     
     GLMesh::ConstPtr mesh_;
-    GLuint           solidRender_;
     Pose             pose_;
     Color::RGBAf     color_;
 
+    Mode   renderMode_;
+    GLuint solidRender_;
+    GLuint normalShading_;
+    GLuint texturedShading_;
 
     protected:
 
@@ -55,12 +67,16 @@ class MeshRenderer : public Renderer
 
     virtual void draw() const;
     virtual void draw(const View::ConstPtr& view) const;
+    void draw_solid(const View::ConstPtr& view, GLenum primitiveMode) const;
+    void draw_normal_shading(const View::ConstPtr& view) const;
     
     template <typename Tp, typename Tf>
     void set_mesh(const types::Mesh<Tp,Tf>& mesh);
 
     GLMesh::ConstPtr  mesh() const { return mesh_; }
     GLMesh::ConstPtr& mesh()       { return mesh_; }
+
+    void set_render_mode(Mode mode) { renderMode_ = mode; }
 };
 
 template <typename Tp, typename Tf>
@@ -70,46 +86,6 @@ void MeshRenderer::set_mesh(const types::Mesh<Tp,Tf>& mesh)
     *tmp = mesh;
     mesh_ = tmp;
 }
-
-
-// template <typename Tp, typename Tf>
-// void MeshRenderer::set_mesh(const types::Mesh<Tp,Tf>& mesh)
-// {
-//     using namespace rtac::types;
-//     using namespace rtac::types::indexing;
-// 
-//     this->allocate_points(3*mesh.num_faces());
-//     
-//     glBindBuffer(GL_ARRAY_BUFFER, points_);
-//     auto points  = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-//     glBindBuffer(GL_ARRAY_BUFFER, normals_);
-//     auto normals = static_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-// 
-//     for(int nf = 0; nf < mesh.num_faces(); nf++) {
-//         auto f = mesh.face(nf);
-//         Map<const Vector3<float>> p0(reinterpret_cast<const float*>(&mesh.point(f.x)));
-//         Map<const Vector3<float>> p1(reinterpret_cast<const float*>(&mesh.point(f.y)));
-//         Map<const Vector3<float>> p2(reinterpret_cast<const float*>(&mesh.point(f.z)));
-//         Vector3<float> n = ((p1 - p0).cross(p2 - p0)).normalized();
-//         
-//         int i = 9*nf;
-//         points[i]     = p0(0); points[i + 1] = p0(1); points[i + 2] = p0(2);
-//         points[i + 3] = p1(0); points[i + 4] = p1(1); points[i + 5] = p1(2);
-//         points[i + 6] = p2(0); points[i + 7] = p2(1); points[i + 8] = p2(2);
-//         normals[i]     = n(0); normals[i + 1] = n(1); normals[i + 2] = n(2);
-//         normals[i + 3] = n(0); normals[i + 4] = n(1); normals[i + 5] = n(2);
-//         normals[i + 6] = n(0); normals[i + 7] = n(1); normals[i + 8] = n(2);
-//     }
-//     
-//     glUnmapBuffer(GL_ARRAY_BUFFER);
-//     glBindBuffer(GL_ARRAY_BUFFER, points_);
-//     glUnmapBuffer(GL_ARRAY_BUFFER);
-//     glBindBuffer(GL_ARRAY_BUFFER, 0);
-// 
-//     numPoints_ = 9*mesh.num_faces();
-// 
-//     GL_CHECK_LAST(); 
-// }
 
 }; //namespace display
 }; //namespace rtac
