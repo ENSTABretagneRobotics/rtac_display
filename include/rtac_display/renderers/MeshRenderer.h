@@ -35,6 +35,7 @@ class MeshRenderer : public Renderer
 
     static const std::string vertexShaderSolid;
     static const std::string vertexShaderNormals;
+    static const std::string vertexShaderDisplayNormals;
     static const std::string fragmentShaderSolid;
     
     GLMesh::ConstPtr mesh_;
@@ -45,6 +46,10 @@ class MeshRenderer : public Renderer
     GLuint solidRender_;
     GLuint normalShading_;
     GLuint texturedShading_;
+
+    bool         displayNormals_;
+    GLuint       displayNormalsProgram_;
+    Color::RGBAf normalsColor_;
 
     protected:
 
@@ -69,6 +74,7 @@ class MeshRenderer : public Renderer
     virtual void draw(const View::ConstPtr& view) const;
     void draw_solid(const View::ConstPtr& view, GLenum primitiveMode) const;
     void draw_normal_shading(const View::ConstPtr& view) const;
+    void draw_normals(const View::ConstPtr& view) const;
     
     template <typename Tp, typename Tf>
     void set_mesh(const types::Mesh<Tp,Tf>& mesh);
@@ -77,6 +83,9 @@ class MeshRenderer : public Renderer
     GLMesh::ConstPtr& mesh()       { return mesh_; }
 
     void set_render_mode(Mode mode) { renderMode_ = mode; }
+    void enable_normals_display()  { displayNormals_ = true; }
+    void disable_normals_display() { displayNormals_ = false; }
+    void set_normals_color(const Color::RGBAf& color) { normalsColor_ = color; }
 };
 
 template <typename Tp, typename Tf>

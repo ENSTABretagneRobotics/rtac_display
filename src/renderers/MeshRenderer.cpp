@@ -39,6 +39,25 @@ void main()
 }
 )");
 
+const std::string MeshRenderer::vertexShaderDisplayNormals = std::string( R"(
+#version 430 core
+
+layout(location = 0) in vec3  point;
+layout(location = 1) in vec3  n;
+layout(location = 2) in float nLenght;
+
+uniform mat4 view;
+uniform vec4 color;
+
+out vec4 c;
+
+void main()
+{
+    gl_Position = view*vec4(point + nLenght*n, 1.0f);
+    c = color;
+}
+)");
+
 const std::string MeshRenderer::fragmentShaderSolid = std::string(R"(
 #version 430 core
 
@@ -65,7 +84,10 @@ MeshRenderer::MeshRenderer(const GLContext::Ptr& context,
     color_(color),
     renderMode_(Mode::NormalShading),
     solidRender_(this->renderProgram_),
-    normalShading_(create_render_program(vertexShaderNormals, fragmentShaderSolid))
+    normalShading_(create_render_program(vertexShaderNormals, fragmentShaderSolid)),
+    displayNormals_(false),
+    displayNormalsProgram_(create_render_program(vertexShaderDisplayNormals, fragmentShaderSolid)),
+    normalsColor_({0.0f,0.0f,1.0f,1.0f})
 {}
 
 MeshRenderer::Ptr MeshRenderer::New(const View3D::Ptr& view, const Color::RGBAf& color)
@@ -78,7 +100,10 @@ MeshRenderer::MeshRenderer(const View3D::Ptr& view, const Color::RGBAf& color) :
     color_(color),
     renderMode_(Mode::Points),
     solidRender_(this->renderProgram_),
-    normalShading_(create_render_program(vertexShaderNormals, fragmentShaderSolid))
+    normalShading_(create_render_program(vertexShaderNormals, fragmentShaderSolid)),
+    displayNormals_(false),
+    displayNormalsProgram_(create_render_program(vertexShaderDisplayNormals, fragmentShaderSolid)),
+    normalsColor_({0.0f,0.0f,1.0f,1.0f})
 {}
 
 void MeshRenderer::set_pose(const Pose& pose)
@@ -124,6 +149,9 @@ void MeshRenderer::draw(const View::ConstPtr& view) const
             //this->draw_textured(view);
             break;
     }
+
+    if(displayNormals_)
+        this->draw_normals(view);
 }
 
 void MeshRenderer::draw_solid(const View::ConstPtr& view, GLenum primitiveMode) const
@@ -172,9 +200,9 @@ void MeshRenderer::draw_normal_shading(const View::ConstPtr& view) const
     glEnableVertexAttribArray(1);
 
     View3D::Mat4 viewMatrix = view->view_matrix()*pose_.homogeneous_matrix();
-    glUniformMatrix4fv(glGetUniformLocation(solidRender_, "view"),
+    glUniformMatrix4fv(glGetUniformLocation(normalShading_, "view"),
         1, GL_FALSE, viewMatrix.data());
-    glUniform4fv(glGetUniformLocation(solidRender_, "color"),
+    glUniform4fv(glGetUniformLocation(normalShading_, "color"),
         1, reinterpret_cast<const float*>(&color_));
 
     if(mesh_->faces().size() == 0) {
@@ -192,6 +220,49 @@ void MeshRenderer::draw_normal_shading(const View::ConstPtr& view) const
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glUseProgram(0);
+}
+
+void MeshRenderer::draw_normals(const View::ConstPtr& view) const
+{
+    static constexpr const float nLength[2] = {0.1f,1.0f};
+
+    if(mesh_->normals().size() != mesh_->points().size()) return;
+
+    glUseProgram(displayNormalsProgram_);
+    
+    mesh_->points().bind(GL_ARRAY_BUFFER);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(0);
+
+    mesh_->normals().bind(GL_ARRAY_BUFFER);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, nLength);
+    glEnableVertexAttribArray(2);
+
+    glVertexAttribDivisor(0, 2);
+    glVertexAttribDivisor(1, 2);
+
+    View3D::Mat4 viewMatrix = view->view_matrix()*pose_.homogeneous_matrix();
+    glUniformMatrix4fv(glGetUniformLocation(displayNormalsProgram_, "view"),
+        1, GL_FALSE, viewMatrix.data());
+    glUniform4fv(glGetUniformLocation(displayNormalsProgram_, "color"),
+        1, reinterpret_cast<const float*>(&normalsColor_));
+    
+    glDrawArraysInstanced(GL_LINES, 0, 2, 2*mesh_->points().size());
+
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glVertexAttribDivisor(0, 0);
+    glVertexAttribDivisor(1, 0);
+
+    glUseProgram(0);
+
+    GL_CHECK_LAST();
 }
 
 }; //namespace display

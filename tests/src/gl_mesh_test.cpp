@@ -28,7 +28,7 @@ int main()
 
     auto renderer0 = display.create_renderer<MeshRenderer>(display.view());
     renderer0->mesh() = mesh1;
-    //renderer0->set_render_mode(MeshRenderer::NormalShading);
+    renderer0->enable_normals_display();
 
     auto renderer1 = display.create_renderer<MeshRenderer>(display.view());
     renderer1->mesh() = mesh1;
