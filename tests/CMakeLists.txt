@@ -14,6 +14,7 @@ list(APPEND test_names
     glsl_types.cpp
     fan_renderer.cpp
     instances_renderer.cpp
+    obj_loader.cpp
 )
 list(APPEND test_deps
     rtac_display
