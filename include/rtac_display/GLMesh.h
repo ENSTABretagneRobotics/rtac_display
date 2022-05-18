@@ -61,9 +61,11 @@ class GLMesh
     void compute_normals();
     void expand_vertices();
 
-    static GLMesh::Ptr cube(float scale = 1.0f);
+    static Ptr cube(float scale = 1.0f);
+    static Ptr cube_with_uvs(float scale = 1.0f);
+    static Ptr from_ply(const std::string& path,
+                        bool transposeUVs = false);
 
-    static GLMesh::Ptr cube_with_uvs(float scale = 1.0f);
 };
 
 inline GLMesh::GLMesh(GLMesh&& other) :
@@ -209,6 +211,86 @@ inline GLMesh::Ptr GLMesh::cube_with_uvs(float scale) {
     }
     mesh->uvs() = uvs;
 
+    return mesh;
+}
+
+inline GLMesh::Ptr GLMesh::from_ply(const std::string& path, bool transposeUVs)
+{
+    std::ifstream f(path, std::ios::binary | std::ios::in);
+    if(!f.is_open()) {
+        throw std::runtime_error(
+            "PointCloud::from_ply : could not open file for reading " + path);
+    }
+    happly::PLYData data(f);
+    
+    if(!data.hasElement("vertex")) {
+        throw std::runtime_error(
+            "Invalid ply file : No vertex defined in \"" + path + "\"");
+    }
+
+    auto mesh = Create();
+    {
+        // Loading vertices
+        auto x = data.getElement("vertex").getProperty<float>("x");
+        auto y = data.getElement("vertex").getProperty<float>("y");
+        auto z = data.getElement("vertex").getProperty<float>("z");
+
+        mesh->points().resize(x.size());
+        auto ptr = mesh->points().map();
+        Point* data = ptr;
+        for(int i = 0; i < x.size(); i++) {
+            data[i].x = x[i];
+            data[i].y = y[i];
+            data[i].z = z[i];
+        }
+    }
+
+    if(data.hasElement("face")) {
+        // Loading faces
+        std::vector<std::string> names({"vertex_indices", "vertex_index"});
+        std::vector<std::vector<uint32_t>> f;
+        for(auto& name : names) {
+            try {
+                f = data.getElement("face").getListPropertyAnySign<uint32_t>(name);
+                break;
+            }
+            catch(const std::runtime_error& e) {
+                // wrong face index name, trying another
+            }
+        }
+        
+        mesh->faces().resize(f.size());
+        auto ptr = mesh->faces().map();
+        Face* data = ptr;
+        for(int i = 0; i < f.size(); i++) {
+            data[i].x = f[i][0];
+            data[i].y = f[i][1];
+            data[i].z = f[i][2];
+        }
+    }
+
+    if(data.hasElement("texCoords")) {
+        // Loading texture coordinates
+        auto x = data.getElement("texCoords").getProperty<float>("x");
+        auto y = data.getElement("texCoords").getProperty<float>("y");
+
+        mesh->uvs().resize(x.size());
+        auto ptr = mesh->uvs().map();
+        UV* data = ptr;
+        if(transposeUVs) {
+            for(int i = 0; i < x.size(); i++) {
+                data[i].x = y[i];
+                data[i].y = x[i];
+            }
+        }
+        else {
+            for(int i = 0; i < x.size(); i++) {
+                data[i].x = x[i];
+                data[i].y = y[i];
+            }
+        }
+    }
+    
     return mesh;
 }
 

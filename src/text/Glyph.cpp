@@ -92,7 +92,7 @@ void Glyph::load_bitmap(FT_GlyphSlot glyph)
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             texture_.set_image({glyph->bitmap.width,
                                 glyph->bitmap.rows},
-                                (const uint8_t*)glyph->bitmap.buffer);
+                                (const unsigned char*)glyph->bitmap.buffer);
             glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
             renderProgram_ = renderProgramFlat_;
             break;
