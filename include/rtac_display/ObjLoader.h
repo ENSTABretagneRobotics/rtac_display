@@ -4,6 +4,9 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <set>
+#include <map>
+#include <unordered_map>
 
 #include <rtac_base/files.h>
 
@@ -130,6 +133,11 @@ class ChunkContainer
         return size;
     }
 
+    void clear() {
+        chunks_.clear();
+        chunks_.push_back(Chunk<T>(chunkSize_));
+    }
+
     void push_back(T value) {
         if(chunks_.back().size() >= chunkSize_) {
             chunks_.push_back(Chunk<T>(chunkSize_));
@@ -160,6 +168,35 @@ class ChunkContainer
     }
 };
 
+struct VertexId
+{
+    uint32_t p;
+    uint32_t u;
+    uint32_t n;
+    mutable uint32_t id;
+
+    bool operator<(const VertexId& other) const {
+        if(p < other.p) {
+            return true;
+        }
+        else if(p > other.p) {
+            return false;
+        }
+        else if(u < other.u) {
+            return true;
+        }
+        else if(u > other.u) {
+            return false;
+        }
+        else if(n < other.n) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+};
+
 class ObjLoader
 {
     public:
@@ -178,6 +215,9 @@ class ObjLoader
     std::vector<Point>  points_;
     std::vector<UV>     uvs_;
     std::vector<Normal> normals_;
+    std::set<VertexId>  vertices_;
+    std::vector<std::string> groupNames_;
+    std::map<std::string,std::vector<Face>> faceGroups_;
 
     public:
 
@@ -189,9 +229,13 @@ class ObjLoader
     std::string obj_path()     const { return objPath_; }
     std::string mtl_path()     const { return mtlPath_; }
 
-    const std::vector<Point>&  points()  const { return points_; }
-    const std::vector<UV>&     uvs()     const { return uvs_; }
-    const std::vector<Normal>& normals() const { return normals_; }
+    const std::vector<Point>&  points()   const { return points_; }
+    const std::vector<UV>&     uvs()      const { return uvs_; }
+    const std::vector<Normal>& normals()  const { return normals_; }
+    const std::set<VertexId>&  vertices() const { return vertices_; }
+    const std::map<std::string,std::vector<Face>>& faces() const { return faceGroups_; }
+
+    std::map<std::string,GLMesh::Ptr> create_meshes();
 };
 
 }; //namespace display

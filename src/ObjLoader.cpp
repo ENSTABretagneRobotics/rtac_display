@@ -24,6 +24,86 @@ ObjLoader::ObjLoader(const std::string& datasetPath) :
     }
 }
 
+std::array<VertexId, 3> parse_face(const std::string& line)
+{
+    unsigned int slashCount = 0;
+    for(char c : line) {
+        if(c == '/') slashCount++;
+    }
+    
+    std::size_t pos;
+    std::string token;
+    std::array<VertexId, 3> v = {0,0,0};
+    switch(slashCount) {
+        default:
+            std::runtime_error("Invalid face format string");
+            break;
+        case 0:
+            v[0].p = std::stoul(line, &pos) - 1;
+            token = line.substr(pos);
+            v[1].p = std::stoul(token, &pos) - 1;
+            token = token.substr(pos);
+            v[2].p = std::stoul(token, &pos) - 1;
+            break;
+        case 3:
+            v[0].p = std::stoul(line, &pos) - 1;
+            token = line.substr(pos + 1);
+            v[0].u = std::stoul(token, &pos) - 1;
+            token = token.substr(pos + 1);
+
+            v[1].p = std::stoul(token, &pos) - 1;
+            token = token.substr(pos + 1);
+            v[1].u = std::stoul(token, &pos) - 1;
+            token = token.substr(pos + 1);
+
+            v[2].p = std::stoul(token, &pos) - 1;
+            token = token.substr(pos + 1);
+            v[2].u = std::stoul(token, &pos) - 1;
+            break;
+        case 6:
+            v[0].p = std::stoul(line, &pos) - 1;
+            if(line[pos + 1] == '/') {
+                v[0].u = 0;
+                token = line.substr(pos + 2);
+            }
+            else {
+                token = line.substr(pos + 1);
+                v[0].u = std::stoul(token, &pos) - 1;
+                token = token.substr(pos + 1);
+            }
+            v[0].n  = std::stoul(token, &pos) - 1;
+            token = token.substr(pos);
+
+            v[1].p = std::stoul(token, &pos) - 1;
+            if(token[pos + 1] == '/') {
+                v[1].u = 0;
+                token = token.substr(pos + 2);
+            }
+            else {
+                token = token.substr(pos + 1);
+                v[1].u = std::stoul(token, &pos) - 1;
+                token = token.substr(pos + 1);
+            }
+            v[1].n  = std::stoul(token, &pos) - 1;
+            token = token.substr(pos);
+
+            v[2].p = std::stoul(token, &pos) - 1;
+            if(token[pos + 1] == '/') {
+                v[2].u = 0;
+                token = token.substr(pos + 2);
+            }
+            else {
+                token = token.substr(pos + 1);
+                v[2].u = std::stoul(token, &pos) - 1;
+                token = token.substr(pos + 1);
+            }
+            v[2].n  = std::stoul(token, &pos) - 1;
+            break;
+    }
+
+    return v;
+}
+
 void ObjLoader::load_geometry(unsigned int chunkSize)
 {
     std::ifstream f(objPath_, std::ifstream::in);
@@ -36,8 +116,12 @@ void ObjLoader::load_geometry(unsigned int chunkSize)
     ChunkContainer<Point>  points;
     ChunkContainer<UV>     uvs;
     ChunkContainer<Normal> normals;
+    ChunkContainer<Face>   faces;
+
+    std::string currentMaterial = "";
     
     std::string line, token;
+    unsigned int numFaces = 0;
     while(std::getline(f, line)) {
         std::istringstream iss(line);
         std::getline(iss, token, ' ');
@@ -62,11 +146,86 @@ void ObjLoader::load_geometry(unsigned int chunkSize)
             iss >> n.z;
             normals.push_back(n);
         }
+        else if(token == "f") {
+            std::getline(iss, token);
+            auto v = parse_face(token);
+
+            Face f;
+            
+            auto it0 = vertices_.insert(v[0]);
+            if(it0.second) it0.first->id = vertices_.size() - 1;
+            auto it1 = vertices_.insert(v[1]);
+            if(it1.second) it1.first->id = vertices_.size() - 1;
+            auto it2 = vertices_.insert(v[2]);
+            if(it2.second) it2.first->id = vertices_.size() - 1;
+
+            f.x = it0.first->id;
+            f.y = it1.first->id;
+            f.z = it2.first->id;
+            
+            faces.push_back(f);
+        }
+        else if(token == "usemtl") {
+            std::getline(iss, token);
+            if(currentMaterial.size() != 0) {
+                faceGroups_[currentMaterial] = faces.to_vector();
+                groupNames_.push_back(currentMaterial);
+            }
+            faces.clear();
+            currentMaterial = token;
+        }
     }
 
+    if(currentMaterial.size() == 0) {
+        faceGroups_["null_material"] = faces.to_vector();
+        groupNames_.push_back(currentMaterial);
+    }
+    else {
+        faceGroups_[currentMaterial] = faces.to_vector();
+        groupNames_.push_back(currentMaterial);
+    }
+    
     points_  = points.to_vector();
     uvs_     = uvs.to_vector();
     normals_ = normals.to_vector();
+}
+
+std::map<std::string,GLMesh::Ptr> ObjLoader::create_meshes()
+{
+    std::map<std::string,GLMesh::Ptr> meshes;
+
+    for(auto name : groupNames_) {
+
+        auto mesh = GLMesh::Create();
+
+        mesh->points().resize(vertices_.size());
+        {
+            auto ptr = mesh->points().map();
+            for(auto v : vertices_) {
+                ptr[v.id] = points_[v.p];
+            }
+        }
+
+        if(uvs_.size() > 0) {
+            mesh->uvs().resize(vertices_.size());
+            auto ptr = mesh->uvs().map();
+            for(auto v : vertices_) {
+                ptr[v.id] = uvs_[v.u];
+            }
+        }
+
+        if(normals_.size() > 0) {
+            mesh->normals().resize(vertices_.size());
+            auto ptr = mesh->normals().map();
+            for(auto v : vertices_) {
+                ptr[v.id] = normals_[v.n];
+            }
+        }
+
+        mesh->faces() = faceGroups_[name];
+        meshes[name] = mesh;
+    }
+    return meshes;
 }
 
 }; //namespace display

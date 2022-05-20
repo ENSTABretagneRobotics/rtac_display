@@ -61,6 +61,7 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/Display.h
     include/rtac_display/GLVector.h
     include/rtac_display/GLTexture.h
+    include/rtac_display/GLMesh.h
     include/rtac_display/EventHandler.h
 
     include/rtac_display/samples/ImageDisplay.h
