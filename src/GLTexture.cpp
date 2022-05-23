@@ -152,9 +152,55 @@ GLTexture::Ptr GLTexture::from_ppm(const std::string& path)
 
     files::read_ppm(path, Win, Hin, data); 
 
-    texture->set_image({Win, Hin}, (const rtac::types::Point3<uint8_t>*)data.data());
+    texture->set_image({Win, Hin}, (const rtac::types::Point3<unsigned char>*)data.data());
     return texture;
 }
+
+#ifdef RTAC_PNG
+/**
+ * Creates a new texture from a PNG image file.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param path Path to .png image file.
+ *
+ * @return a shared pointer to a newly created texture.
+ */
+GLTexture::Ptr GLTexture::from_png(const std::string& path)
+{
+    auto texture = GLTexture::New();
+
+    rtac::external::PNGCodec codec;
+    codec.read_png(path, true);
+
+    GLint  internalFormat;
+    GLenum pixelFormat;
+    switch(codec.channels()) {
+        default:
+            std::runtime_error("GLTexture::from_png : unhandled channel count.");
+            break;
+        case 1: internalFormat = GL_RED;  pixelFormat = GL_RED;  break;
+        case 2: internalFormat = GL_RG;   pixelFormat = GL_RG;   break;
+        case 3: internalFormat = GL_RGB;  pixelFormat = GL_RGB;  break;
+        case 4: internalFormat = GL_RGBA; pixelFormat = GL_RGBA; break;
+    }
+    GLenum scalarType;
+    switch(codec.bitdepth()) {
+        default:
+            std::runtime_error("GLTexture::from_png : unhandled bit depth.");
+            break;
+        case  8:  scalarType = GL_UNSIGNED_BYTE;  break;
+        case 16:  scalarType = GL_UNSIGNED_SHORT; break;
+    }
+
+
+    texture->set_image({codec.width(), codec.height()},
+                       internalFormat, pixelFormat, scalarType, 
+                       codec.data().data());
+    return texture;
+}
+#endif // RTAC_PNG
+
 
 }; //namespace display
 }; //namespace rtac

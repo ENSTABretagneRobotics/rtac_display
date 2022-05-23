@@ -10,9 +10,6 @@ using namespace rtac;
 #include <rtac_display/renderers/MeshRenderer.h>
 using namespace rtac::display;
 
-#include <rtac_display/external/codecs.h>
-
-
 int main()
 {
     auto path = files::find_one(".*models3d/pyramide2_test01");

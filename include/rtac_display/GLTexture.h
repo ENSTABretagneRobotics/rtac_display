@@ -8,6 +8,9 @@
 
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/files.h>
+#ifdef RTAC_PNG
+    #include <rtac_base/external/png_codec.h>
+#endif //RTAC_PNG
 
 #include <rtac_display/utils.h>
 #include <rtac_display/GLFormat.h>
@@ -78,6 +81,9 @@ class GLTexture
     template <typename T>
     void set_size(const Shape& shape);
     template <typename T>
+    void set_image(const Shape& shape, GLint internalFormat,
+                   GLenum pixelFormat, GLenum scalarType, const T* data);
+    template <typename T>
     void set_image(const Shape& shape, const T* data);
     template <typename T>
     void set_image(const Shape& shape, const GLVector<T>& data);
@@ -93,13 +99,17 @@ class GLTexture
     void set_wrap_mode(WrapMode xWrap, WrapMode yWrap, WrapMode zWrap);
 
     // various loaders.
-    static Ptr from_ppm(const std::string& path);
     template <typename T>
     static std::vector<T> checkerboard_data(const Shape& shape, const T& c0, const T& c1,
                                             unsigned int oversampling = 1);
     template <typename T>
     static Ptr checkerboard(const Shape& shape, const T& c0, const T& c1,
                             unsigned int oversampling = 1);
+
+    static Ptr from_ppm(const std::string& path);
+    #ifdef RTAC_PNG
+    static Ptr from_png(const std::string& path);
+    #endif //RTAC_PNG
 };
 
 /**
@@ -124,6 +134,32 @@ void GLTexture::set_size(const Shape& shape)
     glBindTexture(GL_TEXTURE_2D, texId_);
     glTexImage2D(GL_TEXTURE_2D, 0, format_, shape.width, shape.height,
         0, format_, GLFormat<T>::Type, 0);
+    GL_CHECK_LAST();
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    shape_ = shape;
+}
+
+/**
+ * Set texture image data from host memory.
+ *
+ * @param shape Dimensions of the texture {width,height}. Texture width must be even.
+ * @param data  Pixel data to upload to the texture.
+ */
+template <typename T>
+void GLTexture::set_image(const Shape& shape,
+                          GLint internalFormat,
+                          GLenum pixelFormat,
+                          GLenum scalarType,
+                          const T* data)
+{
+    // ensuring no buffer bound to GL_PIXEL_UNPACK_BUFFER for data to be read
+    // from CPU side memory.
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+    glBindTexture(GL_TEXTURE_2D, texId_);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, shape.width, shape.height,
+        0, pixelFormat, scalarType, data);
     GL_CHECK_LAST();
     glBindTexture(GL_TEXTURE_2D, 0);
 

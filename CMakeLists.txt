@@ -125,7 +125,6 @@ if(${WITH_CUDA})
     list(APPEND CONFIG_COMMANDS "find_package(rtac_cuda REQUIRED)")
 endif()
 
-
 if(TARGET Freetype::Freetype)
     list(APPEND rtac_display_PUBLIC_HEADERS
         include/rtac_display/text/freetype.h
