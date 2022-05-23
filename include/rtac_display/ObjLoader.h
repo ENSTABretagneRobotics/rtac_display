@@ -197,6 +197,31 @@ struct VertexId
     }
 };
 
+struct MtlMaterial {
+
+    using Color = GLMesh::Point;
+    
+    std::string name;
+    Color Ka;           // ambient  color
+    Color Kd;           // diffuse  color
+    Color Ks;           // specular color
+    float Ns;           // specular weight
+    float d;            // Transparency
+    unsigned int illum; // illumination model
+    std::string map_Kd; // texture path
+
+    void clear() {
+        name   = "";
+        Ka     = {0.0f,0.0f,0.0f};
+        Kd     = {0.0f,0.0f,0.0f};
+        Ks     = {0.0f,0.0f,0.0f};
+        Ns     = 0;
+        d      = 0;
+        illum  = 0;
+        map_Kd = "";
+    }
+};
+
 class ObjLoader
 {
     public:
@@ -219,11 +244,14 @@ class ObjLoader
     std::vector<std::string> groupNames_;
     std::map<std::string,std::vector<Face>> faceGroups_;
 
+    std::map<std::string,MtlMaterial> materials_;
+
     public:
 
     ObjLoader(const std::string& datasetPath);
 
     void load_geometry(unsigned int chunkSize = 100);
+    void parse_mtl();
 
     std::string dataset_path() const { return datasetPath_; }
     std::string obj_path()     const { return objPath_; }
@@ -234,9 +262,24 @@ class ObjLoader
     const std::vector<Normal>& normals()  const { return normals_; }
     const std::set<VertexId>&  vertices() const { return vertices_; }
     const std::map<std::string,std::vector<Face>>& faces() const { return faceGroups_; }
+    const std::map<std::string,MtlMaterial>& materials() const { return materials_; };
 
     std::map<std::string,GLMesh::Ptr> create_meshes();
 };
+
+inline std::ostream& operator<<(std::ostream& os, const rtac::display::MtlMaterial& mat)
+{
+    os << "newmtl "  << mat.name
+       << "\nKa " << mat.Ka.x << " " << mat.Ka.x << " " << mat.Ka.x
+       << "\nKd " << mat.Kd.y << " " << mat.Kd.y << " " << mat.Kd.y
+       << "\nKs " << mat.Ks.z << " " << mat.Ks.z << " " << mat.Ks.z
+       << "\nNs "    << mat.Ns
+       << "\nd  "    << mat.d
+       << "\nillum " << mat.illum
+       << "\nmap_Kd " << mat.map_Kd;
+
+    return os;
+}
 
 }; //namespace display
 }; //namespace rtac

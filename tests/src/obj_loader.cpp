@@ -10,6 +10,9 @@ using namespace rtac;
 #include <rtac_display/renderers/MeshRenderer.h>
 using namespace rtac::display;
 
+#include <rtac_display/external/codecs.h>
+
+
 int main()
 {
     auto path = files::find_one(".*models3d/pyramide2_test01");
@@ -21,7 +24,7 @@ int main()
     cout << "uvs      : " << parser.uvs().size()      << endl;
     cout << "normals  : " << parser.normals().size()  << endl;
     cout << "vertices : " << parser.vertices().size() << endl;
-    cout << "faces    : " << parser.faces().size()    << endl;
+    cout << "groups   : " << parser.faces().size()    << endl;
 
     samples::Display3D display;
     display.create_renderer<Frame>(display.view());
