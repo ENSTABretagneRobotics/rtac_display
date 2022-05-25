@@ -177,9 +177,10 @@ void Display::draw()
 {
     //glfwMakeContextCurrent(window_.get());
     this->grab_context();
-    this->view()->set_screen_size(this->window_shape());
     
-    this->DrawingSurface::draw();
+    auto view = View::New();
+    view->set_screen_size(this->window_shape());
+    this->DrawingSurface::draw(view);
 
     glfwSwapBuffers(window_.get());
 

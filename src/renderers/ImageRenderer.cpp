@@ -78,14 +78,11 @@ ImageRenderer::Ptr ImageRenderer::Create(const GLContext::Ptr& context)
 ImageRenderer::ImageRenderer(const GLContext::Ptr& context) :
     Renderer(context, vertexShader, fragmentShader),
     texture_(GLTexture::New()),
-    //imageView_(std::dynamic_pointer_cast<ImageView>(view_)),
     imageView_(ImageView::New()),
     passThroughProgram_(this->renderProgram_),
     colormapProgram_(create_render_program(vertexShader, colormapFragmentShader)),
     verticalFlip_(true) // More natural for CPU texture
-{
-    view_ = imageView_;
-}
+{}
 
 GLTexture::Ptr& ImageRenderer::texture()
 {
@@ -198,11 +195,6 @@ void ImageRenderer::draw(const View::ConstPtr& view) const
     glUseProgram(0);
 
     GL_CHECK_LAST();
-}
-
-void ImageRenderer::draw() const
-{
-    this->draw(View::New());
 }
 
 }; //namespace display

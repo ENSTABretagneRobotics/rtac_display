@@ -54,10 +54,9 @@ void main()
  */
 Renderer::Ptr Renderer::Create(const GLContext::Ptr& context,
                                const std::string& vertexShader,
-                               const std::string& fragmentShader,
-                               const View::Ptr& view)
+                               const std::string& fragmentShader)
 {
-    return Ptr(new Renderer(context, vertexShader, fragmentShader, view));
+    return Ptr(new Renderer(context, vertexShader, fragmentShader));
 }
 
 /**
@@ -75,33 +74,10 @@ Renderer::Ptr Renderer::Create(const GLContext::Ptr& context,
  */
 Renderer::Renderer(const GLContext::Ptr& context,
                    const std::string& vertexShader,
-                   const std::string& fragmentShader,
-                   const View::Ptr& view) :
+                   const std::string& fragmentShader) :
     context_(context),
-    renderProgram_(create_render_program(vertexShader, fragmentShader)),
-    view_(view)
+    renderProgram_(create_render_program(vertexShader, fragmentShader))
 {}
-
-Renderer::Ptr Renderer::New(const std::string& vertexShader,
-                            const std::string& fragmentShader,
-                            const View::Ptr& view)
-{
-    return Ptr(new Renderer(nullptr, vertexShader, fragmentShader, view));
-}
-
-Renderer::Renderer(const std::string& vertexShader,
-                   const std::string& fragmentShader,
-                   const View::Ptr& view) :
-    Renderer(nullptr, vertexShader, fragmentShader, view)
-{}
-
-void Renderer::draw() const
-{
-    if(!this->view()) {
-        throw std::runtime_error("No view in renderer");
-    }
-    this->draw(this->view());
-}
 
 /**
  * Performs the OpenGL API calls to draw an object. By default this draws a XYZ
@@ -143,16 +119,6 @@ void Renderer::draw(const View::ConstPtr& view) const
 
     glUseProgram(0);
     glLineWidth(lineWidth);
-}
-
-void Renderer::set_view(const View::Ptr& view) const
-{
-    view_ = view;
-}
-
-View::Ptr Renderer::view() const
-{
-    return view_;
 }
 
 }; //namespace display

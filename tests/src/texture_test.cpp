@@ -73,7 +73,7 @@ std::vector<Point3<float>> image_data_rgbf(int width, int height)
 int main()
 {
     Display display;
-    auto renderer = display.create_renderer<ImageRenderer>();
+    auto renderer = display.create_renderer<ImageRenderer>(View::New());
     
     unsigned int W = 4, H = 4;
     auto data0 = image_data(W,H);

@@ -70,7 +70,6 @@ class TextRenderer : public Renderer
     const Color::RGBAf& text_color() const;
     const Color::RGBAf& back_color() const;
 
-    virtual void draw() const;
     virtual void draw(const View::ConstPtr& view) const;
 };
 

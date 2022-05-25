@@ -43,14 +43,6 @@ FrameInstances::FrameInstances(const GLContext::Ptr& context,
     globalPose_(pose)
 {}
 
-void FrameInstances::draw() const
-{
-    if(!this->view()) {
-        throw std::runtime_error("No view in renderer");
-    }
-    this->draw(this->view());
-}
-
 void FrameInstances::draw(const View::ConstPtr& view) const
 {
     float vertices[] = {0,0,0,

@@ -92,7 +92,6 @@ class FanRenderer : public Renderer
     void disable_bearing_map();
 
     virtual void draw(const View::ConstPtr& view) const;
-    //virtual void draw() const {}
 
     Mat4 compute_view(const Shape& screen) const;
 

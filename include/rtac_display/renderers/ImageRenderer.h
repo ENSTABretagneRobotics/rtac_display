@@ -61,7 +61,6 @@ class ImageRenderer : public Renderer
     GLTexture::Ptr& texture();
     GLTexture::ConstPtr texture() const;
     
-    virtual void draw() const;
     virtual void draw(const View::ConstPtr& view) const;
 
     void set_colormap(const Colormap::Ptr& colormap);

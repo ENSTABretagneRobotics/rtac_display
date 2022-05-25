@@ -45,7 +45,6 @@ class FrameInstances : public Renderer
     void set_global_pose(const Pose& pose) { globalPose_ = pose; }
     void add_pose(const Pose& pose) { poses_.push_back(pose.homogeneous_matrix()); }
 
-    virtual void draw() const;
     virtual void draw(const View::ConstPtr& view) const;
 };
 

@@ -96,7 +96,7 @@ class DrawingSurface : public Renderer
     void handle_display_flags() const;
 
     template <class RendererT, class... Args>
-    typename RendererT::Ptr create_renderer(const View::Ptr& view = View::New(),
+    typename RendererT::Ptr create_renderer(const View::Ptr& view,
                                             const Args (&...args));
 };
 

@@ -30,8 +30,6 @@ class Renderer
     using Ptr      = rtac::types::Handle<Renderer>;
     using ConstPtr = rtac::types::Handle<const Renderer>;
 
-    using Shape = View::Shape;
-
     static const std::string vertexShader;
     static const std::string fragmentShader;
 
@@ -39,35 +37,19 @@ class Renderer
     
     mutable GLContext::Ptr context_;
     GLuint                 renderProgram_;
-    mutable View::Ptr      view_;
 
     Renderer(const GLContext::Ptr& context,
              const std::string& vertexShader = vertexShader,
-             const std::string& fragmentShader = fragmentShader,
-             const View::Ptr& view = View::New());
-
-    Renderer(const std::string& vertexShader = vertexShader,
-             const std::string& fragmentShader = fragmentShader,
-             const View::Ptr& view = View::New());
+             const std::string& fragmentShader = fragmentShader);
 
     public:
 
     static Ptr Create(const GLContext::Ptr& context,
                       const std::string& vertexShader = vertexShader,
-                      const std::string& fragmentShader = fragmentShader,
-                      const View::Ptr& view = View::New());
-
-    static Ptr New(const std::string& vertexShader = vertexShader,
-                   const std::string& fragmentShader = fragmentShader,
-                   const View::Ptr& view = View::New());
+                      const std::string& fragmentShader = fragmentShader);
 
     const GLContext::Ptr context() const { return context_; }
-    
-    virtual void draw() const;
     virtual void draw(const View::ConstPtr& view) const;
-    virtual void set_view(const View::Ptr& view) const; // Why const ?
-
-    View::Ptr view() const;
 };
 
 }; //namespace display

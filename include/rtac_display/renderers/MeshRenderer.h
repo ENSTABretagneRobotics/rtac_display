@@ -73,7 +73,6 @@ class MeshRenderer : public Renderer
     void set_pose(const Pose& pose)                      { pose_ = pose; }
     void set_texture(const GLTexture::ConstPtr& texture) { texture_ = texture; }
 
-    virtual void draw() const;
     virtual void draw(const View::ConstPtr& view) const;
     void draw_solid(const View::ConstPtr& view, GLenum primitiveMode) const;
     void draw_normal_shading(const View::ConstPtr& view) const;

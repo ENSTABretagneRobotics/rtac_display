@@ -92,7 +92,7 @@ int main()
     for(int i = 0; i < 10; i++)
         oss << endl << "Portez ce vieux whisky au juge blond qui fume.";
     auto textRenderer = display.create_renderer<text::TextRenderer>(
-        display.view(), font, oss.str());
+        View::New(), font, oss.str());
     //display.add_renderer(textRenderer);
     textRenderer->origin()(0) = 0;
     textRenderer->origin()(1) = 0;

@@ -52,14 +52,6 @@ void Frame::set_pose(const View3D::Pose& pose)
     pose_ = pose;
 }
 
-//void Frame::draw() const
-//{
-//    if(!this->view()) {
-//        throw std::runtime_error("No view in renderer");
-//    }
-//    this->draw(this->view());
-//}
-
 void Frame::draw(const View::ConstPtr& view) const
 {
     float vertices[] = {0,0,0,

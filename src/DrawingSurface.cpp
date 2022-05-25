@@ -3,13 +3,11 @@
 namespace rtac { namespace display {
 
 DrawingSurface::DrawingSurface(const GLContext::Ptr& context, const Shape& shape) :
-    Renderer(context, "", "", View::New()),
+    Renderer(context, "", ""),
     viewportOrigin_({0,0}),
     clearColor_({0,0,0,0}),
     displayFlags_(FLAGS_NONE)
-{
-    this->view_->set_screen_size(shape);
-}
+{}
 
 /**
  * Instanciate a new DrawingSurface.
@@ -75,7 +73,7 @@ void DrawingSurface::add_render_item(const Renderer::ConstPtr& renderer,
  */
 void DrawingSurface::draw(const View::ConstPtr& view)
 {
-    Shape shape = this->view()->screen_size();
+    Shape shape = view->screen_size();
     for(auto view : views_) {
         view->set_screen_size(shape);
     }
@@ -112,9 +110,7 @@ void DrawingSurface::set_viewport_origin(const Point2& origin)
 }
 
 void DrawingSurface::set_viewport_size(const Shape& size)
-{
-    this->view()->set_screen_size(size);
-}
+{}
 
 void DrawingSurface::set_viewport(int x, int y, size_t width, size_t height)
 {
