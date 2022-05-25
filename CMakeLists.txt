@@ -48,6 +48,7 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/renderers/ImageRenderer.h
     include/rtac_display/renderers/MeshRenderer.h
     include/rtac_display/renderers/FanRenderer.h
+    include/rtac_display/renderers/PointCloudRenderer.h
 
     include/rtac_display/Colormap.h
     include/rtac_display/colormaps/Gray.h
