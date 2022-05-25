@@ -53,18 +53,16 @@ class ImageRenderer : public Renderer
     bool verticalFlip_;
 
     ImageRenderer(const GLContext::Ptr& context);
-    ImageRenderer();
 
     public:
 
     static Ptr Create(const GLContext::Ptr& context);
-    static Ptr New();
 
     GLTexture::Ptr& texture();
     GLTexture::ConstPtr texture() const;
     
-    void draw(const GLTexture& texture) const;
     virtual void draw() const;
+    virtual void draw(const View::ConstPtr& view) const;
 
     void set_colormap(const Colormap::Ptr& colormap);
     bool enable_colormap();

@@ -37,8 +37,15 @@ class DrawingSurface : public Renderer
 
     using RenderItem  = std::pair<Renderer::ConstPtr, View::Ptr>;
     using RenderItems = std::vector<RenderItem>;
-    using TextItem    = std::pair<text::TextRenderer::ConstPtr, View::Ptr>;
-    using TextItems   = std::vector<RenderItem>;
+    struct TextItem {
+        text::TextRenderer::ConstPtr renderer;
+        View::Ptr view;
+        float anchorDepth;
+        bool operator<(const TextItem& other) const { 
+            return !(anchorDepth < other.anchorDepth);
+        }
+    };
+    using TextItems   = std::vector<TextItem>;
 
     enum Flags : uint32_t {
         FLAGS_NONE  = 0x0,
@@ -57,8 +64,6 @@ class DrawingSurface : public Renderer
     TextItems   textItems_;
 
     Views        views_;
-    Renderers    renderers_;
-    Renderers    textRenderers_;
     Color::RGBAf clearColor_;
     Flags        displayFlags_;
 
@@ -69,18 +74,14 @@ class DrawingSurface : public Renderer
     static Ptr New(const GLContext::Ptr& context, const Shape& shape);
 
     void add_view(const View::Ptr& view);
-    void add_renderer(const Renderer::ConstPtr& renderer);
-    void add_renderer(const text::TextRenderer::ConstPtr& renderer);
-    void add_renderer(const text::TextRenderer::Ptr& renderer) {
-        this->add_renderer(renderer);
-    }
 
     void add_render_item(const RenderItem& item);
-    void add_text_item(const RenderItem& item);
+    void add_render_item(const TextItem& item);
     void add_render_item(const Renderer::ConstPtr& renderer,
                          const View::Ptr& view);
 
-    virtual void draw();
+    virtual void draw() { this->draw(View::New()); }
+    virtual void draw(const View::ConstPtr& view);
 
     void set_viewport_origin(const Point2& origin);
     void set_viewport_size(const Shape& size);
@@ -95,7 +96,8 @@ class DrawingSurface : public Renderer
     void handle_display_flags() const;
 
     template <class RendererT, class... Args>
-    typename RendererT::Ptr create_renderer(const View::Ptr& view, const Args (&...args));
+    typename RendererT::Ptr create_renderer(const View::Ptr& view = View::New(),
+                                            const Args (&...args));
 };
 
 /**

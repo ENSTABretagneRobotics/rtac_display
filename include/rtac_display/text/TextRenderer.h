@@ -42,20 +42,13 @@ class TextRenderer : public Renderer
     GLuint renderProgramSubPix_;
     
     TextRenderer(const GLContext::Ptr& context,
-                 const FontFace::ConstPtr& font,
-                 const View::Ptr& view);
-    TextRenderer(const FontFace::ConstPtr& font,
-                 const View::Ptr& view);
+                 const FontFace::ConstPtr& font);
 
     public:
 
     static Ptr Create(const GLContext::Ptr& context,
                       const FontFace::ConstPtr& font,
-                      const std::string& text,
-                      const View::Ptr& view = View::New());
-    static Ptr Create(const FontFace::ConstPtr& font,
-                      const std::string& text,
-                      const View::Ptr& view = View::New());
+                      const std::string& text);
     void set_text(const std::string& text, bool updateNow = true);
     void set_text_color(const Color::RGBAf& color, bool updateNow = true);
     void set_back_color(const Color::RGBAf& color, bool updateNow = true);
@@ -63,6 +56,7 @@ class TextRenderer : public Renderer
 
     void update_texture();
     Shape compute_text_area(const std::string& text);
+    float anchor_depth(const View::ConstPtr& view) const;
     std::array<Vec4,4> compute_corners(const View::ConstPtr& view) const;
 
     FontFace::ConstPtr font() const;

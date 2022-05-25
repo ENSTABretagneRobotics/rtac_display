@@ -14,7 +14,7 @@ using PointCloud = rtac::types::PointCloud<>;
 
 #include <rtac_display/Display.h>
 #include <rtac_display/views/PinholeView.h>
-#include <rtac_display/renderers/PointCloudRenderer.h>
+#include <rtac_display/renderers/MeshRenderer.h>
 using namespace rtac::display;
 
 struct PointTest {
@@ -34,8 +34,7 @@ int main()
     auto renderer = display.create_renderer<Renderer>(view3d);
     view3d->look_at({0,0,0}, {5,4,3});
     
-    //auto pcRenderer = display.create_renderer<PointCloudRenderer<PointCloud::PointType>>(view3d);
-    auto pcRenderer = display.create_renderer<PointCloudRenderer<PointTest>>(view3d);
+    auto pcRenderer = display.create_renderer<MeshRenderer>(view3d);
 
     std::vector<float> cubePoints({-1,-1,-1,
                                     1,-1,-1,
@@ -46,6 +45,8 @@ int main()
                                     1, 1, 1,
                                    -1, 1, 1});
     //pcRenderer->set_points(8, cubePoints.data());
+
+
     PointCloud pc(8);
     pc[0] = PointCloud::PointType({-1,-1,-1});
     pc[1] = PointCloud::PointType({ 1,-1,-1});
@@ -56,7 +57,10 @@ int main()
     pc[6] = PointCloud::PointType({ 1, 1, 1});
     pc[7] = PointCloud::PointType({-1, 1, 1});
     cout << pc << endl;
-    pcRenderer->set_points(pc);
+    auto mesh = GLMesh::Create();
+    *mesh = pc;
+    pcRenderer->mesh() = mesh;
+    pcRenderer->set_render_mode(MeshRenderer::Mode::Points);
     pcRenderer->set_pose(Pose({0,2,0}));
 
 

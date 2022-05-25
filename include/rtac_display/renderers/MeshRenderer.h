@@ -62,18 +62,12 @@ class MeshRenderer : public Renderer
     protected:
 
     MeshRenderer(const GLContext::Ptr& context,
-                 const View3D::Ptr& view = nullptr,
-                 const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
-    MeshRenderer(const View3D::Ptr& view,
                  const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
 
     public:
 
     static Ptr Create(const GLContext::Ptr& context,
-                      const View3D::Ptr& view = nullptr,
                       const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
-    static Ptr New(const View3D::Ptr& view,
-                   const Color::RGBAf& color = {1.0,1.0,1.0,1.0});
 
     void set_color(const Color::RGBAf& color);
     void set_pose(const Pose& pose)                      { pose_ = pose; }

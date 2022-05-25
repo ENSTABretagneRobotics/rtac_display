@@ -14,8 +14,7 @@ int main()
     cout << "Using image : " << path << endl;
 
     Display display;
-    auto renderer = ImageRenderer::New();
-    display.add_renderer(renderer);
+    auto renderer = display.create_renderer<ImageRenderer>();
 
     renderer->texture() = GLTexture::from_png(path);
 

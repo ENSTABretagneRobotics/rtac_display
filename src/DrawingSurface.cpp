@@ -42,40 +42,16 @@ void DrawingSurface::add_view(const View::Ptr& view)
     views_.push_back(view);
 }
 
-/**
- * Append a rtac::display::Renderer to the list of handled renderers.
- *
- * The view associated to the renderer will automatically be added to the
- * handled views via DrawingSurface::add_view method.
- */
-void DrawingSurface::add_renderer(const Renderer::ConstPtr& renderer)
-{
-    renderers_.push_back(renderer);
-    views_.push_back(renderer->view());
-}
-
-/**
- * Append a rtac::display::Renderer to the list of handled renderers.
- *
- * The view associated to the renderer will automatically be added to the
- * handled views via DrawingSurface::add_view method.
- */
-void DrawingSurface::add_renderer(const text::TextRenderer::ConstPtr& renderer)
-{
-    textRenderers_.push_back(renderer);
-    views_.push_back(renderer->view());
-}
-
 void DrawingSurface::add_render_item(const RenderItem& item)
 {
     renderItems_.push_back(item);
     this->add_view(item.second);
 }
 
-void DrawingSurface::add_text_item(const RenderItem& item)
+void DrawingSurface::add_render_item(const TextItem& item)
 {
     textItems_.push_back(item);
-    this->add_view(item.second);
+    this->add_view(item.view);
 }
 
 void DrawingSurface::add_render_item(const Renderer::ConstPtr& renderer,
@@ -86,7 +62,7 @@ void DrawingSurface::add_render_item(const Renderer::ConstPtr& renderer,
     }
     auto text = std::dynamic_pointer_cast<const text::TextRenderer>(renderer);
     if(text) {
-        this->add_text_item(std::make_pair(text, view));
+        this->add_render_item(TextItem({text, view, 0.0f}));
     }
     else {
         this->add_render_item(std::make_pair(renderer, view));
@@ -97,7 +73,7 @@ void DrawingSurface::add_render_item(const Renderer::ConstPtr& renderer,
  * Update all handled views with the current display size and draw all the
  * handled renderers after clearing the display area.
  */
-void DrawingSurface::draw()
+void DrawingSurface::draw(const View::ConstPtr& view)
 {
     Shape shape = this->view()->screen_size();
     for(auto view : views_) {
@@ -108,24 +84,23 @@ void DrawingSurface::draw()
                shape.width, shape.height);
 
     this->handle_display_flags();
-    for(auto& renderer : renderers_) {
-        if(renderer) {
-            renderer->draw();
-        }
-    }
     for(auto& item : renderItems_) {
         if(item.first) {
             item.first->draw(item.second);
         }
     }
-    for(auto& renderer : textRenderers_) {
-        if(renderer) {
-            renderer->draw();
+    
+    // Transparency rendering (as text background) must be renderered closest
+    // last (hence sorting text items with respect to anchor_depth).
+    for(auto& item : textItems_) {
+        if(item.renderer) {
+            item.anchorDepth = item.renderer->anchor_depth(item.view);
         }
     }
+    std::sort(textItems_.begin(), textItems_.end());
     for(auto& item : textItems_) {
-        if(item.first) {
-            item.first->draw(item.second);
+        if(item.renderer) {
+            item.renderer->draw(item.view);
         }
     }
     glDisable(GL_FRAMEBUFFER_SRGB);

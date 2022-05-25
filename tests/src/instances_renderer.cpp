@@ -9,10 +9,9 @@ using namespace rtac::display;
 int main()
 {
     samples::Display3D display;
-    display.add_renderer(Frame::New(Frame::Pose(),display.view()));
-
-    auto frames = FrameInstances::New(display.view());
-    display.add_renderer(frames);
+    display.create_renderer<Frame>(display.view());
+    
+    auto frames = display.create_renderer<FrameInstances>(display.view());
 
     Frame::Pose base({3.0f,0.0f,0.0f});
     int N = 10000;

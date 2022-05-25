@@ -46,10 +46,7 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/renderers/Frame.h
     include/rtac_display/renderers/FrameInstances.h
     include/rtac_display/renderers/ImageRenderer.h
-    include/rtac_display/renderers/PointCloudRenderer.h
     include/rtac_display/renderers/MeshRenderer.h
-    include/rtac_display/renderers/NormalsRenderer.h
-    include/rtac_display/renderers/TexturedMeshRenderer.h
     include/rtac_display/renderers/FanRenderer.h
 
     include/rtac_display/Colormap.h
@@ -87,9 +84,7 @@ list(APPEND rtac_display_SOURCES
     src/renderers/Frame.cpp
     src/renderers/FrameInstances.cpp
     src/renderers/ImageRenderer.cpp
-    src/renderers/PointCloudRenderer.cpp
     src/renderers/MeshRenderer.cpp
-    src/renderers/NormalsRenderer.cpp
     src/renderers/FanRenderer.cpp
 
     src/Colormap.cpp

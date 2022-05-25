@@ -57,9 +57,8 @@ void main()
 )");
 
 TextRenderer::TextRenderer(const GLContext::Ptr& context,
-                           const FontFace::ConstPtr& font,
-                           const View::Ptr& view) :
-    Renderer(context, vertexShader, fragmentShaderFlat, view),
+                           const FontFace::ConstPtr& font) :
+    Renderer(context, vertexShader, fragmentShaderFlat),
     font_(font),
     origin_({0,0,0,1}),
     anchor_({0,1.0f}),
@@ -78,38 +77,9 @@ TextRenderer::TextRenderer(const GLContext::Ptr& context,
 
 TextRenderer::Ptr TextRenderer::Create(const GLContext::Ptr& context,
                                        const FontFace::ConstPtr& font,
-                                       const std::string& text,
-                                       const View::Ptr& view)
+                                       const std::string& text)
 {
-    auto renderer = Ptr(new TextRenderer(context, font, view));
-    renderer->set_text(text);
-    return renderer;
-}
-
-TextRenderer::TextRenderer(const FontFace::ConstPtr& font,
-                           const View::Ptr& view) :
-    Renderer(vertexShader, fragmentShaderFlat, view),
-    font_(font),
-    origin_({0,0,0,1}),
-    anchor_({0,1.0f}),
-    textColor_({0,0,0}),
-    backColor_({0,0,0,0}),
-    renderProgramFlat_(renderProgram_),
-    renderProgramSubPix_(create_render_program(vertexShader, fragmentShaderSubPix))
-{
-    if(!font_) {
-        std::ostringstream oss;
-        oss << "Error rtac_display::text::TextRenderer : "
-            << "Invalid font face pointer.";
-        throw std::runtime_error(oss.str());
-    }
-}
-
-TextRenderer::Ptr TextRenderer::Create(const FontFace::ConstPtr& font,
-                                       const std::string& text,
-                                       const View::Ptr& view)
-{
-    auto renderer = Ptr(new TextRenderer(font, view));
+    auto renderer = Ptr(new TextRenderer(context, font));
     renderer->set_text(text);
     return renderer;
 }
@@ -333,6 +303,12 @@ const Color::RGBAf& TextRenderer::text_color() const
 const Color::RGBAf& TextRenderer::back_color() const
 {
     return backColor_;
+}
+
+float TextRenderer::anchor_depth(const View::ConstPtr& view) const
+{
+    Vec4 clipOrigin = view->view_matrix() * origin_;
+    return clipOrigin(2) / clipOrigin(3);
 }
 
 std::array<TextRenderer::Vec4,4> TextRenderer::compute_corners(const View::ConstPtr& view) const

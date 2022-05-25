@@ -36,24 +36,14 @@ void main()
 )");
 
 Frame::Ptr Frame::Create(const GLContext::Ptr& context,
-                         const View3D::Pose& pose, const View::Ptr& view)
+                         const View3D::Pose& pose)
 {
-    return Ptr(new Frame(context, pose, view));
+    return Ptr(new Frame(context, pose));
 }
 
 Frame::Frame(const GLContext::Ptr& context,
-             const View3D::Pose& pose, const View::Ptr& view) :
-    Renderer(context, vertexShader, fragmentShader, view),
-    pose_(pose)
-{}
-
-Frame::Ptr Frame::New(const View3D::Pose& pose, const View::Ptr& view)
-{
-    return Ptr(new Frame(pose, view));
-}
-
-Frame::Frame(const View3D::Pose& pose, const View::Ptr& view) :
-    Renderer(vertexShader, fragmentShader, view),
+             const View3D::Pose& pose) :
+    Renderer(context, vertexShader, fragmentShader),
     pose_(pose)
 {}
 
@@ -62,13 +52,13 @@ void Frame::set_pose(const View3D::Pose& pose)
     pose_ = pose;
 }
 
-void Frame::draw() const
-{
-    if(!this->view()) {
-        throw std::runtime_error("No view in renderer");
-    }
-    this->draw(this->view());
-}
+//void Frame::draw() const
+//{
+//    if(!this->view()) {
+//        throw std::runtime_error("No view in renderer");
+//    }
+//    this->draw(this->view());
+//}
 
 void Frame::draw(const View::ConstPtr& view) const
 {

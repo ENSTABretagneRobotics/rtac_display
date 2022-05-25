@@ -72,10 +72,6 @@ int main()
     Display display;
 	display.disable_frame_counter();
 
-    auto renderer = ImageRenderer::New();
-    renderer->set_vertical_flip(false);
-    //display.add_renderer(renderer);
-
     auto font = text::FontFace::Create(filename);
     font->set_char_size(10);
     font->set_char_size(12);

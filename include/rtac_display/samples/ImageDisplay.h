@@ -23,8 +23,8 @@ class ImageDisplay : public Display
     ImageDisplay(int width = 1024, int height = 768,
                  const std::string& title = "optix render");
 
-    ImageRenderer::Ptr      renderer();
-    ImageRenderer::ConstPtr renderer() const;
+    ImageRenderer::Ptr      renderer()       { return renderer_; }
+    ImageRenderer::ConstPtr renderer() const { return renderer_; }
 
     template <typename T>
     void set_image(const Shape& imageSize, const T* data) {

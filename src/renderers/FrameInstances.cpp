@@ -32,25 +32,14 @@ void main()
 )");
 
 FrameInstances::Ptr FrameInstances::Create(const GLContext::Ptr& context,
-                         const View::Ptr& view, const View3D::Pose& pose)
+                                           const View3D::Pose& pose)
 {
-    return Ptr(new FrameInstances(context, view, pose));
+    return Ptr(new FrameInstances(context, pose));
 }
 
 FrameInstances::FrameInstances(const GLContext::Ptr& context,
-                               const View::Ptr& view,
                                const View3D::Pose& pose) :
-    Renderer(context, vertexShader, fragmentShader, view),
-    globalPose_(pose)
-{}
-
-FrameInstances::Ptr FrameInstances::New(const View::Ptr& view, const View3D::Pose& pose)
-{
-    return Ptr(new FrameInstances(view, pose));
-}
-
-FrameInstances::FrameInstances(const View::Ptr& view, const View3D::Pose& pose) :
-    Renderer(vertexShader, fragmentShader, view),
+    Renderer(context, vertexShader, fragmentShader),
     globalPose_(pose)
 {}
 

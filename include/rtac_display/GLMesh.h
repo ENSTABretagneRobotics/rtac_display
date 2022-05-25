@@ -4,6 +4,7 @@
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Point.h>
 #include <rtac_base/types/Mesh.h>
+#include <rtac_base/types/PointCloud.h>
 
 #include <rtac_display/GLFormat.h>
 #include <rtac_display/GLVector.h>
@@ -47,6 +48,8 @@ class GLMesh
     GLMesh(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other);
     template <template <typename> class VectorT>
     GLMesh& operator=(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other);
+    template <typename T>
+    GLMesh& operator=(const types::PointCloud<T>& pointcloud);
 
     GLVector<Point>&  points()  { return points_; }
     GLVector<Face>&   faces()   { return faces_; }
@@ -65,7 +68,6 @@ class GLMesh
     static Ptr cube_with_uvs(float scale = 1.0f);
     static Ptr from_ply(const std::string& path,
                         bool transposeUVs = false);
-
 };
 
 inline GLMesh::GLMesh(GLMesh&& other) :
@@ -85,20 +87,38 @@ inline GLMesh& GLMesh::operator=(GLMesh&& other)
 }
 
 template <template <typename> class VectorT>
-inline GLMesh::GLMesh(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other) :
+GLMesh::GLMesh(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other) :
     GLMesh()
 {
     *this = other;
 }
 
 template <template <typename> class VectorT>
-inline GLMesh& GLMesh::operator=(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other)
+GLMesh& GLMesh::operator=(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other)
 {
     points_ = other.points();
     faces_  = other.faces();
 
     uvs_.resize(0);
     normals_.resize(0);
+
+    return *this;
+}
+
+template <typename T>
+GLMesh& GLMesh::operator=(const types::PointCloud<T>& pointcloud)
+{
+    points_.resize(pointcloud.size());
+    faces_.resize(0);
+    uvs_.resize(0);
+    normals_.resize(0);
+
+    auto p = points_.map();
+    for(int i = 0; i < points_.size(); i++) {
+        p[i].x = pointcloud[i].x;
+        p[i].y = pointcloud[i].y;
+        p[i].z = pointcloud[i].z;
+    }
 
     return *this;
 }

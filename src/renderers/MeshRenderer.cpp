@@ -139,39 +139,19 @@ void main()
 
 
 MeshRenderer::Ptr MeshRenderer::Create(const GLContext::Ptr& context,
-                                       const View3D::Ptr& view,
                                        const Color::RGBAf& color)
 {
-    return Ptr(new MeshRenderer(context, view, color));
+    return Ptr(new MeshRenderer(context, color));
 }
 
 MeshRenderer::MeshRenderer(const GLContext::Ptr& context,
-                           const View3D::Ptr& view,
                            const Color::RGBAf& color) :
-    Renderer(context, vertexShaderSolid, fragmentShaderSolid, view),
+    Renderer(context, vertexShaderSolid, fragmentShaderSolid),
+    mesh_(GLMesh::Create()),
     color_(color),
     renderMode_(Mode::TexturedNormal),
     solidRender_(this->renderProgram_),
     normalShading_(create_render_program(vertexShaderNormals, fragmentShaderSolid)),
-    texturedShading_(create_render_program(vertexShaderTextured, fragmentShaderTextured)),
-    texturedNormalShading_(create_render_program(vertexShaderTexturedNormal,
-                                                 fragmentShaderTexturedNormal)),
-    displayNormals_(false),
-    displayNormalsProgram_(create_render_program(vertexShaderDisplayNormals, fragmentShaderSolid)),
-    normalsColor_({0.0f,0.0f,1.0f,1.0f})
-{}
-
-MeshRenderer::Ptr MeshRenderer::New(const View3D::Ptr& view, const Color::RGBAf& color)
-{
-    return Ptr(new MeshRenderer(view, color));
-}
-
-MeshRenderer::MeshRenderer(const View3D::Ptr& view, const Color::RGBAf& color) :
-    Renderer(vertexShader, fragmentShader, view),
-    color_(color),
-    renderMode_(Mode::TexturedNormal),
-    solidRender_(this->renderProgram_),
-    normalShading_(create_render_program(vertexShaderNormals,  fragmentShaderSolid)),
     texturedShading_(create_render_program(vertexShaderTextured, fragmentShaderTextured)),
     texturedNormalShading_(create_render_program(vertexShaderTexturedNormal,
                                                  fragmentShaderTexturedNormal)),
