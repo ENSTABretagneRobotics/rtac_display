@@ -135,6 +135,7 @@ class GLVector
 
     GLVector& operator=(const rtac::cuda::DeviceVector<T>& other);
     GLVector& operator=(const rtac::cuda::HostVector<T>& other);
+    void set_device_data(unsigned int size, const T* data);
 
     rtac::cuda::DeviceVector<T>& to_device_vector(rtac::cuda::DeviceVector<T>& other) const;
     rtac::cuda::DeviceVector<T>  to_device_vector() const;
@@ -788,6 +789,25 @@ GLVector<T>& GLVector<T>::operator=(const rtac::cuda::HostVector<T>& other)
 
     this->unbind(GL_ARRAY_BUFFER);
     return *this;
+}
+
+/**
+ * Reallocate data if needed and copy from a cuda device pointer. Copy happen
+ * solely on the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param other DeviceVector to be copied.
+ *
+ * @return A reference to this instance.
+ */
+template <typename T>
+void GLVector<T>::set_device_data(unsigned int size, const T* data)
+{
+    this->resize(size);
+    auto devicePtr = this->map_cuda();
+    CUDA_CHECK( cudaMemcpy(devicePtr, data, this->size()*sizeof(T),
+                           cudaMemcpyDeviceToDevice) );
 }
 
 /**
