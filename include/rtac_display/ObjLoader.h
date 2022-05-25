@@ -262,10 +262,16 @@ class ObjLoader
     const std::vector<Normal>& normals()  const { return normals_; }
     const std::set<VertexId>&  vertices() const { return vertices_; }
     const std::map<std::string,std::vector<Face>>& faces() const { return faceGroups_; }
-    const std::map<std::string,MtlMaterial>& materials() const { return materials_; };
+    const std::map<std::string,MtlMaterial>& materials() const { return materials_; }
+    const MtlMaterial& material(const std::string& name) const {
+        return materials_.at(name);
+    }
 
     std::map<std::string,GLMesh::Ptr> create_meshes();
 };
+
+}; //namespace display
+}; //namespace rtac
 
 inline std::ostream& operator<<(std::ostream& os, const rtac::display::MtlMaterial& mat)
 {
@@ -280,8 +286,5 @@ inline std::ostream& operator<<(std::ostream& os, const rtac::display::MtlMateri
 
     return os;
 }
-
-}; //namespace display
-}; //namespace rtac
 
 #endif //_DEF_RTAC_DISPLAY_OBJ_LOADER_H_

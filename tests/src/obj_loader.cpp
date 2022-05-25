@@ -29,8 +29,9 @@ int main()
     for(auto mesh : parser.create_meshes()) {
         auto renderer = display.create_renderer<MeshRenderer>(display.view());
         renderer->mesh() = mesh.second;
-        //renderer->set_render_mode(MeshRenderer::Mode::Points);
-        //renderer->set_render_mode(MeshRenderer::Mode::Solid);
+        
+        renderer->set_texture(GLTexture::from_png(parser.material(mesh.first).map_Kd));
+        renderer->set_render_mode(MeshRenderer::Mode::Textured);
     }
 
     while(!display.should_close()) {

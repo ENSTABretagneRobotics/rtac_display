@@ -276,10 +276,14 @@ void ObjLoader::parse_mtl()
             currentMtl.map_Kd = rtac::files::find_one(".*" + token, datasetPath_);
         }
     }
-
-    for(const auto& mat : materials_) {
-        std::cout << mat.second << std::endl;
+    if(currentMtl.name != "") {
+        materials_[currentMtl.name] = currentMtl;
+        currentMtl.clear();
     }
+
+    // for(const auto& mat : materials_) {
+    //     std::cout << mat.second << std::endl;
+    // }
 }
 
 std::map<std::string,GLMesh::Ptr> ObjLoader::create_meshes()
