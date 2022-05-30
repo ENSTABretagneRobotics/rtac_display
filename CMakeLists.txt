@@ -67,7 +67,6 @@ list(APPEND rtac_display_PUBLIC_HEADERS
     include/rtac_display/samples/Display3D.h
 
     include/rtac_display/GLReductor.h
-    include/rtac_display/ObjLoader.h
 )
 list(APPEND rtac_display_SOURCES
     src/utils.cpp
@@ -100,7 +99,6 @@ list(APPEND rtac_display_SOURCES
     src/samples/Display3D.cpp
 
     src/GLReductor.cpp
-    src/ObjLoader.cpp
 )
 add_library(rtac_display SHARED ${rtac_display_SOURCES})
 target_include_directories(rtac_display PUBLIC

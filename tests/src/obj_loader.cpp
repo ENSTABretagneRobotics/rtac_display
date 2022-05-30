@@ -2,9 +2,9 @@
 using namespace std;
 
 #include <rtac_base/files.h>
+#include <rtac_base/external/obj_codec.h>
 using namespace rtac;
 
-#include <rtac_display/ObjLoader.h>
 #include <rtac_display/samples/Display3D.h>
 #include <rtac_display/renderers/Frame.h>
 #include <rtac_display/renderers/MeshRenderer.h>
@@ -13,7 +13,7 @@ using namespace rtac::display;
 int main()
 {
     auto path = files::find_one(".*models3d/pyramide2_test01");
-    ObjLoader parser(path);
+    external::ObjLoader parser(path);
 
     parser.load_geometry();
 
@@ -26,7 +26,7 @@ int main()
     samples::Display3D display;
     display.create_renderer<Frame>(display.view());
     
-    for(auto mesh : parser.create_meshes()) {
+    for(auto mesh : parser.create_meshes<GLMesh>()) {
         auto renderer = display.create_renderer<MeshRenderer>(display.view());
         renderer->mesh() = mesh.second;
         
