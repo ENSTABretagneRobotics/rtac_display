@@ -177,6 +177,9 @@ void ObjLoader::load_geometry(unsigned int chunkSize)
         else if(token == "mtllib") {
             std::getline(iss, mtlPath_);
         }
+        else {
+            std::cerr << "Unhandled token : '" << token << "'\n";
+        }
     } // end of file
 
     if(currentMaterial.size() == 0) {

@@ -98,6 +98,8 @@ uniform sampler2D texIn;
 
 void main()
 {
+    //vec4 c = texture(texIn, uv);
+    //outColor = vec4(c.z,c.y,c.x,c.w);
     outColor = texture(texIn, uv);
 }
 )");

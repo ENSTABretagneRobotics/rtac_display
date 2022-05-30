@@ -43,6 +43,14 @@ FrameInstances::FrameInstances(const GLContext::Ptr& context,
     globalPose_(pose)
 {}
 
+void FrameInstances::set_poses(const std::vector<Pose>& poses)
+{
+    poses_.resize(poses.size());
+    for(int i = 0; i < poses_.size(); i++) {
+        poses_[i] = poses[i].homogeneous_matrix();
+    }
+}
+
 void FrameInstances::draw(const View::ConstPtr& view) const
 {
     float vertices[] = {0,0,0,
