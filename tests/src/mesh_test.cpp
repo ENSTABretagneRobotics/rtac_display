@@ -29,7 +29,7 @@ int main()
     auto renderer = display.create_renderer<Renderer>(view3d);
 
     auto meshRenderer = display.create_renderer<MeshRenderer>(view3d);
-    meshRenderer->set_mesh(Mesh::cube(0.5));
+    meshRenderer->mesh() = GLMesh::cube();
     meshRenderer->set_pose(Pose({0,0,3}));
     meshRenderer->set_color({1,1,0,1});
 

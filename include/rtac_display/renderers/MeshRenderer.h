@@ -3,7 +3,6 @@
 
 #include <rtac_base/types/common.h>
 #include <rtac_base/types/Handle.h>
-#include <rtac_base/types/Mesh.h>
 
 #include <rtac_display/GLContext.h>
 #include <rtac_display/Color.h>
@@ -79,9 +78,6 @@ class MeshRenderer : public Renderer
     void draw_textured(const View::ConstPtr& view) const;
     void draw_normals(const View::ConstPtr& view) const;
     void draw_textured_normal(const View::ConstPtr& view) const;
-    
-    template <typename Tp, typename Tf>
-    void set_mesh(const types::Mesh<Tp,Tf>& mesh);
 
     GLMesh::ConstPtr  mesh() const { return mesh_; }
     GLMesh::ConstPtr& mesh()       { return mesh_; }
@@ -91,14 +87,6 @@ class MeshRenderer : public Renderer
     void disable_normals_display() { displayNormals_ = false; }
     void set_normals_color(const Color::RGBAf& color) { normalsColor_ = color; }
 };
-
-template <typename Tp, typename Tf>
-void MeshRenderer::set_mesh(const types::Mesh<Tp,Tf>& mesh)
-{
-    auto tmp = GLMesh::Create();
-    *tmp = mesh;
-    mesh_ = tmp;
-}
 
 }; //namespace display
 }; //namespace rtac

@@ -20,10 +20,10 @@ class GLMesh
 
     using Point    = types::Point3<float>;
     using Face     = types::Point3<uint32_t>;
-    using UV       = types::Point2<float>;
     using Normal   = types::Point3<float>;
+    using UV       = types::Point2<float>;
 
-    using BaseMesh = types::Mesh<Point,Face>;
+    using BaseMesh = types::Mesh<Point,Face,Normal,UV>;
 
     static const unsigned int GroupSize;
     static const std::string expandVerticesShader;
@@ -33,8 +33,8 @@ class GLMesh
     
     GLVector<Point>  points_;
     GLVector<Face>   faces_;
-    GLVector<UV>     uvs_;
     GLVector<Normal> normals_;
+    GLVector<UV>     uvs_;
 
     public:
 
@@ -45,21 +45,21 @@ class GLMesh
     GLMesh& operator=(GLMesh&& other);
 
     template <template <typename> class VectorT>
-    GLMesh(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other);
+    GLMesh(const types::Mesh<Point,Face,Normal,UV,VectorT>& other);
     template <template <typename> class VectorT>
-    GLMesh& operator=(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other);
+    GLMesh& operator=(const types::Mesh<Point,Face,Normal,UV,VectorT>& other);
     template <typename T>
     GLMesh& operator=(const types::PointCloud<T>& pointcloud);
 
     GLVector<Point>&  points()  { return points_; }
     GLVector<Face>&   faces()   { return faces_; }
-    GLVector<UV>&     uvs()     { return uvs_; }
     GLVector<Normal>& normals() { return normals_; }
+    GLVector<UV>&     uvs()     { return uvs_; }
 
     const GLVector<Point>&  points()   const { return points_; }
     const GLVector<Face>&   faces()    const { return faces_; }
-    const GLVector<UV>&     uvs()      const { return uvs_; }
     const GLVector<Normal>& normals()  const { return normals_; }
+    const GLVector<UV>&     uvs()      const { return uvs_; }
 
     void compute_normals();
     void expand_vertices();
@@ -80,27 +80,26 @@ inline GLMesh& GLMesh::operator=(GLMesh&& other)
 {
     points_   = std::move(other.points_);
     faces_    = std::move(other.faces_);
-    uvs_      = std::move(other.uvs_);
     normals_  = std::move(other.normals_);
+    uvs_      = std::move(other.uvs_);
 
     return *this;
 }
 
 template <template <typename> class VectorT>
-GLMesh::GLMesh(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other) :
+GLMesh::GLMesh(const types::Mesh<Point,Face,Normal,UV,VectorT>& other) :
     GLMesh()
 {
     *this = other;
 }
 
 template <template <typename> class VectorT>
-GLMesh& GLMesh::operator=(const types::Mesh<GLMesh::Point,GLMesh::Face,VectorT>& other)
+GLMesh& GLMesh::operator=(const types::Mesh<Point,Face,Normal,UV,VectorT>& other)
 {
-    points_ = other.points();
-    faces_  = other.faces();
-
-    uvs_.resize(0);
-    normals_.resize(0);
+    points_  = other.points();
+    faces_   = other.faces();
+    normals_ = other.normals();
+    uvs_     = other.uvs();
 
     return *this;
 }
@@ -110,8 +109,8 @@ GLMesh& GLMesh::operator=(const types::PointCloud<T>& pointcloud)
 {
     points_.resize(pointcloud.size());
     faces_.resize(0);
-    uvs_.resize(0);
     normals_.resize(0);
+    uvs_.resize(0);
 
     auto p = points_.map();
     for(int i = 0; i < points_.size(); i++) {
@@ -212,11 +211,11 @@ inline void GLMesh::expand_vertices()
 }
 
 inline GLMesh::Ptr GLMesh::cube(float scale) {
-    return Ptr(new GLMesh(BaseMesh::cube(scale)));
+    return Ptr(new GLMesh(*BaseMesh::cube(scale)));
 }
 
 inline GLMesh::Ptr GLMesh::cube_with_uvs(float scale) {
-    Ptr mesh(new GLMesh(BaseMesh::cube(scale)));
+    Ptr mesh(new GLMesh(*BaseMesh::cube(scale)));
     mesh->compute_normals();
 
     std::vector<UV> uvs(mesh->points().size());
