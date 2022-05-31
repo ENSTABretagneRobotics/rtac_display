@@ -10,6 +10,7 @@
 
 #include <rtac_base/time.h>
 #include <rtac_base/types/CallbackQueue.h>
+#include <rtac_base/types/Image.h>
 
 #include <rtac_display/utils.h>
 #include <rtac_display/GLFWContext.h>
@@ -100,6 +101,10 @@ class Display : public DrawingSurface
     void wait_for_close() const;
     
     virtual void draw();
+    template <typename T, template<typename> class VectorT>
+    void take_screenshot(rtac::types::Image<T,VectorT>& output);
+    //template <typename T>
+    //void take_screenshot<GLVector>(rtac::types::Image<T,GLVector>& output);
 
     void enable_frame_counter();
     void disable_frame_counter();
@@ -119,6 +124,41 @@ class Display : public DrawingSurface
     
     void add_event_handler(const EventHandler::Ptr& eventHandler);
 };
+
+template <typename T, template<typename> class VectorT>
+void Display::take_screenshot(rtac::types::Image<T,VectorT>& output)
+{
+    this->grab_context();
+    auto shape = this->window_shape();
+    output.resize({shape.width  - this->viewportOrigin_.x,
+                   shape.height - this->viewportOrigin_.y});
+    
+    glReadPixels(this->viewportOrigin_.x,
+                 this->viewportOrigin_.y,
+                 shape.width, shape.height,
+                 GLFormat<T>::PixelFormat,
+                 GLFormat<T>::Type,
+                 output.data().data());
+    GL_CHECK_LAST();
+}
+
+//template <typename T>
+//void Display::take_screenshot<GLVector>(rtac::types::Image<T,GLVector>& output)
+//{
+//    auto shape = this->window_shape();
+//    output.resize({shape.width  - this->viewportOrigin_.x,
+//                   shape.height - this->viewportOrigin_.y});
+//
+//    output.data().bind(GL_PIXEL_PACK_BUFFER);
+//    glReadPixels(this->viewportOrigin_.x,
+//                 this->viewportOrigin_.y,
+//                 shape.width, shape.height,
+//                 GLFormat<T>::PixelFormat,
+//                 GLFormat<T>::Type,
+//                 output.data().data());
+//    output.data().unbind(GL_PIXEL_PACK_BUFFER);
+//    GL_CHECK_LAST();
+//}
 
 }; //namespace display
 }; //namespace rtac
