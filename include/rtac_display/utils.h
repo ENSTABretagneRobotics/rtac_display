@@ -12,6 +12,7 @@
 #include <GLFW/glfw3.h>
 
 #include <rtac_base/types/Shape.h>
+#include <rtac_base/types/Rectangle.h>
 
 #include <rtac_display/GLFormat.h>
 
@@ -43,6 +44,7 @@
 namespace rtac { namespace display {
 
 using Shape = rtac::types::Shape<size_t>;
+using Rect  = rtac::types::Rectangle<size_t>;
 
 bool check_gl(const std::string& location = "");
 
