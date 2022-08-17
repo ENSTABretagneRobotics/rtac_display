@@ -8,6 +8,7 @@
 
 #include <rtac_base/types/Handle.h>
 #include <rtac_base/files.h>
+#include <rtac_base/external/ImageCodec.h>
 #ifdef RTAC_PNG
     #include <rtac_base/external/png_codec.h>
 #endif //RTAC_PNG
@@ -112,6 +113,7 @@ class GLTexture
     #ifdef RTAC_PNG
     static Ptr from_png(const std::string& path);
     #endif //RTAC_PNG
+    static Ptr from_file(const std::string& path);
 };
 
 /**

@@ -171,7 +171,7 @@ GLTexture::Ptr GLTexture::from_png(const std::string& path)
     auto texture = GLTexture::New();
 
     rtac::external::PNGCodec codec;
-    codec.read_png(path, true);
+    codec.read_image(path, true);
 
     GLint  internalFormat;
     GLenum pixelFormat;
@@ -200,6 +200,39 @@ GLTexture::Ptr GLTexture::from_png(const std::string& path)
     return texture;
 }
 #endif // RTAC_PNG
+GLTexture::Ptr GLTexture::from_file(const std::string& path)
+{
+    auto texture = GLTexture::New();
+
+    rtac::external::ImageCodec codec;
+    auto img = codec.read_image(path, true);
+
+    GLint  internalFormat;
+    GLenum pixelFormat;
+    switch(img->channels()) {
+        default:
+            std::runtime_error("GLTexture::from_png : unhandled channel count.");
+            break;
+        case 1: internalFormat = GL_RED;  pixelFormat = GL_RED;  break;
+        case 2: internalFormat = GL_RG;   pixelFormat = GL_RG;   break;
+        case 3: internalFormat = GL_RGB;  pixelFormat = GL_RGB;  break;
+        case 4: internalFormat = GL_RGBA; pixelFormat = GL_RGBA; break;
+    }
+    GLenum scalarType;
+    switch(img->bitdepth()) {
+        default:
+            std::runtime_error("GLTexture::from_png : unhandled bit depth.");
+            break;
+        case  8:  scalarType = GL_UNSIGNED_BYTE;  break;
+        case 16:  scalarType = GL_UNSIGNED_SHORT; break;
+    }
+
+
+    texture->set_image({img->width(), img->height()},
+                       internalFormat, pixelFormat, scalarType, 
+                       img->data().data());
+    return texture;
+}
 
 
 }; //namespace display
