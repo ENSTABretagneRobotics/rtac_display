@@ -1,37 +1,32 @@
 
-list(APPEND test_names
-    base_test.cpp
-    view_test.cpp
-    mesh_test.cpp
-    texture_test.cpp
-    texturedmesh_test.cpp
-    pointcloud_test.cpp
-    imagedisplay_test.cpp
-    userinput_test.cpp
-    glfwinput_test.cpp
-    dual_window.cpp
-    gl_mesh_test.cpp
-    glsl_types.cpp
-    fan_renderer.cpp
-    instances_renderer.cpp
-    png_codec.cpp
-    obj_loader.cpp
-)
-list(APPEND test_deps
-    rtac_display
+list(APPEND test_files
+    src/base_test.cpp
+    src/view_test.cpp
+    src/mesh_test.cpp
+    src/texture_test.cpp
+    src/texturedmesh_test.cpp
+    src/pointcloud_test.cpp
+    src/imagedisplay_test.cpp
+    src/userinput_test.cpp
+    src/glfwinput_test.cpp
+    src/dual_window.cpp
+    src/gl_mesh_test.cpp
+    src/glsl_types.cpp
+    src/fan_renderer.cpp
+    src/instances_renderer.cpp
+    src/png_codec.cpp
+    src/obj_loader.cpp
 )
 
-foreach(name ${test_names})
-
-    # Generating a unique target name to avoid name colision with other rtac
-    # packages.
-    get_filename_component(executable_name ${name} NAME_WE)
-    set(test_target_name ${executable_name}_${PROJECT_NAME})
-
-    add_executable(${test_target_name} src/${name})
-    target_link_libraries(${test_target_name} ${test_deps})
-    set_target_properties(${test_target_name} PROPERTIES OUTPUT_NAME ${executable_name})
-
+foreach(filename ${test_files})
+    get_filename_component(test_name ${filename} NAME_WE)
+    set(target_name ${test_name}_${PROJECT_NAME})
+    add_executable(${target_name} ${filename})
+    target_link_libraries(${target_name} rtac_display)
+    if(WITH_CUDA)
+        set_target_properties(${target_name} PROPERTIES
+                              CUDA_ARCHITECTURES native)
+    endif()
 endforeach()
 
 if(TARGET Freetype::Freetype)

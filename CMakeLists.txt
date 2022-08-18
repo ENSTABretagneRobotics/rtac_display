@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 project(rtac_display VERSION 0.1)
 
 option(WITH_CUDA "enable cuda related code" ON)
+option(BUILD_TESTS "Build unit tests" ON)
+
 if(${WITH_CUDA})
     enable_language(CUDA)
     if(NOT TARGET rtac_cuda)
@@ -14,7 +16,7 @@ if(NOT TARGET rtac_base)
     find_package(rtac_base REQUIRED)
 endif()
 
-
+set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
@@ -117,6 +119,7 @@ if(${WITH_CUDA})
     target_link_libraries(rtac_display PUBLIC rtac_cuda)
     target_compile_definitions(rtac_display PUBLIC RTAC_DISPLAY_CUDA)
     list(APPEND CONFIG_COMMANDS "find_package(rtac_cuda REQUIRED)")
+    set_target_properties(rtac_display PROPERTIES CUDA_ARCHITECTURES native)
 endif()
 
 if(TARGET Freetype::Freetype)
@@ -135,7 +138,9 @@ if(TARGET Freetype::Freetype)
     target_link_libraries(rtac_display PUBLIC Freetype::Freetype)
 endif()
 
-add_subdirectory(tests)
+if(BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
 
 set_target_properties(rtac_display PROPERTIES 
     RTAC_PUBLIC_HEADERS "${rtac_display_PUBLIC_HEADERS}"
