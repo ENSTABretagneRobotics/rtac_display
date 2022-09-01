@@ -1,7 +1,5 @@
 @PACKAGE_INIT@
 
-include(CMakeFindDependencyMacro)
-
 set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
@@ -10,8 +8,12 @@ find_package(glfw3 REQUIRED)
 find_package(rtac_base REQUIRED)
 find_package(Freetype)
 
-@RTAC_INSTALLATION_ADDITIONAL_CONFIG_BODY@
+set(WITH_CUDA @WITH_CUDA@)
+if(WITH_CUDA)
+    find_package(rtac_cuda REQUIRED)
+endif()
 
-include("${CMAKE_CURRENT_LIST_DIR}/@TARGET_EXPORT_NAME@.cmake")
-# set_and_check(@PROJECT_NAME@_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
-check_required_components("@PROJECT_NAME@")
+include("${CMAKE_CURRENT_LIST_DIR}/@export_name@.cmake")
+set_and_check(@TARGET_NAME@_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+set_and_check(@TARGET_NAME@_LIB_DIR     "@PACKAGE_CMAKE_INSTALL_LIBDIR@")
+check_required_components(@TARGET_NAME@)

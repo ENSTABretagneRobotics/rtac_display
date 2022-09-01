@@ -30,7 +30,7 @@ if(NOT TARGET Freetype::Freetype)
     )
 endif()
 
-list(APPEND rtac_display_PUBLIC_HEADERS
+list(APPEND rtac_display_headers
     include/rtac_display/utils.h
     include/rtac_display/GLState.h
     include/rtac_display/GLContext.h
@@ -123,7 +123,7 @@ if(${WITH_CUDA})
 endif()
 
 if(TARGET Freetype::Freetype)
-    list(APPEND rtac_display_PUBLIC_HEADERS
+    list(APPEND rtac_display_headers
         include/rtac_display/text/freetype.h
         include/rtac_display/text/Glyph.h
         include/rtac_display/text/FontFace.h
@@ -142,12 +142,8 @@ if(BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
-set_target_properties(rtac_display PROPERTIES 
-    RTAC_PUBLIC_HEADERS "${rtac_display_PUBLIC_HEADERS}"
-    INSTALL_RPATH_USE_LINK_PATH True
-)
 rtac_install_target(rtac_display
-    ADDITIONAL_CONFIG_COMMANDS ${CONFIG_COMMANDS}
+    HEADER_FILES ${rtac_display_headers}
 )
 
 # add_subdirectory(bin)
