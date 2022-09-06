@@ -34,7 +34,7 @@
         GLenum err = glGetError();                                      \
         if(err != GL_NO_ERROR) {                                        \
             std::ostringstream oss;                                     \
-            oss << "GL call failed '"                                   \
+            oss << "GL call failed '" << opengl_error_string(err)       \
                 << "' (code:0x" << std::hex << err << std::dec << ")\n" \
                 << __FILE__ << ":" << __LINE__ << "\n";                 \
             throw std::runtime_error(oss.str());                        \
@@ -46,7 +46,37 @@ namespace rtac { namespace display {
 using Shape = rtac::types::Shape<size_t>;
 using Rect  = rtac::types::Rectangle<size_t>;
 
-bool check_gl(const std::string& location = "");
+inline bool check_gl(const std::string& location = "")
+{
+    GLenum errorCode;
+
+    errorCode = glGetError();
+    if(errorCode != GL_NO_ERROR)
+    {
+        std::ostringstream oss;
+        oss << "GL error : " << errorCode << ", \"" << gluErrorString(errorCode)
+            << "\". Tag : " << location;
+        //std::cout << oss.str() << std::endl;
+        throw std::runtime_error(oss.str());
+    }
+    return false;
+}
+
+inline constexpr const char* opengl_error_string(GLenum code)
+{
+    switch(code) {
+        default:                   return "GL_UNKNOWN_ERROR";     break;
+        case GL_NO_ERROR:          return "GL_NO_ERROR";          break;
+        case GL_INVALID_ENUM:      return "GL_INVALID_ENUM";      break;
+        case GL_INVALID_VALUE:     return "GL_INVALID_VALUE";     break;
+        case GL_INVALID_OPERATION: return "GL_INVALID_OPERATION"; break;
+        case GL_OUT_OF_MEMORY:     return "GL_OUT_OF_MEMORY";     break;
+        case GL_STACK_UNDERFLOW:   return "GL_STACK_UNDERFLOW";   break;
+        case GL_STACK_OVERFLOW:    return "GL_STACK_OVERFLOW";    break;
+        case GL_INVALID_FRAMEBUFFER_OPERATION: 
+            return "GL_INVALID_FRAMEBUFFER_OPERATION";            break;
+    }
+}
 
 GLuint compile_shader(GLenum shaderType, const std::string& source);
 

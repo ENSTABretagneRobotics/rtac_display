@@ -2,22 +2,6 @@
 
 namespace rtac { namespace display {
 
-bool check_gl(const std::string& location)
-{
-    GLenum errorCode;
-
-    errorCode = glGetError();
-    if(errorCode != GL_NO_ERROR)
-    {
-        std::ostringstream oss;
-        oss << "GL error : " << errorCode << ", \"" << gluErrorString(errorCode)
-            << "\". Tag : " << location;
-        //std::cout << oss.str() << std::endl;
-        throw std::runtime_error(oss.str());
-    }
-    return false;
-}
-
 GLuint compile_shader(GLenum shaderType, const std::string& source)
 {
     GLuint shaderId = glCreateShader(shaderType);
