@@ -241,6 +241,8 @@ GLVector<T>::~GLVector()
 template <typename T>
 GLVector<T>& GLVector<T>::operator=(const GLVector<T>& other)
 {
+    if(other.size() == 0) return *this;
+
     this->resize(other.size());
 
     other.bind(GL_COPY_READ_BUFFER);
@@ -299,6 +301,8 @@ GLVector<T>& GLVector<T>::operator=(const std::vector<T>& other)
 template <typename T>
 void GLVector<T>::set_data(unsigned int size, const T* data)
 {
+    if(size == 0) return;
+
     this->resize(size);
 
     this->bind(GL_ARRAY_BUFFER);
@@ -326,6 +330,8 @@ void GLVector<T>::copy_to(VectorT<T>& other) const
 template <typename T>
 void GLVector<T>::copy_to(T* dst) const
 {
+    if(this->size() == 0) return;
+
     this->bind(GL_COPY_READ_BUFFER);
 
     glGetBufferSubData(GL_COPY_READ_BUFFER, 0,
@@ -422,7 +428,6 @@ template <typename T>
 void GLVector<T>::bind(GLenum target) const
 {
     glBindBuffer(target, this->gl_id());
-    check_gl("GLVector::bind : could not bind buffer.");
 }
 
 /**
@@ -435,7 +440,7 @@ template <typename T>
 void GLVector<T>::unbind(GLenum target) const
 {
     glBindBuffer(target, 0);
-    check_gl("GLVector::unbind : could not unbind buffer (invalid target).");
+    //check_gl("GLVector::unbind : could not unbind buffer (invalid target).");
 }
 
 /**
@@ -762,6 +767,8 @@ GLVector<T>::GLVector(const rtac::cuda::HostVector<T>& other) :
 template <typename T>
 GLVector<T>& GLVector<T>::operator=(const rtac::cuda::DeviceVector<T>& other)
 {
+    if(other.size() == 0) return *this;
+
     this->resize(other.size());
     auto devicePtr = this->map_cuda();
     CUDA_CHECK( cudaMemcpy(devicePtr, other.data(), this->size()*sizeof(T),
@@ -782,6 +789,8 @@ GLVector<T>& GLVector<T>::operator=(const rtac::cuda::DeviceVector<T>& other)
 template <typename T>
 GLVector<T>& GLVector<T>::operator=(const rtac::cuda::HostVector<T>& other)
 {
+    if(other.size() == 0) return *this;
+
     this->resize(other.size());
     this->bind(GL_ARRAY_BUFFER);
     
@@ -804,6 +813,8 @@ GLVector<T>& GLVector<T>::operator=(const rtac::cuda::HostVector<T>& other)
 template <typename T>
 void GLVector<T>::set_device_data(unsigned int size, const T* data)
 {
+    if(size == 0) return;
+
     this->resize(size);
     auto devicePtr = this->map_cuda();
     CUDA_CHECK( cudaMemcpy(devicePtr, data, this->size()*sizeof(T),
@@ -822,6 +833,8 @@ template <typename T>
 rtac::cuda::DeviceVector<T>&
 GLVector<T>::to_device_vector(rtac::cuda::DeviceVector<T>& other) const
 {
+    if(this->size() == 0) return other;
+
     other.resize(this->size());
     auto devicePtr = this->map_cuda();
     CUDA_CHECK( cudaMemcpy(other.data(), devicePtr, other.size()*sizeof(T),
