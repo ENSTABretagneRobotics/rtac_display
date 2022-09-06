@@ -65,6 +65,7 @@ class GLMesh
     void expand_vertices();
 
     static Ptr cube(float scale = 1.0f);
+    static Ptr icosahedron(float scale = 1.0f);
     static Ptr cube_with_uvs(float scale = 1.0f);
     static Ptr from_ply(const std::string& path,
                         bool transposeUVs = false);
@@ -212,6 +213,10 @@ inline void GLMesh::expand_vertices()
 
 inline GLMesh::Ptr GLMesh::cube(float scale) {
     return Ptr(new GLMesh(*BaseMesh::cube(scale)));
+}
+
+inline GLMesh::Ptr GLMesh::icosahedron(float scale) {
+    return Ptr(new GLMesh(*BaseMesh::icosahedron(scale)));
 }
 
 inline GLMesh::Ptr GLMesh::cube_with_uvs(float scale) {
