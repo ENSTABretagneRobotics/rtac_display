@@ -89,7 +89,8 @@ void main()
 
     if(normalized.x >= 0.0f && normalized.x <= 1.0f &&
        normalized.y >= 0.0f && normalized.y <= 1.0f) {
-        normalized.x = texture(bearingMap, vec2(normalized.x,0.0)).x;
+        //normalized.x = texture(bearingMap, vec2(normalized.x,0.0)).x;
+        normalized.x = 1.0f - texture(bearingMap, vec2(normalized.x,0.0)).x;
         float value = valueScaling.x*texture(fanData,normalized).x + valueScaling.y;
         outColor = texture(colormap, vec2(value, 0.0f));
     }
