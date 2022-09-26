@@ -1,5 +1,7 @@
 #include <rtac_display/utils.h>
 
+#include <iomanip>
+
 namespace rtac { namespace display {
 
 GLuint compile_shader(GLenum shaderType, const std::string& source)
@@ -19,7 +21,6 @@ GLuint compile_shader(GLenum shaderType, const std::string& source)
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &compilationStatus);
     if(compilationStatus != GL_TRUE)
     {
-        std::cout << source << std::endl;
         GLint errorSize(0);
         glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &errorSize);
 
@@ -29,7 +30,17 @@ GLuint compile_shader(GLenum shaderType, const std::string& source)
         glDeleteShader(shaderId);                       
         shaderId = 0;
 
-        throw std::runtime_error("Shader compilation error :\n" + std::string(error.get()));
+        std::ostringstream oss;
+        oss << "Shader compilation  error :\n";
+        oss << std::setfill(' ');
+        std::istringstream iss(source);
+        std::string line;
+        for(int i = 0; std::getline(iss, line); i++) {
+            oss << std::setw(4) << i+1 << " " << line << std::endl;
+        }
+        oss << std::string(error.get()) << std::endl;
+
+        throw std::runtime_error(oss.str());
     }
 
     return shaderId;
