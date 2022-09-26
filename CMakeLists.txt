@@ -119,7 +119,6 @@ if(${WITH_CUDA})
     target_link_libraries(rtac_display PUBLIC rtac_cuda)
     target_compile_definitions(rtac_display PUBLIC RTAC_DISPLAY_CUDA)
     list(APPEND CONFIG_COMMANDS "find_package(rtac_cuda REQUIRED)")
-    set_target_properties(rtac_display PROPERTIES CUDA_ARCHITECTURES native)
 endif()
 
 if(TARGET Freetype::Freetype)
