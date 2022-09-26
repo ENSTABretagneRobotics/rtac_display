@@ -6,6 +6,8 @@
 
 #include <rtac_display/utils.h>
 
+//#include <rtac_display/GLFrameBufferAttachment.h>
+
 namespace rtac { namespace display {
 
 class GLFrameBuffer
@@ -29,7 +31,7 @@ class GLFrameBuffer
 
     GLuint gl_id() const { return glId_; }
 
-    void bind(GLenum target = GL_FRAMEBUFFER);
+    void bind(GLenum target = GL_FRAMEBUFFER) const;
 
     bool is_complete(GLenum target = GL_FRAMEBUFFER) const;
 };

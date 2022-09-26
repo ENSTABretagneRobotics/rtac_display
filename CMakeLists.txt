@@ -61,6 +61,8 @@ list(APPEND rtac_display_headers
     include/rtac_display/Display.h
     include/rtac_display/GLVector.h
     include/rtac_display/GLTexture.h
+    include/rtac_display/GLRenderBuffer.h
+    include/rtac_display/GLFrameBuffer.h
     include/rtac_display/GLMesh.h
     include/rtac_display/EventHandler.h
 
@@ -94,6 +96,8 @@ list(APPEND rtac_display_SOURCES
     src/DrawingSurface.cpp
     src/Display.cpp
     src/GLTexture.cpp
+    src/GLRenderBuffer.cpp
+    src/GLFrameBuffer.cpp
     src/EventHandler.cpp
 
     src/samples/ImageDisplay.cpp
