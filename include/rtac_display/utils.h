@@ -34,7 +34,8 @@
         GLenum err = glGetError();                                      \
         if(err != GL_NO_ERROR) {                                        \
             std::ostringstream oss;                                     \
-            oss << "GL call failed '" << opengl_error_string(err)       \
+            oss << "GL call failed '"                                   \
+                << rtac::display::opengl_error_string(err)              \
                 << "' (code:0x" << std::hex << err << std::dec << ")\n" \
                 << __FILE__ << ":" << __LINE__ << "\n";                 \
             throw std::runtime_error(oss.str());                        \
