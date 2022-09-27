@@ -31,6 +31,7 @@ class View3D : public View
     using Mat4    = View::Mat4;
     using Shape   = View::Shape;
     using Pose    = rtac::types::Pose<float>;
+    using Vec3 = rtac::types::Vector3<float>;
     using Vector3 = rtac::types::Vector3<float>;
 
     static const Mat4 viewFrameGL;
@@ -53,6 +54,7 @@ class View3D : public View
     Mat4 raw_view_matrix() const;
     virtual Mat4 view_matrix() const;
     Pose pose() const;
+    Vec3 translation() const { return viewMatrix_(Eigen::seqN(0,3),3); }
 
     void set_raw_view(const Mat4& viewMatrix);
 };
