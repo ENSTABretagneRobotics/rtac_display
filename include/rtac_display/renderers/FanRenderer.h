@@ -34,8 +34,7 @@ class FanRenderer : public Renderer
     using Interval  = rtac::types::Interval<float>;
     using Rectangle = rtac::types::Rectangle<float>;
 
-    //using Interpolator = rtac::algorithm::InterpolatorLinear<float>;
-    using Interpolator = rtac::algorithm::InterpolatorCubicSpline<float>;
+    using Interpolator = rtac::algorithm::Interpolator<float>;
 
     static const std::string& vertexShader;
     static const std::string& fragmentShader;

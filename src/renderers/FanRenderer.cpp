@@ -250,8 +250,7 @@ void FanRenderer::set_bearings(unsigned int nBeams, const float* bearings,
         b[i]  = ((bearings[nBeams-1] - bearings[0])*i) / (mapSize - 1) + bearings[0];
     }
 
-    Interpolator interp(y0,x0);
-    auto ib = interp(b);
+    auto ib = Interpolator::CreateCubicSpline(y0,x0)(b);
 
     if(!bearingMap_) {
         bearingMap_ = GLTexture::New();
