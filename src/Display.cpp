@@ -396,7 +396,7 @@ void Display::add_event_handler(const EventHandler::Ptr& eventHandler)
 {
     if(eventHandler->uses_keyboard()) {
         this->add_key_callback(std::bind(&EventHandler::key_callback,
-                                         eventHandler.get(), 
+                                         eventHandler,
                                          std::placeholders::_1,
                                          std::placeholders::_2,
                                          std::placeholders::_3,
@@ -404,20 +404,20 @@ void Display::add_event_handler(const EventHandler::Ptr& eventHandler)
     }
     if(eventHandler->uses_mouse_position()) {
         this->add_mouse_position_callback(std::bind(&EventHandler::mouse_position_callback,
-                                                    eventHandler.get(), 
+                                                    eventHandler,
                                                     std::placeholders::_1,
                                                     std::placeholders::_2));
     }
     if(eventHandler->uses_mouse_button()) {
         this->add_mouse_button_callback(std::bind(&EventHandler::mouse_button_callback,
-                                                  eventHandler.get(), 
+                                                  eventHandler,
                                                   std::placeholders::_1,
                                                   std::placeholders::_2,
                                                   std::placeholders::_3));
     }
     if(eventHandler->uses_scroll()) {
         this->add_scroll_callback(std::bind(&EventHandler::scroll_callback,
-                                            eventHandler.get(), 
+                                            eventHandler,
                                             std::placeholders::_1,
                                             std::placeholders::_2));
     }
