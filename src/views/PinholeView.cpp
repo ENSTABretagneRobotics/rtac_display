@@ -23,6 +23,26 @@ PinholeView::Ptr PinholeView::New(float fovy, const Pose& pose,
 }
 
 /**
+ * Creates a new PinholeView instance on the heap.
+ *
+ * @param fovy  vertical field of view in degrees.
+ * @param pose  position and orientation of the camera in 3D space.
+ * @param zNear minimum "distance to screen" at which objects will be
+ *              renderered. Any vertex below this distance to the camera will
+ *              be discarded by OpenGL.
+ * @param zFar  maximum "distance to screen" at which objects will be
+ *              renderered. Any vertex above this distance to the camera will
+ *              be discarded by OpenGL.
+ *
+ * @return a shared pointer to the newly created PinholeView instance.
+ */
+PinholeView::Ptr PinholeView::Create(float fovy, const Pose& pose,
+                                     float zNear, float zFar)
+{
+    return Ptr(new PinholeView(fovy, pose, zNear, zFar));
+}
+
+/**
  * Constructor of PinholeView
  *
  * @param fovy  vertical field of view in degrees.

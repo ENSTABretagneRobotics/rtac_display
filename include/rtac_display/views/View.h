@@ -66,6 +66,7 @@ class View
     public:
 
     static Ptr New(const Mat4& mat = Mat4::Identity());
+    static Ptr Create(const Mat4& mat = Mat4::Identity());
 
     View(const Mat4& mat = Mat4::Identity());
     

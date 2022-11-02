@@ -30,7 +30,7 @@ int main()
 
     Display display;
     
-    auto view3d   = PinholeView::New();
+    auto view3d   = PinholeView::Create();
     auto renderer = display.create_renderer<Renderer>(view3d);
     view3d->look_at({0,0,0}, {5,4,3});
     

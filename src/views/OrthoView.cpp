@@ -23,6 +23,26 @@ OrthoView::Ptr OrthoView::New(const Bounds& bounds,
 }
 
 /**
+ * Create a new instance of OrthoView on the heap.
+ *
+ * @param bounds a rtac::types::Rectangle object representing the left-right,
+ *               bottom-top clipping plane positions.
+ * @param pose   3D position (translation and orientation) of the camera.
+ * @param zNear  near clipping plane position (vertex below this distance to
+ *               the camera will be clipped.
+ * @param zFar   far clipping plane position (vertex above this distance to the
+ *               camera will be clipped.
+ *
+ * @return a shared pointer to the newly created OrthoView instance.
+ */
+OrthoView::Ptr OrthoView::Create(const Bounds& bounds,
+                                 const Pose& pose,
+                                 float zNear, float zFar)
+{
+    return Ptr(new OrthoView(bounds, pose, zNear, zFar));
+}
+
+/**
  * Constructor of OrthoView.
  *
  * @param bounds a rtac::types::Rectangle object representing the left-right,

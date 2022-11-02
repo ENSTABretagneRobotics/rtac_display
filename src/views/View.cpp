@@ -15,6 +15,18 @@ View::Ptr View::New(const Mat4& mat)
 }
 
 /**
+ * Creates a new Instance of View on the heap and returns a smart pointer.
+ *
+ * @param a homogeneous 4x4 projection matrix (default is identity).
+ *
+ * @return a shared pointer to the newly created View instance.
+ */
+View::Ptr View::Create(const Mat4& mat)
+{
+    return Ptr(new View(mat));
+}
+
+/**
  * Constructor of View.
  *
  * By default the screen aspect ratio is 1 (screenSize is set to {1,1})

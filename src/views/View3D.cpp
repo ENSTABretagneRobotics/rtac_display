@@ -31,6 +31,23 @@ View3D::Ptr View3D::New(const Pose& pose, const Mat4& projection)
 }
 
 /**
+ * Creates a new instance of View3D allocated on the heap
+ *
+ * @param pose       a rtac::types::Pose giving the position and the
+ *                   orientation of the point of view in 3D space (RTAC
+ *                   convention). Default is pose at origin and back of screen
+ *                   towards global y.
+ * @param projection a homogeneous matrix modeling the projection form 3D space
+ *                   to 2D screen coordinates (OpenGL convention).
+ *
+ * @return a shared pointer to the new View3D instance.
+ */
+View3D::Ptr View3D::Create(const Pose& pose, const Mat4& projection)
+{
+    return Ptr(new View3D(pose, projection));
+}
+
+/**
  * Constructor of View3D.
  *
  * @param pose       a rtac::types::Pose giving the position and the

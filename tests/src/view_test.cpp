@@ -16,8 +16,8 @@ using Pose   = OrthoView::Pose;
 int main()
 {
     Display display;
-    //auto view = OrthoView::New(Bounds({-3,3,-3,3}));
-    auto view = PinholeView::New();
+    //auto view = OrthoView::Create(Bounds({-3,3,-3,3}));
+    auto view = PinholeView::Create();
     auto axes = display.create_renderer<Renderer>(view);
     auto r = display.create_renderer<MeshRenderer>(view);
 

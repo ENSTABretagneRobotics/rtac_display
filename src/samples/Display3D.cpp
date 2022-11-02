@@ -5,7 +5,7 @@ namespace rtac { namespace display { namespace samples {
 Display3D::Display3D(int width, int height, const std::string& name,
                      const Display::Context::Ptr& sharedContext) :
     Display(width,height,name,sharedContext),
-    view_(PinholeView::New()),
+    view_(PinholeView::Create()),
     controls_(OrbitControls::Create(view_, {0,0,0}))
 {
     this->add_view(view_);

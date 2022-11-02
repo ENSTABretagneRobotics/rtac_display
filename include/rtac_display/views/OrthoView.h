@@ -47,6 +47,9 @@ class OrthoView : public View3D
     static Ptr New(const Bounds& bounds = Bounds({-1,1,-1,1}),
                    const Pose& pose = Pose(),
                    float zNear = 0.1f, float zFar = 1000.0f);
+    static Ptr Create(const Bounds& bounds = Bounds({-1,1,-1,1}),
+                      const Pose& pose = Pose(),
+                      float zNear = 0.1f, float zFar = 1000.0f);
 
     OrthoView(const Bounds& bounds = Bounds({-1,1,-1,1}),
               const Pose& pose = Pose(),

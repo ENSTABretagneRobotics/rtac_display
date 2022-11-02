@@ -102,7 +102,7 @@ void main()
 
 FanRenderer::FanRenderer(const GLContext::Ptr& context) :
     Renderer(context, vertexShader, fragmentShader),
-    data_(GLTexture::New()),
+    data_(GLTexture::Create()),
     colormap_(colormap::Viridis()),
     valueRange_({0.0f,1.0f}),
     angle_({-M_PI, M_PI}),
@@ -253,7 +253,7 @@ void FanRenderer::set_bearings(unsigned int nBeams, const float* bearings,
     auto ib = Interpolator::CreateCubicSpline(y0,x0)(b);
 
     if(!bearingMap_) {
-        bearingMap_ = GLTexture::New();
+        bearingMap_ = GLTexture::Create();
         bearingMap_->set_filter_mode(GLTexture::FilterMode::Linear);
         bearingMap_->set_wrap_mode(GLTexture::WrapMode::Clamp);
         GL_CHECK_LAST();

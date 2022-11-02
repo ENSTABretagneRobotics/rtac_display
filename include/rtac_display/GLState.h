@@ -42,7 +42,8 @@ class GLState
 
     GLState();
 
-    static Ptr New() { return Ptr(new GLState()); }
+    static Ptr New() { return Ptr(new GLState()); } // deprecated
+    static Ptr Create() { return Ptr(new GLState()); }
 
     void enable(GLenum cap) {
         bool& state = this->capability(cap);

@@ -61,7 +61,8 @@ class GLTexture
 
     public:
     
-    static Ptr New();
+    static Ptr New(); // deprecated
+    static Ptr Create();
 
     GLTexture();
     ~GLTexture();

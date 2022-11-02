@@ -77,8 +77,8 @@ ImageRenderer::Ptr ImageRenderer::Create(const GLContext::Ptr& context)
  */
 ImageRenderer::ImageRenderer(const GLContext::Ptr& context) :
     Renderer(context, vertexShader, fragmentShader),
-    texture_(GLTexture::New()),
-    imageView_(ImageView::New()),
+    texture_(GLTexture::Create()),
+    imageView_(ImageView::Create()),
     passThroughProgram_(this->renderProgram_),
     colormapProgram_(create_render_program(vertexShader, colormapFragmentShader)),
     verticalFlip_(true) // More natural for CPU texture

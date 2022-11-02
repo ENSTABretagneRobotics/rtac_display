@@ -71,7 +71,8 @@ class DrawingSurface : public Renderer
 
     public:
 
-    static Ptr New(const GLContext::Ptr& context);
+    static Ptr New(const GLContext::Ptr& context); // deprecated
+    static Ptr Create(const GLContext::Ptr& context);
 
     void add_view(const View::Ptr& view);
 

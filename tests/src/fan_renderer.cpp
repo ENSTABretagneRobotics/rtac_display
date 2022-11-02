@@ -15,7 +15,7 @@ GLTexture::Ptr create_texture(int W, int H)
             data[W*h + w] = ((float)w) / (W - 1);
         }
     }
-    auto texture = GLTexture::New();
+    auto texture = GLTexture::Create();
     texture->set_image({W,H}, data.data());
     return texture;
 }
@@ -25,7 +25,7 @@ int main()
 {
     Display display;
 
-    auto renderer = display.create_renderer<FanRenderer>(View::New());
+    auto renderer = display.create_renderer<FanRenderer>(View::Create());
     renderer->set_geometry_degrees({-65,65}, {0,20});
 
     //auto texture = create_texture(16,16);
@@ -36,7 +36,7 @@ int main()
         std::cout << v << " ";
     }
     std::cout << std::endl;
-    auto texture = GLTexture::New();
+    auto texture = GLTexture::Create();
     texture->set_image({16,16}, data.data());
     texture->set_filter_mode(GLTexture::FilterMode::Linear);
     //texture->set_filter_mode(GLTexture::FilterMode::Nearest);

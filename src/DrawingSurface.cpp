@@ -12,11 +12,25 @@ DrawingSurface::DrawingSurface(const GLContext::Ptr& context) :
 /**
  * Instanciate a new DrawingSurface.
  *
+ * deprecated : use Create method instead
+ *
  * @param shape initial {width,height} of the DrawingSurface.
  *
  * @return a shared pointer to the newly instanciated DrawingSurface.
  */
 DrawingSurface::Ptr DrawingSurface::New(const GLContext::Ptr& context)
+{
+    return Ptr(new DrawingSurface(context));
+}
+
+/**
+ * Instanciate a new DrawingSurface.
+ *
+ * @param shape initial {width,height} of the DrawingSurface.
+ *
+ * @return a shared pointer to the newly instanciated DrawingSurface.
+ */
+DrawingSurface::Ptr DrawingSurface::Create(const GLContext::Ptr& context)
 {
     return Ptr(new DrawingSurface(context));
 }

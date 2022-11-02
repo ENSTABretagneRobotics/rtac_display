@@ -4,6 +4,16 @@ namespace rtac { namespace display {
 
 /**
  * @return a shared pointer to a newly created GLTexture.
+ *
+ * DEPRECATED
+ */
+GLTexture::Ptr GLTexture::Create()
+{
+    return Ptr(new GLTexture());
+}
+
+/**
+ * @return a shared pointer to a newly created GLTexture.
  */
 GLTexture::Ptr GLTexture::New()
 {
@@ -145,7 +155,7 @@ void GLTexture::unbind(GLenum target)
  */
 GLTexture::Ptr GLTexture::from_ppm(const std::string& path)
 {
-    auto texture = GLTexture::New();
+    auto texture = GLTexture::Create();
 
     size_t Win, Hin;
     std::vector<uint8_t> data;
@@ -168,7 +178,7 @@ GLTexture::Ptr GLTexture::from_ppm(const std::string& path)
  */
 GLTexture::Ptr GLTexture::from_png(const std::string& path)
 {
-    auto texture = GLTexture::New();
+    auto texture = GLTexture::Create();
 
     rtac::external::PNGCodec codec;
     codec.read_image(path, true);
@@ -202,7 +212,7 @@ GLTexture::Ptr GLTexture::from_png(const std::string& path)
 #endif // RTAC_PNG
 GLTexture::Ptr GLTexture::from_file(const std::string& path)
 {
-    auto texture = GLTexture::New();
+    auto texture = GLTexture::Create();
 
     rtac::external::ImageCodec codec;
     auto img = codec.read_image(path, true);

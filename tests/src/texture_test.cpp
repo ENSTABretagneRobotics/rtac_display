@@ -73,7 +73,7 @@ std::vector<Point3<float>> image_data_rgbf(int width, int height)
 int main()
 {
     Display display;
-    auto renderer = display.create_renderer<ImageRenderer>(View::New());
+    auto renderer = display.create_renderer<ImageRenderer>(View::Create());
     
     unsigned int W = 4, H = 4;
     auto data0 = image_data(W,H);
@@ -81,7 +81,7 @@ int main()
     auto data2 = image_data_rgbf(W,H);
     GLVector<Point3<float>> data3(data2);
 
-    // auto tex0 = GLTexture::New();
+    // auto tex0 = GLTexture::Create();
     // //tex0->set_image({W,H}, data0.data());
     // //tex0->set_image({W,H}, data1.data());
     // //tex0->set_image({W,H}, data2.data());

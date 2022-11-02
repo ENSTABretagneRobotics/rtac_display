@@ -34,6 +34,7 @@ class ImageView : public View
     public:
 
     static Ptr New(const Shape& image = {1,1});
+    static Ptr Create(const Shape& image = {1,1});
 
     ImageView(const Shape& image = {1,1});
     

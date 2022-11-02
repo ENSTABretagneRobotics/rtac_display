@@ -47,6 +47,8 @@ class PinholeView : public View3D
     
     static Ptr New(float fovy = 90.0f, const Pose& pose = Pose(),
                    float zNear = 0.1f, float zFar = 1000.0f);
+    static Ptr Create(float fovy = 90.0f, const Pose& pose = Pose(),
+                      float zNear = 0.1f, float zFar = 1000.0f);
 
     PinholeView(float fovy = 90.0f, const Pose& pose = Pose(),
                 float zNear = 0.1f, float zFar = 1000.0f);

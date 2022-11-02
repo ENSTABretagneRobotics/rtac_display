@@ -15,6 +15,18 @@ ImageView::Ptr ImageView::New(const Shape& image)
 }
 
 /**
+ * Creates a new ImageView instance on the heap.
+ *
+ * @param image the size of the image to be displayed.
+ *
+ * @return a shared pointer to the newly created ImageView instance.
+ */
+ImageView::Ptr ImageView::Create(const Shape& image)
+{
+    return Ptr(new ImageView(image));
+}
+
+/**
  * Constructor of ImageView.
  *
  * @param image the size of the image to be displayed.
