@@ -62,7 +62,6 @@ class Display : public DrawingSurface
     Window       window_;
     Views        views_;
     Renderers    renderers_;
-    EventHandler eventHandler_;
     
     rtac::time::FrameCounter frameCounter_;
     bool displayFrameRate_;
