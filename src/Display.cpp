@@ -35,7 +35,7 @@ std::tuple<GLFWContext::Ptr, Display::Window, Display::Shape> Display::create_wi
 }
 
 Display::Display(const std::tuple<Context::Ptr, Window, Shape>& windowData) :
-    DrawingSurface(std::get<0>(windowData), std::get<2>(windowData)),
+    DrawingSurface(std::get<0>(windowData)),
     window_(std::get<1>(windowData)),
     displayFrameRate_(false)
 {

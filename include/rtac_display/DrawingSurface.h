@@ -67,11 +67,11 @@ class DrawingSurface : public Renderer
     Color::RGBAf clearColor_;
     Flags        displayFlags_;
 
-    DrawingSurface(const GLContext::Ptr& context, const Shape& shape);
+    DrawingSurface(const GLContext::Ptr& context);
 
     public:
 
-    static Ptr New(const GLContext::Ptr& context, const Shape& shape);
+    static Ptr New(const GLContext::Ptr& context);
 
     void add_view(const View::Ptr& view);
 
