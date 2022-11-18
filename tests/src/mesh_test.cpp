@@ -5,6 +5,8 @@
 using namespace std;
 
 #include <rtac_base/time.h>
+#include <rtac_base/files.h>
+#include <rtac_base/external/obj_codec.h>
 using FrameCounter = rtac::time::FrameCounter;
 
 #include <rtac_base/types/Pose.h>
@@ -19,20 +21,37 @@ using Mesh = rtac::types::Mesh<>;
 #include <rtac_display/renderers/Frame.h>
 using namespace rtac::display;
 
-int main()
+int main(int argc, char** argv)
 {
-    int W = 1920, H = 1080;
+    std::string filename = "";
+    if(argc > 1) {
+        filename = argv[1];
+    }
 
     samples::Display3D display;
     
     auto origin = display.create_renderer<Frame>(display.view());
 
-    auto meshRenderer = display.create_renderer<MeshRenderer>(display.view());
-    auto mesh = GLMesh::icosahedron();
-    mesh->compute_normals();
-    GL_CHECK_LAST();
-    meshRenderer->mesh() = mesh;
-    meshRenderer->set_color({1,1,0,1});
+    if(filename.size() == 0) {
+        auto meshRenderer = display.create_renderer<MeshRenderer>(display.view());
+        auto mesh = GLMesh::icosahedron();
+        mesh->compute_normals();
+        GL_CHECK_LAST();
+        meshRenderer->mesh() = mesh;
+        meshRenderer->set_color({1,1,0,1});
+    }
+    else {
+        rtac::external::ObjLoader parser(filename);
+        parser.load_geometry();
+        cout << parser << endl;
+        cout << "bounding box :\n" << parser.bounding_box() << endl;
+        for(const auto& m : parser.create_meshes<GLMesh>()) {
+            auto renderer = display.create_renderer<MeshRenderer>(display.view());
+            cout << *m.second << endl;
+            renderer->mesh() = m.second;
+            renderer->set_color({1,1,0,1});
+        }
+    }
 
     while(!display.should_close()) {
         display.draw();
