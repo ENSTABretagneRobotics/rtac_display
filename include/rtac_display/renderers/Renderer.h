@@ -1,7 +1,7 @@
 #ifndef _DEF_RTAC_DISPLAY_RENDER_H_
 #define _DEF_RTAC_DISPLAY_RENDER_H_
 
-#include <rtac_base/types/Handle.h>
+#include <memory>
 
 #include <rtac_display/utils.h>
 #include <rtac_display/GLContext.h>
@@ -27,8 +27,8 @@ class Renderer
 {
     public:
 
-    using Ptr      = rtac::Handle<Renderer>;
-    using ConstPtr = rtac::Handle<const Renderer>;
+    using Ptr      = std::shared_ptr<Renderer>;
+    using ConstPtr = std::shared_ptr<const Renderer>;
 
     static const std::string vertexShader;
     static const std::string fragmentShader;

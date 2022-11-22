@@ -1,12 +1,12 @@
 #ifndef _DEF_RTAC_DISPLAY_GLTEXTURE_H_
 #define _DEF_RTAC_DISPLAY_GLTEXTURE_H_
 
+#include <memory>
 #include <utility>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#include <rtac_base/types/Handle.h>
 #include <rtac_base/files.h>
 #include <rtac_base/external/ImageCodec.h>
 #ifdef RTAC_PNG
@@ -34,8 +34,8 @@ class GLTexture
 {
     public:
 
-    using Ptr      = rtac::Handle<GLTexture>;
-    using ConstPtr = rtac::Handle<const GLTexture>;
+    using Ptr      = std::shared_ptr<GLTexture>;
+    using ConstPtr = std::shared_ptr<const GLTexture>;
 
     enum WrapMode : GLint {
         Repeat        = GL_REPEAT,

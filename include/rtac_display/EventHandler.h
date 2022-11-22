@@ -1,10 +1,9 @@
 #ifndef _DEF_RTAC_DISPLAY_EVENT_HANDLER_H_
 #define _DEF_RTAC_DISPLAY_EVENT_HANDLER_H_
 
+#include <memory>
 #include <iostream>
 #include <iomanip>
-
-#include <rtac_base/types/Handle.h>
 
 #include <rtac_display/utils.h>
 
@@ -26,9 +25,9 @@ class EventHandler
 {
     public:
 
-    using Ptr      = rtac::Handle<EventHandler>;
-    using ConstPtr = rtac::Handle<const EventHandler>;
-    using Window   = rtac::Handle<GLFWwindow>;
+    using Ptr      = std::shared_ptr<EventHandler>;
+    using ConstPtr = std::shared_ptr<const EventHandler>;
+    using Window   = std::shared_ptr<GLFWwindow>;
 
     protected:
     

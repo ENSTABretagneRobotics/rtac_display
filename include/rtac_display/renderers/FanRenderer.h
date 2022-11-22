@@ -1,10 +1,10 @@
 #ifndef _DEF_RTAC_DISPLAY_FAN_RENDERER_H_
 #define _DEF_RTAC_DISPLAY_FAN_RENDERER_H_
 
+#include <memory>
 #include <iostream>
 #include <cmath>
 
-#include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Bounds.h>
 #include <rtac_base/types/Rectangle.h>
 #include <rtac_base/interpolation.h>
@@ -25,8 +25,8 @@ class FanRenderer : public Renderer
 {
     public:
 
-    using Ptr      = rtac::Handle<FanRenderer>;
-    using ConstPtr = rtac::Handle<const FanRenderer>;
+    using Ptr      = std::shared_ptr<FanRenderer>;
+    using ConstPtr = std::shared_ptr<const FanRenderer>;
 
     using Shape     = View::Shape;
     using Mat4      = View::Mat4;

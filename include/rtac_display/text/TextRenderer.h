@@ -1,6 +1,7 @@
 #ifndef _DEF_RTAC_DISPLAY_TEXT_RENDERER_H_
 #define _DEF_RTAC_DISPLAY_TEXT_RENDERER_H_
 
+#include <memory>
 #include <iostream>
 #include <stdexcept>
 #include <cmath>
@@ -18,8 +19,8 @@ class TextRenderer : public Renderer
 {
     public:
 
-    using Ptr      = rtac::Handle<TextRenderer>;
-    using ConstPtr = rtac::Handle<const TextRenderer>;
+    using Ptr      = std::shared_ptr<TextRenderer>;
+    using ConstPtr = std::shared_ptr<const TextRenderer>;
     using Mat4     = View::Mat4;
     using Vec2     = rtac::Vector2<float>;
     using Vec4     = rtac::Vector4<float>;

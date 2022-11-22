@@ -1,10 +1,9 @@
 #ifndef _DEF_RTAC_DISPLAY_GL_STATE_H_
 #define _DEF_RTAC_DISPLAY_GL_STATE_H_
 
+#include <memory>
 #include <cstring>
 #include <unordered_map>
-
-#include <rtac_base/types/Handle.h>
 
 #include <rtac_display/utils.h>
 #include <rtac_display/GLState.h>
@@ -30,8 +29,8 @@ class GLState
 {
     public:
 
-    using Ptr      = rtac::Handle<GLState>;
-    using ConstPtr = rtac::Handle<const GLState>;
+    using Ptr      = std::shared_ptr<GLState>;
+    using ConstPtr = std::shared_ptr<const GLState>;
     using StateMap = std::unordered_map<GLenum, bool>;
 
     protected:

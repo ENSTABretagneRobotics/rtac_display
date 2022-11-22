@@ -1,9 +1,9 @@
 #ifndef _DEF_RTAC_DISPLAY_DRAWING_SURFACE_H_
 #define _DEF_RTAC_DISPLAY_DRAWING_SURFACE_H_
 
+#include <memory>
 #include <utility>
 
-#include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Point.h>
 
 #include <rtac_display/GLContext.h>
@@ -27,8 +27,8 @@ class DrawingSurface : public Renderer
 {
     public :
 
-    using Ptr      = rtac::Handle<DrawingSurface>;
-    using ConstPtr = rtac::Handle<const DrawingSurface>;
+    using Ptr      = std::shared_ptr<DrawingSurface>;
+    using ConstPtr = std::shared_ptr<const DrawingSurface>;
 
     using Shape     = View::Shape;
     using Point2    = rtac::Point2<int>;

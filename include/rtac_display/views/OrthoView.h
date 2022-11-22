@@ -1,11 +1,11 @@
 #ifndef _DEF_RTAC_DISPLAY_ORTHO_VIEW_H_
 #define _DEF_RTAC_DISPLAY_ORTHO_VIEW_H_
 
+#include <memory>
 #include <iostream>
 #include <cmath>
 
 #include <rtac_base/types/Rectangle.h>
-#include <rtac_base/types/Handle.h>
 
 #include <rtac_display/views/View3D.h>
 
@@ -26,8 +26,8 @@ class OrthoView : public View3D
 {
     public:
 
-    using Ptr      = rtac::Handle<OrthoView>;
-    using ConstPtr = rtac::Handle<const OrthoView>;
+    using Ptr      = std::shared_ptr<OrthoView>;
+    using ConstPtr = std::shared_ptr<const OrthoView>;
 
     using Mat4    = View3D::Mat4;
     using Shape   = View3D::Mat4;

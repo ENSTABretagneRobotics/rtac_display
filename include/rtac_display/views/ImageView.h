@@ -2,8 +2,7 @@
 #define _DEF_RTAC_DISPLAY_IMAGE_VIEW_H_
 
 #include <iostream>
-
-#include <rtac_base/types/Handle.h>
+#include <memory>
 
 #include <rtac_display/views/View.h>
 
@@ -21,8 +20,8 @@ class ImageView : public View
 {
     public:
 
-    using Ptr      = rtac::Handle<ImageView>;
-    using ConstPtr = rtac::Handle<const ImageView>;
+    using Ptr      = std::shared_ptr<ImageView>;
+    using ConstPtr = std::shared_ptr<const ImageView>;
 
     using Mat4  = View::Mat4;
     using Shape = View::Shape;

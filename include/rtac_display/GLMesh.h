@@ -1,7 +1,8 @@
 #ifndef _DEF_RTAC_DISPLAY_GL_MESH_H_
 #define _DEF_RTAC_DISPLAY_GL_MESH_H_
 
-#include <rtac_base/types/Handle.h>
+#include <memory>
+
 #include <rtac_base/types/Point.h>
 #include <rtac_base/types/Mesh.h>
 #include <rtac_base/types/PointCloud.h>
@@ -16,8 +17,8 @@ class GLMesh
 {
     public:
 
-    using Ptr      = rtac::Handle<GLMesh>;
-    using ConstPtr = rtac::Handle<const GLMesh>;
+    using Ptr      = std::shared_ptr<GLMesh>;
+    using ConstPtr = std::shared_ptr<const GLMesh>;
 
     using Point    = rtac::Point3<float>;
     using Face     = rtac::Point3<uint32_t>;

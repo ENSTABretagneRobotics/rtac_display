@@ -6,7 +6,6 @@
 #include <GL/gl.h>
 
 #include <rtac_base/types/MappedPointer.h>
-#include <rtac_base/types/Handle.h>
 
 #ifdef RTAC_DISPLAY_CUDA // CUDA support is optional
     #include <cuda_runtime.h>
@@ -50,9 +49,6 @@ class GLVector
     using const_pointer   = const value_type*;
     using iterator        = pointer;
     using const_iterator  = const_pointer;
-
-    using Ptr      = rtac::Handle<GLVector<T>>;
-    using ConstPtr = rtac::Handle<const GLVector<T>>;
 
     protected:
 

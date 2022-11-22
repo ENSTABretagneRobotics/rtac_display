@@ -1,7 +1,7 @@
 #ifndef _DEF_RTAC_DISPLAY_IMAGE_RENDERER_H_
 #define _DEF_RTAC_DISPLAY_IMAGE_RENDERER_H_
 
-#include <rtac_base/types/Handle.h>
+#include <memory>
 
 #include <rtac_display/utils.h>
 #include <rtac_display/GLContext.h>
@@ -31,8 +31,8 @@ class ImageRenderer : public Renderer
 {
     public:
 
-    using Ptr      = rtac::Handle<ImageRenderer>;
-    using ConstPtr = rtac::Handle<const ImageRenderer>;
+    using Ptr      = std::shared_ptr<ImageRenderer>;
+    using ConstPtr = std::shared_ptr<const ImageRenderer>;
 
     using Mat4  = ImageView::Mat4;
     using Shape = ImageView::Shape;

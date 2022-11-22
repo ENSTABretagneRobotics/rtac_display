@@ -1,7 +1,7 @@
 #ifndef _DEF_RTAC_DISPLAY_GLFW_CONTEXT_H_
 #define _DEF_RTAC_DISPLAY_GLFW_CONTEXT_H_
 
-#include <rtac_base/types/Handle.h>
+#include <memory>
 
 #include <rtac_display/GLContext.h>
 
@@ -13,10 +13,10 @@ class GLFWContext : public GLContext
 {
     public:
 
-    using Ptr      = rtac::Handle<GLFWContext>;
-    using ConstPtr = rtac::Handle<const GLFWContext>;
+    using Ptr      = std::shared_ptr<GLFWContext>;
+    using ConstPtr = std::shared_ptr<const GLFWContext>;
 
-    using Window = rtac::Handle<GLFWwindow>;
+    using Window = std::shared_ptr<GLFWwindow>;
     
     protected:
 

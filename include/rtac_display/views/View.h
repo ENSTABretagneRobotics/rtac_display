@@ -2,11 +2,11 @@
 #define _DEF_RTAC_DISPLAY_VIEW_H_
 
 #include <iostream>
+#include <memory>
 
 #include <rtac_base/types/common.h>
 #include <rtac_base/types/Shape.h>
 #include <rtac_base/types/Point.h>
-#include <rtac_base/types/Handle.h>
 
 #include <rtac_display/utils.h>
 
@@ -48,8 +48,8 @@ class View
 {
     public:
 
-    using Ptr      = rtac::Handle<View>;
-    using ConstPtr = rtac::Handle<const View>;
+    using Ptr      = std::shared_ptr<View>;
+    using ConstPtr = std::shared_ptr<const View>;
 
     using Mat4   = rtac::Matrix4<float>;
     using Shape  = rtac::display::Shape;

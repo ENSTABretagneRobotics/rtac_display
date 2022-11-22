@@ -1,7 +1,8 @@
 #ifndef _DEF_RTAC_DISPLAY_SAMPLES_ORBIT_CONTROL_H_
 #define _DEF_RTAC_DISPLAY_SAMPLES_ORBIT_CONTROL_H_
 
-#include <rtac_base/types/Handle.h>
+#include <memory>
+
 #include <rtac_base/types/common.h>
 
 #include <rtac_display/EventHandler.h>
@@ -13,8 +14,8 @@ class OrbitControls : public EventHandler
 {
     public:
     
-    using Ptr           = rtac::Handle<OrbitControls>;
-    using ConstPtr      = rtac::Handle<const OrbitControls>;
+    using Ptr           = std::shared_ptr<OrbitControls>;
+    using ConstPtr      = std::shared_ptr<const OrbitControls>;
     using Vec3          = View3D::Vector3;
     using Pose          = View3D::Pose;
     using Mat3          = View3D::Pose::Mat3;

@@ -1,10 +1,9 @@
 #ifndef _DEF_RTAC_DISPLAY_PINHOLE_VIEW_H_
 #define _DEF_RTAC_DISPLAY_PINHOLE_VIEW_H_
 
+#include <memory>
 #include <iostream>
 #include <cmath>
-
-#include <rtac_base/types/Handle.h>
 
 #include <rtac_display/views/View3D.h>
 
@@ -28,8 +27,8 @@ class PinholeView : public View3D
 {
     public:
 
-    using Ptr      = rtac::Handle<PinholeView>;
-    using ConstPtr = rtac::Handle<const PinholeView>;
+    using Ptr      = std::shared_ptr<PinholeView>;
+    using ConstPtr = std::shared_ptr<const PinholeView>;
 
     using Mat4    = View3D::Mat4;
     using Shape   = View3D::Mat4;

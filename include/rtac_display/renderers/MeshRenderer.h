@@ -1,8 +1,9 @@
 #ifndef _DEF_RTAC_DISPLAY_MESH_RENDERER_H_
 #define _DEF_RTAC_DISPLAY_MESH_RENDERER_H_
 
+#include <memory>
+
 #include <rtac_base/types/common.h>
-#include <rtac_base/types/Handle.h>
 
 #include <rtac_display/GLContext.h>
 #include <rtac_display/Color.h>
@@ -17,8 +18,8 @@ class MeshRenderer : public Renderer
 {
     public:
 
-    using Ptr      = rtac::Handle<MeshRenderer>;
-    using ConstPtr = rtac::Handle<const MeshRenderer>;
+    using Ptr      = std::shared_ptr<MeshRenderer>;
+    using ConstPtr = std::shared_ptr<const MeshRenderer>;
     
     using Mat4  = View3D::Mat4;
     using Pose  = View3D::Pose;

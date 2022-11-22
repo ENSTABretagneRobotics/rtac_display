@@ -2,8 +2,8 @@
 #define _DEF_RTAC_DISPLAY_VIEW_3D_H_
 
 #include <iostream>
+#include <memory>
 
-#include <rtac_base/types/Handle.h>
 #include <rtac_base/types/Pose.h>
 #include <rtac_base/geometry.h>
 
@@ -25,8 +25,8 @@ class View3D : public View
 {
     public:
 
-    using Ptr      = rtac::Handle<View3D>;
-    using ConstPtr = rtac::Handle<const View3D>;
+    using Ptr      = std::shared_ptr<View3D>;
+    using ConstPtr = std::shared_ptr<const View3D>;
 
     using Mat4    = View::Mat4;
     using Shape   = View::Shape;

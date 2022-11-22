@@ -1,7 +1,7 @@
 #ifndef _DEF_RTAC_DISPLAY_GL_CONTEXT_H_
 #define _DEF_RTAC_DISPLAY_GL_CONTEXT_H_
 
-#include <rtac_base/types/Handle.h>
+#include <memory>
 
 #include <rtac_display/GLState.h>
 
@@ -16,8 +16,8 @@ class GLContext : public GLState
 {
     public:
 
-    using Ptr      = rtac::Handle<GLContext>;
-    using ConstPtr = rtac::Handle<const GLContext>;
+    using Ptr      = std::shared_ptr<GLContext>;
+    using ConstPtr = std::shared_ptr<const GLContext>;
 
     protected:
 

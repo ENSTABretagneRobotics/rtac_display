@@ -1,6 +1,8 @@
 #ifndef _DEF_RTAC_DISPLAY_RENDERERS_POINTCLOUD_RENDERER_H_
 #define _DEF_RTAC_DISPLAY_RENDERERS_POINTCLOUD_RENDERER_H_
 
+#include <memory>
+
 #include <rtac_display/GLMesh.h>
 #include <rtac_display/renderers/MeshRenderer.h>
 
@@ -10,8 +12,8 @@ class PointCloudRenderer : public MeshRenderer
 {
     public:
 
-    using Ptr      = rtac::Handle<PointCloudRenderer>;
-    using ConstPtr = rtac::Handle<const PointCloudRenderer>;
+    using Ptr      = std::shared_ptr<PointCloudRenderer>;
+    using ConstPtr = std::shared_ptr<const PointCloudRenderer>;
 
     protected:
 

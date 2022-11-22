@@ -1,6 +1,7 @@
 #ifndef _DEF_RTAC_DISPLAY_GL_REDUCTION_H_
 #define _DEF_RTAC_DISPLAY_GL_REDUCTION_H_
 
+#include <memory>
 #include <iostream>
 #include <unordered_map>
 #include <regex>
@@ -22,8 +23,8 @@ class GLReductor
 {
     public:
 
-    using Ptr      = rtac::Handle<GLReductor>;
-    using ConstPtr = rtac::Handle<const GLReductor>;
+    using Ptr      = std::shared_ptr<GLReductor>;
+    using ConstPtr = std::shared_ptr<const GLReductor>;
     
     static const std::string MainShader;
     static const std::string SumOperatorShader;

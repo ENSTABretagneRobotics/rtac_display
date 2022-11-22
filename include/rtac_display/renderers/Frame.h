@@ -1,7 +1,7 @@
 #ifndef _DEF_RTAC_DISPLAY_RENDERER_FRAME_H_
 #define _DEF_RTAC_DISPLAY_RENDERER_FRAME_H_
 
-#include <rtac_base/types/Handle.h>
+#include <memory>
 
 #include <rtac_display/utils.h>
 #include <rtac_display/GLContext.h>
@@ -18,8 +18,8 @@ class Frame : public Renderer
 {
     public:
 
-    using Ptr      = rtac::Handle<Frame>;
-    using ConstPtr = rtac::Handle<const Frame>;
+    using Ptr      = std::shared_ptr<Frame>;
+    using ConstPtr = std::shared_ptr<const Frame>;
 
     using Pose = View3D::Pose;
 

@@ -1,6 +1,7 @@
 #ifndef _DEF_RTAC_DISPLAY_COLORMAP_H_
 #define _DEF_RTAC_DISPLAY_COLORMAP_H_
 
+#include <memory>
 #include <vector>
 
 #include <rtac_display/Color.h>
@@ -12,8 +13,8 @@ class Colormap
 {
     public:
 
-    using Ptr      = rtac::Handle<Colormap>;
-    using ConstPtr = rtac::Handle<const Colormap>;
+    using Ptr      = std::shared_ptr<Colormap>;
+    using ConstPtr = std::shared_ptr<const Colormap>;
 
     protected:
 
