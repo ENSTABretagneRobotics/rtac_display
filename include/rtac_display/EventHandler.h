@@ -26,9 +26,9 @@ class EventHandler
 {
     public:
 
-    using Ptr      = rtac::types::Handle<EventHandler>;
-    using ConstPtr = rtac::types::Handle<const EventHandler>;
-    using Window   = rtac::types::Handle<GLFWwindow>;
+    using Ptr      = rtac::Handle<EventHandler>;
+    using ConstPtr = rtac::Handle<const EventHandler>;
+    using Window   = rtac::Handle<GLFWwindow>;
 
     protected:
     

@@ -48,13 +48,13 @@ class View
 {
     public:
 
-    using Ptr      = rtac::types::Handle<View>;
-    using ConstPtr = rtac::types::Handle<const View>;
+    using Ptr      = rtac::Handle<View>;
+    using ConstPtr = rtac::Handle<const View>;
 
-    using Mat4   = rtac::types::Matrix4<float>;
+    using Mat4   = rtac::Matrix4<float>;
     using Shape  = rtac::display::Shape;
-    using Point2 = rtac::types::Point2<float>;
-    using Point3 = rtac::types::Point3<float>;
+    using Point2 = rtac::Point2<float>;
+    using Point3 = rtac::Point3<float>;
 
     protected:
 

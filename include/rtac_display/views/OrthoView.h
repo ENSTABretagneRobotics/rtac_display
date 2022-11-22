@@ -26,14 +26,14 @@ class OrthoView : public View3D
 {
     public:
 
-    using Ptr      = rtac::types::Handle<OrthoView>;
-    using ConstPtr = rtac::types::Handle<const OrthoView>;
+    using Ptr      = rtac::Handle<OrthoView>;
+    using ConstPtr = rtac::Handle<const OrthoView>;
 
     using Mat4    = View3D::Mat4;
     using Shape   = View3D::Mat4;
     using Pose    = View3D::Pose;
     using Vector3 = View3D::Vector3;
-    using Bounds  = rtac::types::Rectangle<float>;
+    using Bounds  = rtac::Rectangle<float>;
 
     protected:
 

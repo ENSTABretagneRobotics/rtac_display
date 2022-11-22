@@ -2,7 +2,7 @@
 
 namespace rtac { namespace display {
 
-using namespace rtac::types::indexing;
+using namespace rtac::indexing;
 
 /**
  * Homogeneous transformation matrix from RTAC screen coordinates to OpenGL
@@ -16,7 +16,7 @@ const View3D::Mat4 View3D::viewFrameGL = (Mat4() << 1, 0, 0, 0,
 /**
  * Creates a new instance of View3D allocated on the heap
  *
- * @param pose       a rtac::types::Pose giving the position and the
+ * @param pose       a rtac::Pose giving the position and the
  *                   orientation of the point of view in 3D space (RTAC
  *                   convention). Default is pose at origin and back of screen
  *                   towards global y.
@@ -33,7 +33,7 @@ View3D::Ptr View3D::New(const Pose& pose, const Mat4& projection)
 /**
  * Creates a new instance of View3D allocated on the heap
  *
- * @param pose       a rtac::types::Pose giving the position and the
+ * @param pose       a rtac::Pose giving the position and the
  *                   orientation of the point of view in 3D space (RTAC
  *                   convention). Default is pose at origin and back of screen
  *                   towards global y.
@@ -50,7 +50,7 @@ View3D::Ptr View3D::Create(const Pose& pose, const Mat4& projection)
 /**
  * Constructor of View3D.
  *
- * @param pose       a rtac::types::Pose giving the position and the
+ * @param pose       a rtac::Pose giving the position and the
  *                   orientation of the point of view in 3D space (RTAC
  *                   convention). Default is pose at origin and back of screen
  *                   towards global y.
@@ -68,7 +68,7 @@ View3D::View3D(const Pose& pose, const Mat4& projection) :
  *
  * Does not change the projection matrix.
  * 
- * @param pose a rtac::types::Pose giving the position and the orientation of
+ * @param pose a rtac::Pose giving the position and the orientation of
  *             the point of view in 3D space (RTAC convention). Default is
  *             pose at origin and back of screen towards global y.
  */
@@ -120,7 +120,7 @@ View3D::Mat4 View3D::view_matrix() const
 }
 
 /**
- * @return a rtac::types::Pose representing the point of view position and
+ * @return a rtac::Pose representing the point of view position and
  *         orientation.
  */
 View3D::Pose View3D::pose() const

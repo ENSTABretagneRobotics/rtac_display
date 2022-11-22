@@ -61,7 +61,7 @@ void View::update_projection()
 /**
  * Called by a Display object when the display surface size changes.
  *
- * @param screen a rtac::types::Shape object containing the width and height
+ * @param screen a rtac::Shape object containing the width and height
  *               of the display area.
  */
 void View::set_screen_size(const Shape& screen)

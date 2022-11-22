@@ -27,8 +27,8 @@ class Renderer
 {
     public:
 
-    using Ptr      = rtac::types::Handle<Renderer>;
-    using ConstPtr = rtac::types::Handle<const Renderer>;
+    using Ptr      = rtac::Handle<Renderer>;
+    using ConstPtr = rtac::Handle<const Renderer>;
 
     static const std::string vertexShader;
     static const std::string fragmentShader;

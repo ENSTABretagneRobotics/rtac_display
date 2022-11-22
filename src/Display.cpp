@@ -306,7 +306,7 @@ void Display::scroll_callback(GLFWwindow* window, double x, double y)
  * @param callback Either a function pointer with the signature
  *                 (int,int,int,int) or an equivalent std::function (use a
  *                 std::function to bind a class method to an object with the
- *                 function std::bind. See rtac_base::types::CallbackQueue,
+ *                 function std::bind. See rtac_base::CallbackQueue,
  *                 or Display::add_event_handler for more information).
  */
 unsigned int Display::add_key_callback(const KeyCallbackT& callback)
@@ -331,7 +331,7 @@ unsigned int Display::add_key_callback(const KeyCallbackT& callback)
  * @param callback Either a function pointer with the signature (double,double)
  *                 or an equivalent std::function (use a std::function to bind
  *                 a class method to an object with the function std::bind. See
- *                 rtac_base::types::CallbackQueue, or
+ *                 rtac_base::CallbackQueue, or
  *                 Display::add_event_handler for more information).
  */
 unsigned int Display::add_mouse_position_callback(const MousePositionCallbackT& callback)
@@ -354,7 +354,7 @@ unsigned int Display::add_mouse_position_callback(const MousePositionCallbackT& 
  * @param callback Either a function pointer with the signature (int,int,int)
  *                 or an equivalent std::function (use a std::function to bind
  *                 a class method to an object with the function std::bind. See
- *                 rtac_base::types::CallbackQueue, or
+ *                 rtac_base::CallbackQueue, or
  *                 Display::add_event_handler for more information).
  */
 unsigned int Display::add_mouse_button_callback(const MouseButtonCallbackT& callback)
@@ -375,7 +375,7 @@ unsigned int Display::add_mouse_button_callback(const MouseButtonCallbackT& call
  * @param callback Either a function pointer with the signature (double,double)
  *                 or an equivalent std::function (use a std::function to bind
  *                 a class method to an object with the function std::bind. See
- *                 rtac_base::types::CallbackQueue, or
+ *                 rtac_base::CallbackQueue, or
  *                 Display::add_event_handler for more information).
  */
 unsigned int Display::add_scroll_callback(const ScrollCallbackT& callback)

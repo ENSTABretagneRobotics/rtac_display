@@ -18,7 +18,7 @@ int main()
     //int N = 10;
     for(int n = 0; n < N; n++) {
         frames->add_pose(Frame::Pose({0.0f,0.0f,0.0f},
-                         Frame::Pose::Quaternion(Eigen::AngleAxisf((2.0*M_PI*n)/N, Eigen::Vector3f::UnitZ()))) * base);
+                         Frame::Pose::Quat(Eigen::AngleAxisf((2.0*M_PI*n)/N, Eigen::Vector3f::UnitZ()))) * base);
     }
     
     while(!display.should_close()) {

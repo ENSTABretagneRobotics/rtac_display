@@ -19,20 +19,20 @@ namespace rtac { namespace display {
  * conventions (x to right of screen, y towards back of screen, z up) to OpenGL
  * 3D conventions (x towards right of screen, y towards up, z towards front of
  * screen). It also implements some helpers such as setting the point of view
- * from a rtac::types::Pose object and other geometrical helpers.
+ * from a rtac::Pose object and other geometrical helpers.
  */
 class View3D : public View
 {
     public:
 
-    using Ptr      = rtac::types::Handle<View3D>;
-    using ConstPtr = rtac::types::Handle<const View3D>;
+    using Ptr      = rtac::Handle<View3D>;
+    using ConstPtr = rtac::Handle<const View3D>;
 
     using Mat4    = View::Mat4;
     using Shape   = View::Shape;
-    using Pose    = rtac::types::Pose<float>;
-    using Vec3 = rtac::types::Vector3<float>;
-    using Vector3 = rtac::types::Vector3<float>;
+    using Pose    = rtac::Pose<float>;
+    using Vec3    = rtac::Vector3<float>;
+    using Vector3 = rtac::Vector3<float>;
 
     static const Mat4 viewFrameGL;
 

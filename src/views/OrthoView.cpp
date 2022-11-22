@@ -5,7 +5,7 @@ namespace rtac { namespace display {
 /**
  * Create a new instance of OrthoView on the heap.
  *
- * @param bounds a rtac::types::Rectangle object representing the left-right,
+ * @param bounds a rtac::Rectangle object representing the left-right,
  *               bottom-top clipping plane positions.
  * @param pose   3D position (translation and orientation) of the camera.
  * @param zNear  near clipping plane position (vertex below this distance to
@@ -25,7 +25,7 @@ OrthoView::Ptr OrthoView::New(const Bounds& bounds,
 /**
  * Create a new instance of OrthoView on the heap.
  *
- * @param bounds a rtac::types::Rectangle object representing the left-right,
+ * @param bounds a rtac::Rectangle object representing the left-right,
  *               bottom-top clipping plane positions.
  * @param pose   3D position (translation and orientation) of the camera.
  * @param zNear  near clipping plane position (vertex below this distance to
@@ -45,7 +45,7 @@ OrthoView::Ptr OrthoView::Create(const Bounds& bounds,
 /**
  * Constructor of OrthoView.
  *
- * @param bounds a rtac::types::Rectangle object representing the left-right,
+ * @param bounds a rtac::Rectangle object representing the left-right,
  *               bottom-top clipping plane positions.
  * @param pose   3D position (translation and orientation) of the camera.
  * @param zNear  near clipping plane position (vertex below this distance to
@@ -87,7 +87,7 @@ void OrthoView::update_projection()
 /**
  * Set the [left-right], [bottom-top] clipping planes.
  * 
- * @param bounds a rtac::types::Rectangle object representing the left-right,
+ * @param bounds a rtac::Rectangle object representing the left-right,
  *               bottom-top clipping plane positions.
  */
 void OrthoView::set_bounds(const Bounds& bounds)
@@ -112,7 +112,7 @@ void OrthoView::set_range(float zNear, float zFar)
 }
 
 /**
- * @return a rtac::types::Rectangle object representing the left-right,
+ * @return a rtac::Rectangle object representing the left-right,
  *         bottom-top clipping plane positions.
  */
 OrthoView::Bounds OrthoView::bounds() const

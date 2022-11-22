@@ -30,9 +30,9 @@ class Glyph
 
     protected:
     
-    types::Point2<float> bearing_;
-    types::Point2<float> advance_;
-    types::Point2<float> shape_;
+    rtac::Point2<float> bearing_;
+    rtac::Point2<float> advance_;
+    rtac::Point2<float> shape_;
     mutable GLTexture    texture_;
 
     GLuint renderProgramFlat_;
@@ -52,9 +52,9 @@ class Glyph
     Glyph(Glyph&& other);
     Glyph& operator=(Glyph&& other);
 
-    types::Point2<float> bearing() const;
-    types::Point2<float> advance() const;
-    types::Point2<float> shape()   const;
+    rtac::Point2<float> bearing() const;
+    rtac::Point2<float> advance() const;
+    rtac::Point2<float> shape()   const;
     const GLTexture&     texture() const;
 
     void draw(const Mat4& mat = Mat4::Identity(),

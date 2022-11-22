@@ -4,7 +4,7 @@ using namespace std;
 #include <rtac_display/GLSLType.h>
 using namespace rtac::display;
 
-using namespace rtac::types;
+using namespace rtac;
 
 int main()
 {

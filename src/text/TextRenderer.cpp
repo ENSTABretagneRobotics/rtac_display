@@ -160,7 +160,7 @@ void TextRenderer::update_texture()
 {
     Shape textArea = this->compute_text_area(text_);
     std::cout << "Text area size : " << textArea << std::endl;
-    texture_.resize<types::Point4<float>>(textArea);
+    texture_.resize<rtac::Point4<float>>(textArea);
     texture_.bind(GL_TEXTURE_2D);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

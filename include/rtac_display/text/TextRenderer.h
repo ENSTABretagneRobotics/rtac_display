@@ -18,11 +18,11 @@ class TextRenderer : public Renderer
 {
     public:
 
-    using Ptr      = rtac::types::Handle<TextRenderer>;
-    using ConstPtr = rtac::types::Handle<const TextRenderer>;
+    using Ptr      = rtac::Handle<TextRenderer>;
+    using ConstPtr = rtac::Handle<const TextRenderer>;
     using Mat4     = View::Mat4;
-    using Vec2     = types::Vector2<float>;
-    using Vec4     = types::Vector4<float>;
+    using Vec2     = rtac::Vector2<float>;
+    using Vec4     = rtac::Vector4<float>;
 
     static const std::string vertexShader;
     static const std::string fragmentShaderFlat;

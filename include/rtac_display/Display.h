@@ -47,10 +47,10 @@ class Display : public DrawingSurface
     using Views     = std::vector<View::Ptr>;
     using Renderers = std::vector<Renderer::Ptr>;
 
-    using KeyCallbacks           = rtac::types::CallbackQueue<int,int,int,int>;
-    using MousePositionCallbacks = rtac::types::CallbackQueue<double,double>;
-    using MouseButtonCallbacks   = rtac::types::CallbackQueue<int,int,int>;
-    using ScrollCallbacks        = rtac::types::CallbackQueue<double,double>;
+    using KeyCallbacks           = rtac::CallbackQueue<int,int,int,int>;
+    using MousePositionCallbacks = rtac::CallbackQueue<double,double>;
+    using MouseButtonCallbacks   = rtac::CallbackQueue<int,int,int>;
+    using ScrollCallbacks        = rtac::CallbackQueue<double,double>;
 
     using KeyCallbackT           = KeyCallbacks::CallbackT;
     using MousePositionCallbackT = MousePositionCallbacks::CallbackT;
@@ -101,9 +101,9 @@ class Display : public DrawingSurface
     
     virtual void draw();
     template <typename T, template<typename> class VectorT>
-    void take_screenshot(rtac::types::Image<T,VectorT>& output);
+    void take_screenshot(rtac::Image<T,VectorT>& output);
     //template <typename T>
-    //void take_screenshot<GLVector>(rtac::types::Image<T,GLVector>& output);
+    //void take_screenshot<GLVector>(rtac::Image<T,GLVector>& output);
 
     void enable_frame_counter();
     void disable_frame_counter();
@@ -125,7 +125,7 @@ class Display : public DrawingSurface
 };
 
 template <typename T, template<typename> class VectorT>
-void Display::take_screenshot(rtac::types::Image<T,VectorT>& output)
+void Display::take_screenshot(rtac::Image<T,VectorT>& output)
 {
     this->grab_context();
     auto shape = this->window_shape();
@@ -142,7 +142,7 @@ void Display::take_screenshot(rtac::types::Image<T,VectorT>& output)
 }
 
 //template <typename T>
-//void Display::take_screenshot<GLVector>(rtac::types::Image<T,GLVector>& output)
+//void Display::take_screenshot<GLVector>(rtac::Image<T,GLVector>& output)
 //{
 //    auto shape = this->window_shape();
 //    output.resize({shape.width  - this->viewportOrigin_.x,

@@ -158,12 +158,12 @@ Glyph& Glyph::operator=(Glyph&& other)
     return *this;
 }
 
-types::Point2<float> Glyph::bearing() const
+rtac::Point2<float> Glyph::bearing() const
 {
     return bearing_;
 }
 
-types::Point2<float> Glyph::advance() const
+rtac::Point2<float> Glyph::advance() const
 {
     return advance_;
 }
@@ -173,7 +173,7 @@ const GLTexture& Glyph::texture() const
     return texture_;
 }
 
-types::Point2<float> Glyph::shape() const
+rtac::Point2<float> Glyph::shape() const
 {
     return shape_;
 }
@@ -186,7 +186,7 @@ types::Point2<float> Glyph::shape() const
  */
 void Glyph::draw(const Mat4& view, const Color::RGBAf& color) const
 {
-    using Point2f = types::Point2<float>;
+    using Point2f = rtac::Point2<float>;
     //std::array<Point2f,4> points = {
     //    Point2f({bearing_.x,            bearing_.y - shape_.y}),
     //    Point2f({bearing_.x + shape_.x, bearing_.y - shape_.y}),

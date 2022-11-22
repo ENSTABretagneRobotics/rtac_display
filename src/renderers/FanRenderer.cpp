@@ -138,7 +138,7 @@ void FanRenderer::set_geometry_degrees(const Interval& angle, const Interval& ra
 
 void FanRenderer::set_geometry(Interval angle, const Interval& range)
 {
-    using Point2 = rtac::types::Point2<float>;
+    using Point2 = rtac::Point2<float>;
 
     // Normalizing angle bounds
     // (angle.lower in [-pi,pi] and angle.upper in ]angle.lower, angle.lower + 2pi])

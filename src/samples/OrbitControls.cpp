@@ -2,7 +2,7 @@
 
 namespace rtac { namespace display { namespace samples {
 
-using namespace rtac::types::indexing;
+using namespace rtac::indexing;
 
 OrbitControls::OrbitControls(const View3D::Ptr& view,
                              const Vec3& target,

@@ -5,9 +5,9 @@ using namespace std;
 #include <rtac_display/renderers/FanRenderer.h>
 using namespace rtac::display;
 
-using P4 = rtac::types::Point4<float>;
+using P4 = rtac::Point4<float>;
 
-GLTexture::Ptr create_texture(int W, int H)
+GLTexture::Ptr create_texture(unsigned int W, unsigned int H)
 {
     std::vector<float> data(W*H);
     for(int h = 0; h < H; h++) {

@@ -162,7 +162,7 @@ GLTexture::Ptr GLTexture::from_ppm(const std::string& path)
 
     files::read_ppm(path, Win, Hin, data); 
 
-    texture->set_image({Win, Hin}, (const rtac::types::Point3<unsigned char>*)data.data());
+    texture->set_image({Win, Hin}, (const rtac::Point3<unsigned char>*)data.data());
     return texture;
 }
 

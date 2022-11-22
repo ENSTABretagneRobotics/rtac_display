@@ -30,8 +30,8 @@ class GLState
 {
     public:
 
-    using Ptr      = rtac::types::Handle<GLState>;
-    using ConstPtr = rtac::types::Handle<const GLState>;
+    using Ptr      = rtac::Handle<GLState>;
+    using ConstPtr = rtac::Handle<const GLState>;
     using StateMap = std::unordered_map<GLenum, bool>;
 
     protected:

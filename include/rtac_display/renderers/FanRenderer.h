@@ -8,6 +8,7 @@
 #include <rtac_base/types/Bounds.h>
 #include <rtac_base/types/Rectangle.h>
 #include <rtac_base/interpolation.h>
+#include <rtac_base/types/SonarPing2D.h>
 
 #include <rtac_display/GLFormat.h>
 #include <rtac_display/GLVector.h>
@@ -24,15 +25,15 @@ class FanRenderer : public Renderer
 {
     public:
 
-    using Ptr      = rtac::types::Handle<FanRenderer>;
-    using ConstPtr = rtac::types::Handle<const FanRenderer>;
+    using Ptr      = rtac::Handle<FanRenderer>;
+    using ConstPtr = rtac::Handle<const FanRenderer>;
 
     using Shape     = View::Shape;
     using Mat4      = View::Mat4;
-    using Point2    = rtac::types::Point2<float>;
-    using Point4    = rtac::types::Point4<float>;
-    using Interval  = rtac::types::Bounds<float>;
-    using Rectangle = rtac::types::Rectangle<float>;
+    using Point2    = rtac::Point2<float>;
+    using Point4    = rtac::Point4<float>;
+    using Interval  = rtac::Bounds<float>;
+    using Rectangle = rtac::Rectangle<float>;
 
     using Interpolator = rtac::algorithm::Interpolator<float>;
 
@@ -96,7 +97,19 @@ class FanRenderer : public Renderer
 
     GLTexture::Ptr      texture()       { return data_; }
     GLTexture::ConstPtr texture() const { return data_; }
+
+    template <typename T, template<typename>class VectorT>
+    void set_ping(const rtac::SonarPing2D<T,VectorT>& ping);
 };
+
+template <typename T, template<typename>class VectorT>
+void FanRenderer::set_ping(const rtac::SonarPing2D<T,VectorT>& ping)
+{
+    this->set_bearings(ping.bearing_count(), ping.bearings().data());
+    this->set_range(ping.range_bounds());
+
+    data_->set_image({ping.width(), ping.height()}, ping.ping_data().data());
+}
 
 }; //namespace display
 }; //namespace rtac

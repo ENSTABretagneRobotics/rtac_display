@@ -20,8 +20,8 @@ class FrameInstances : public Renderer
 {
     public:
 
-    using Ptr      = rtac::types::Handle<FrameInstances>;
-    using ConstPtr = rtac::types::Handle<const FrameInstances>;
+    using Ptr      = rtac::Handle<FrameInstances>;
+    using ConstPtr = rtac::Handle<const FrameInstances>;
 
     using Pose = View3D::Pose;
 

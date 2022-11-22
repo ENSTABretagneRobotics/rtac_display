@@ -13,10 +13,10 @@ class GLFWContext : public GLContext
 {
     public:
 
-    using Ptr      = rtac::types::Handle<GLFWContext>;
-    using ConstPtr = rtac::types::Handle<const GLFWContext>;
+    using Ptr      = rtac::Handle<GLFWContext>;
+    using ConstPtr = rtac::Handle<const GLFWContext>;
 
-    using Window = rtac::types::Handle<GLFWwindow>;
+    using Window = rtac::Handle<GLFWwindow>;
     
     protected:
 

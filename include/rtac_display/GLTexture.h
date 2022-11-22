@@ -34,8 +34,8 @@ class GLTexture
 {
     public:
 
-    using Ptr      = rtac::types::Handle<GLTexture>;
-    using ConstPtr = rtac::types::Handle<const GLTexture>;
+    using Ptr      = rtac::Handle<GLTexture>;
+    using ConstPtr = rtac::Handle<const GLTexture>;
 
     enum WrapMode : GLint {
         Repeat        = GL_REPEAT,

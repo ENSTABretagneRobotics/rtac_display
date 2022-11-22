@@ -11,9 +11,9 @@ using FrameCounter = rtac::time::FrameCounter;
 
 #include <rtac_base/types/Pose.h>
 #include <rtac_base/types/Mesh.h>
-using Pose = rtac::types::Pose<float>;
-using Quaternion = rtac::types::Quaternion<float>;
-using Mesh = rtac::types::Mesh<>;
+using Pose = rtac::Pose<float>;
+using Quaternion = rtac::Quaternion<float>;
+using Mesh = rtac::Mesh<>;
 
 #include <rtac_display/samples/Display3D.h>
 #include <rtac_display/views/PinholeView.h>
@@ -49,6 +49,7 @@ int main(int argc, char** argv)
             auto renderer = display.create_renderer<MeshRenderer>(display.view());
             cout << *m.second << endl;
             renderer->mesh() = m.second;
+            cout << "- GLMesh::bounding_box :\n" << m.second->bounding_box() << endl;
             renderer->set_color({1,1,0,1});
         }
     }

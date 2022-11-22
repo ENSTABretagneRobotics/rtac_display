@@ -10,8 +10,8 @@ class PointCloudRenderer : public MeshRenderer
 {
     public:
 
-    using Ptr      = rtac::types::Handle<PointCloudRenderer>;
-    using ConstPtr = rtac::types::Handle<const PointCloudRenderer>;
+    using Ptr      = rtac::Handle<PointCloudRenderer>;
+    using ConstPtr = rtac::Handle<const PointCloudRenderer>;
 
     protected:
 

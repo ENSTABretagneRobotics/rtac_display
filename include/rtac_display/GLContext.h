@@ -16,8 +16,8 @@ class GLContext : public GLState
 {
     public:
 
-    using Ptr      = rtac::types::Handle<GLContext>;
-    using ConstPtr = rtac::types::Handle<const GLContext>;
+    using Ptr      = rtac::Handle<GLContext>;
+    using ConstPtr = rtac::Handle<const GLContext>;
 
     protected:
 

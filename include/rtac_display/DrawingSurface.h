@@ -27,11 +27,11 @@ class DrawingSurface : public Renderer
 {
     public :
 
-    using Ptr      = rtac::types::Handle<DrawingSurface>;
-    using ConstPtr = rtac::types::Handle<const DrawingSurface>;
+    using Ptr      = rtac::Handle<DrawingSurface>;
+    using ConstPtr = rtac::Handle<const DrawingSurface>;
 
     using Shape     = View::Shape;
-    using Point2    = types::Point2<int>;
+    using Point2    = rtac::Point2<int>;
     using Views     = std::vector<View::Ptr>;
     using Renderers = std::vector<Renderer::ConstPtr>;
 

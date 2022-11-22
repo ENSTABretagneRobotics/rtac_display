@@ -21,8 +21,8 @@ class ImageView : public View
 {
     public:
 
-    using Ptr      = rtac::types::Handle<ImageView>;
-    using ConstPtr = rtac::types::Handle<const ImageView>;
+    using Ptr      = rtac::Handle<ImageView>;
+    using ConstPtr = rtac::Handle<const ImageView>;
 
     using Mat4  = View::Mat4;
     using Shape = View::Shape;

@@ -44,8 +44,8 @@
 
 namespace rtac { namespace display {
 
-using Shape = rtac::types::Shape<size_t>;
-using Rect  = rtac::types::Rectangle<size_t>;
+using Shape = rtac::Shape<size_t>;
+using Rect  = rtac::Rectangle<size_t>;
 
 inline bool check_gl(const std::string& location = "")
 {

@@ -13,14 +13,14 @@ class OrbitControls : public EventHandler
 {
     public:
     
-    using Ptr           = rtac::types::Handle<OrbitControls>;
-    using ConstPtr      = rtac::types::Handle<const OrbitControls>;
+    using Ptr           = rtac::Handle<OrbitControls>;
+    using ConstPtr      = rtac::Handle<const OrbitControls>;
     using Vec3          = View3D::Vector3;
     using Pose          = View3D::Pose;
     using Mat3          = View3D::Pose::Mat3;
-    using Quaternion    = View3D::Pose::Quaternion;
+    using Quaternion    = View3D::Pose::Quat;
     using Mat4          = View3D::Mat4;
-    using MousePosition = rtac::types::Vector2<double>;
+    using MousePosition = rtac::Vector2<double>;
 
     protected:
     

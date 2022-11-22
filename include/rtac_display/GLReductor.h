@@ -22,8 +22,8 @@ class GLReductor
 {
     public:
 
-    using Ptr      = rtac::types::Handle<GLReductor>;
-    using ConstPtr = rtac::types::Handle<const GLReductor>;
+    using Ptr      = rtac::Handle<GLReductor>;
+    using ConstPtr = rtac::Handle<const GLReductor>;
     
     static const std::string MainShader;
     static const std::string SumOperatorShader;

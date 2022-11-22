@@ -17,8 +17,8 @@ class MeshRenderer : public Renderer
 {
     public:
 
-    using Ptr      = rtac::types::Handle<MeshRenderer>;
-    using ConstPtr = rtac::types::Handle<const MeshRenderer>;
+    using Ptr      = rtac::Handle<MeshRenderer>;
+    using ConstPtr = rtac::Handle<const MeshRenderer>;
     
     using Mat4  = View3D::Mat4;
     using Pose  = View3D::Pose;

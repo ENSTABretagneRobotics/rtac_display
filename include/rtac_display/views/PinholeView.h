@@ -28,8 +28,8 @@ class PinholeView : public View3D
 {
     public:
 
-    using Ptr      = rtac::types::Handle<PinholeView>;
-    using ConstPtr = rtac::types::Handle<const PinholeView>;
+    using Ptr      = rtac::Handle<PinholeView>;
+    using ConstPtr = rtac::Handle<const PinholeView>;
 
     using Mat4    = View3D::Mat4;
     using Shape   = View3D::Mat4;

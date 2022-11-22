@@ -31,8 +31,8 @@ class ImageRenderer : public Renderer
 {
     public:
 
-    using Ptr      = rtac::types::Handle<ImageRenderer>;
-    using ConstPtr = rtac::types::Handle<const ImageRenderer>;
+    using Ptr      = rtac::Handle<ImageRenderer>;
+    using ConstPtr = rtac::Handle<const ImageRenderer>;
 
     using Mat4  = ImageView::Mat4;
     using Shape = ImageView::Shape;

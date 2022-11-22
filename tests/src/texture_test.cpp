@@ -6,8 +6,8 @@ using namespace std;
 #include <rtac_base/files.h>
 #include <rtac_base/types/Point.h>
 template <typename T>
-using Point3 = rtac::types::Point3<T>;
-using namespace rtac;
+using Point3 = rtac::Point3<T>;
+//using namespace rtac;
 
 #include <rtac_display/Display.h>
 #include <rtac_display/GLTexture.h>
@@ -87,7 +87,7 @@ int main()
     // //tex0->set_image({W,H}, data2.data());
     // tex0->set_image({W,H}, data3);
 
-    auto path = files::find_one(".*mummy-orthoimage-halfResolution.ppm");
+    auto path = rtac::files::find_one(".*mummy-orthoimage-halfResolution.ppm");
     auto tex0 = GLTexture::from_ppm(path);
 
     //renderer->set_texture(tex0->shape(), tex0->gl_id());

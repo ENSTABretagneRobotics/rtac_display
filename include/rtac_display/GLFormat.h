@@ -100,7 +100,7 @@ struct GLFormat<float>
 };
 
 template<>
-struct GLFormat<types::Point2<float>>
+struct GLFormat<rtac::Point2<float>>
 {
     using Scalar = float;
 
@@ -112,7 +112,7 @@ struct GLFormat<types::Point2<float>>
 };
 
 template<>
-struct GLFormat<types::Point3<float>>
+struct GLFormat<rtac::Point3<float>>
 {
     using Scalar = float;
 
@@ -124,7 +124,7 @@ struct GLFormat<types::Point3<float>>
 };
 
 template<>
-struct GLFormat<types::Point4<float>>
+struct GLFormat<rtac::Point4<float>>
 {
     using Scalar = float;
 
@@ -148,7 +148,7 @@ struct GLFormat<int32_t>
 };
 
 template<>
-struct GLFormat<types::Point2<int32_t>>
+struct GLFormat<rtac::Point2<int32_t>>
 {
     using Scalar = int32_t;
 
@@ -160,7 +160,7 @@ struct GLFormat<types::Point2<int32_t>>
 };
 
 template<>
-struct GLFormat<types::Point3<int32_t>>
+struct GLFormat<rtac::Point3<int32_t>>
 {
     using Scalar = int32_t;
 
@@ -172,7 +172,7 @@ struct GLFormat<types::Point3<int32_t>>
 };
 
 template<>
-struct GLFormat<types::Point4<int32_t>>
+struct GLFormat<rtac::Point4<int32_t>>
 {
     using Scalar = int32_t;
 
@@ -196,7 +196,7 @@ struct GLFormat<uint32_t>
 };
 
 template<>
-struct GLFormat<types::Point2<uint32_t>>
+struct GLFormat<rtac::Point2<uint32_t>>
 {
     using Scalar = uint32_t;
 
@@ -208,7 +208,7 @@ struct GLFormat<types::Point2<uint32_t>>
 };
 
 template<>
-struct GLFormat<types::Point3<uint32_t>>
+struct GLFormat<rtac::Point3<uint32_t>>
 {
     using Scalar = uint32_t;
 
@@ -220,7 +220,7 @@ struct GLFormat<types::Point3<uint32_t>>
 };
 
 template<>
-struct GLFormat<types::Point4<uint32_t>>
+struct GLFormat<rtac::Point4<uint32_t>>
 {
     using Scalar = uint32_t;
 
@@ -244,7 +244,7 @@ struct GLFormat<char>
 };
 
 template<>
-struct GLFormat<types::Point2<char>>
+struct GLFormat<rtac::Point2<char>>
 {
     using Scalar = char;
 
@@ -256,7 +256,7 @@ struct GLFormat<types::Point2<char>>
 };
 
 template<>
-struct GLFormat<types::Point3<char>>
+struct GLFormat<rtac::Point3<char>>
 {
     using Scalar = char;
 
@@ -268,7 +268,7 @@ struct GLFormat<types::Point3<char>>
 };
 
 template<>
-struct GLFormat<types::Point4<char>>
+struct GLFormat<rtac::Point4<char>>
 {
     using Scalar = char;
 
@@ -293,7 +293,7 @@ struct GLFormat<unsigned char>
 };
 
 template<>
-struct GLFormat<types::Point2<unsigned char>>
+struct GLFormat<rtac::Point2<unsigned char>>
 {
     using Scalar = unsigned char;
 
@@ -306,7 +306,7 @@ struct GLFormat<types::Point2<unsigned char>>
 };
 
 template<>
-struct GLFormat<types::Point3<unsigned char>>
+struct GLFormat<rtac::Point3<unsigned char>>
 {
     using Scalar = unsigned char;
 
@@ -318,7 +318,7 @@ struct GLFormat<types::Point3<unsigned char>>
 };
 
 template<>
-struct GLFormat<types::Point4<unsigned char>>
+struct GLFormat<rtac::Point4<unsigned char>>
 {
     using Scalar = unsigned char;
 
@@ -341,7 +341,7 @@ struct GLFormat<types::Point4<unsigned char>>
 // };
 // 
 // template <>
-// struct GLFormat<types::Point2<double>>
+// struct GLFormat<rtac::Point2<double>>
 // {
 //     using Scalar = double;
 // 
@@ -351,7 +351,7 @@ struct GLFormat<types::Point4<unsigned char>>
 // };
 // 
 // template <>
-// struct GLFormat<types::Point3<double>>
+// struct GLFormat<rtac::Point3<double>>
 // {
 //     using Scalar = double;
 // 
@@ -361,7 +361,7 @@ struct GLFormat<types::Point4<unsigned char>>
 // };
 // 
 // template <>
-// struct GLFormat<types::Point4<double>>
+// struct GLFormat<rtac::Point4<double>>
 // {
 //     using Scalar = double;
 // 

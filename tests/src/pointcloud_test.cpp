@@ -8,9 +8,9 @@ using FrameCounter = rtac::time::FrameCounter;
 
 #include <rtac_base/types/Pose.h>
 #include <rtac_base/types/PointCloud.h>
-using Pose = rtac::types::Pose<float>;
-using Quaternion = rtac::types::Quaternion<float>;
-using PointCloud = rtac::types::PointCloud<>;
+using Pose = rtac::Pose<float>;
+using Quaternion = rtac::Quaternion<float>;
+using PointCloud = rtac::PointCloud<>;
 
 #include <rtac_display/Display.h>
 #include <rtac_display/views/PinholeView.h>

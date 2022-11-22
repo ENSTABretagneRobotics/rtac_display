@@ -78,5 +78,24 @@ void main()
 
 )");
 
+rtac::Bounds<float,3> GLMesh::bounding_box() const
+{
+    auto bbox = rtac::Bounds<float,3>::Zero();
+    if(points_.size() == 0) {
+        return bbox;
+    }
+
+    auto pointData = points_.map();
+    bbox[0].init(pointData[0].x);
+    bbox[1].init(pointData[0].y);
+    bbox[2].init(pointData[0].z);
+    for(unsigned int i = 1; i < points_.size(); i++) {
+        bbox[0].update(pointData[i].x);
+        bbox[1].update(pointData[i].y);
+        bbox[2].update(pointData[i].z);
+    }
+    return bbox;
+}
+
 }; //namespace display
 }; //namespace rtac

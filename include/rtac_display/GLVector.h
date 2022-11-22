@@ -51,8 +51,8 @@ class GLVector
     using iterator        = pointer;
     using const_iterator  = const_pointer;
 
-    using Ptr      = rtac::types::Handle<GLVector<T>>;
-    using ConstPtr = rtac::types::Handle<const GLVector<T>>;
+    using Ptr      = rtac::Handle<GLVector<T>>;
+    using ConstPtr = rtac::Handle<const GLVector<T>>;
 
     protected:
 
@@ -105,8 +105,8 @@ class GLVector
 
     public:
 
-    using MappedPointer      = rtac::types::MappedPointer<GLVector<T>>;
-    using ConstMappedPointer = rtac::types::MappedPointer<const GLVector<T>>;
+    using MappedPointer      = rtac::MappedPointer<GLVector<T>>;
+    using ConstMappedPointer = rtac::MappedPointer<const GLVector<T>>;
 
     MappedPointer      map(bool writeOnly = false);
     ConstMappedPointer map() const;

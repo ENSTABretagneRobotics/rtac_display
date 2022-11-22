@@ -9,9 +9,9 @@ using FrameCounter = rtac::time::FrameCounter;
 
 #include <rtac_base/types/Pose.h>
 #include <rtac_base/types/Mesh.h>
-using Pose = rtac::types::Pose<float>;
-using Quaternion = rtac::types::Quaternion<float>;
-using Mesh = rtac::types::Mesh<>;
+using Pose = rtac::Pose<float>;
+using Quaternion = rtac::Quaternion<float>;
+using Mesh = rtac::Mesh<>;
 
 #include <rtac_display/samples/Display3D.h>
 #include <rtac_display/renderers/Frame.h>

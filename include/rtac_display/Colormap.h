@@ -12,8 +12,8 @@ class Colormap
 {
     public:
 
-    using Ptr      = rtac::types::Handle<Colormap>;
-    using ConstPtr = rtac::types::Handle<const Colormap>;
+    using Ptr      = rtac::Handle<Colormap>;
+    using ConstPtr = rtac::Handle<const Colormap>;
 
     protected:
 
