@@ -150,6 +150,7 @@ MeshRenderer::MeshRenderer(const GLContext::Ptr& context,
                            const Color::RGBAf& color) :
     Renderer(context, vertexShaderSolid, fragmentShaderSolid),
     mesh_(GLMesh::Create()),
+    pose_(Pose::Identity()),
     color_(color),
     renderMode_(Mode::TexturedNormal),
     solidRender_(this->renderProgram_),

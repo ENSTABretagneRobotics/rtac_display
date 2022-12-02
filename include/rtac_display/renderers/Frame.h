@@ -28,15 +28,15 @@ class Frame : public Renderer
 
     protected:
 
-    View3D::Pose pose_;
+    Pose pose_;
 
     Frame(const GLContext::Ptr& context,
-          const View3D::Pose& pose = View3D::Pose());
+          const View3D::Pose& pose = Pose::Identity());
     
     public:
 
     static Ptr Create(const GLContext::Ptr& context,
-                      const View3D::Pose& pose = View3D::Pose());
+                      const View3D::Pose& pose = Pose::Identity());
 
     void set_pose(const View3D::Pose& pose);
 

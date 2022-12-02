@@ -35,12 +35,12 @@ class FrameInstances : public Renderer
     mutable GLVector<Pose::Mat4> deviceData_;
 
     FrameInstances(const GLContext::Ptr& context,
-                   const View3D::Pose& pose = View3D::Pose());
+                   const Pose& pose = Pose::Identity());
 
     public:
 
     static Ptr Create(const GLContext::Ptr& context,
-                      const View3D::Pose& pose = View3D::Pose());
+                      const Pose& pose = Pose::Identity());
 
     void set_global_pose(const Pose& pose) { globalPose_ = pose; }
     void add_pose(const Pose& pose) { poses_.push_back(pose.homogeneous_matrix()); }

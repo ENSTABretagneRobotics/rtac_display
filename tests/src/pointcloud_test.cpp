@@ -61,11 +61,11 @@ int main()
     *mesh = pc;
     pcRenderer->mesh() = mesh;
     pcRenderer->set_render_mode(MeshRenderer::Mode::Points);
-    pcRenderer->set_pose(Pose({0,2,0}));
+    pcRenderer->set_pose(Pose::from_translation(Pose::Vec3({0,2,0})));
 
 
     float dangle = 0.01;
-    Pose R({0.0,0.0,0.0}, Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));
+    auto R = Pose::from_quaternion(Quaternion({cos(dangle/2), 0.0, 0.0, sin(dangle/2)}));
     
     FrameCounter counter;
     while(!display.should_close()) {

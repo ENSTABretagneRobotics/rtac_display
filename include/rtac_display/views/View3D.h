@@ -42,10 +42,10 @@ class View3D : public View
 
     public:
     
-    static Ptr New(const Pose& pose = Pose(), const Mat4& projection = Mat4::Identity());
-    static Ptr Create(const Pose& pose = Pose(), const Mat4& projection = Mat4::Identity());
+    static Ptr New(const Pose& pose = Pose::Identity(), const Mat4& projection = Mat4::Identity());
+    static Ptr Create(const Pose& pose = Pose::Identity(), const Mat4& projection = Mat4::Identity());
 
-    View3D(const Pose& pose = Pose(), const Mat4& projection = Mat4::Identity());
+    View3D(const Pose& pose = Pose::Identity(), const Mat4& projection = Mat4::Identity());
 
     void set_pose(const Pose& pose);
     void look_at(const Vector3& target);

@@ -44,12 +44,12 @@ class PinholeView : public View3D
 
     public:
     
-    static Ptr New(float fovy = 90.0f, const Pose& pose = Pose(),
+    static Ptr New(float fovy = 90.0f, const Pose& pose = Pose::Identity(),
                    float zNear = 0.1f, float zFar = 1000.0f);
-    static Ptr Create(float fovy = 90.0f, const Pose& pose = Pose(),
+    static Ptr Create(float fovy = 90.0f, const Pose& pose = Pose::Identity(),
                       float zNear = 0.1f, float zFar = 1000.0f);
 
-    PinholeView(float fovy = 90.0f, const Pose& pose = Pose(),
+    PinholeView(float fovy = 90.0f, const Pose& pose = Pose::Identity(),
                 float zNear = 0.1f, float zFar = 1000.0f);
 
     void set_fovy(float fovy);

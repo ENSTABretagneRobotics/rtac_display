@@ -45,14 +45,14 @@ class OrthoView : public View3D
     public:
     
     static Ptr New(const Bounds& bounds = Bounds({-1,1,-1,1}),
-                   const Pose& pose = Pose(),
+                   const Pose& pose = Pose::Identity(),
                    float zNear = 0.1f, float zFar = 1000.0f);
     static Ptr Create(const Bounds& bounds = Bounds({-1,1,-1,1}),
-                      const Pose& pose = Pose(),
+                      const Pose& pose = Pose::Identity(),
                       float zNear = 0.1f, float zFar = 1000.0f);
 
     OrthoView(const Bounds& bounds = Bounds({-1,1,-1,1}),
-              const Pose& pose = Pose(),
+              const Pose& pose = Pose::Identity(),
               float zNear = 0.1f, float zFar = 1000.0f);
 
     void set_bounds(const Bounds& bounds);

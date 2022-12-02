@@ -16,7 +16,7 @@ int main()
     display0.enable_frame_counter();
     display0.view()->look_at({0,0,0}, {5,4,3});
     
-    auto renderer = display0.create_renderer<Frame>(display0.view(), Frame::Pose());
+    auto renderer = display0.create_renderer<Frame>(display0.view(), Frame::Pose::Identity());
 
     //samples::Display3D display1; // this is not working (as expected)
     samples::Display3D display1(display0.context());
