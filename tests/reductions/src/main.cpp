@@ -9,8 +9,8 @@ using namespace rtac::time;
 using namespace rtac::display;
 
 #include <rtac_base/cuda/DeviceVector.h>
-#include <rtac_base/cuda/HostVector.h>
 using namespace rtac::cuda;
+using namespace rtac;
 
 #include "reductions.h"
 

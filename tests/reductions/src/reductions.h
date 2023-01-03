@@ -5,7 +5,6 @@
 #include <rtac_display/GLVector.h>
 
 #include <rtac_base/cuda/DeviceVector.h>
-#include <rtac_base/cuda/HostVector.h>
 
 namespace rtac { namespace display {
 

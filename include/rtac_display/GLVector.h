@@ -5,13 +5,13 @@
 //#define GL3_PROTOTYPES 1
 #include <GL/gl.h>
 
+#include <rtac_base/types/HostVector.h>
 #include <rtac_base/types/MappedPointer.h>
 
-#ifdef RTAC_DISPLAY_CUDA // CUDA support is optional
+#ifdef RTAC_CUDA_ENABLED // CUDA support is optional
     #include <cuda_runtime.h>
     #include <cuda_gl_interop.h>
     #include <rtac_base/cuda/DeviceVector.h>
-    #include <rtac_base/cuda/HostVector.h>
 #endif
 
 #include <rtac_display/utils.h>
@@ -66,11 +66,13 @@ class GLVector
     GLVector(const GLVector<T>& other);
     GLVector(GLVector<T>&& other);
     GLVector(const std::vector<T>& other);
+    GLVector(const rtac::HostVector<T>& other);
     ~GLVector();
     
     GLVector& operator=(const GLVector<T>& other);
     GLVector& operator=(GLVector<T>&& other);
     GLVector& operator=(const std::vector<T>& other);
+    GLVector& operator=(const rtac::HostVector<T>& other);
     void set_data(unsigned int size, const T* data);
     
     template <template <typename> class VectorT>
@@ -108,7 +110,7 @@ class GLVector
     ConstMappedPointer map() const;
     void               unmap() const;
     
-    #ifdef RTAC_DISPLAY_CUDA
+    #ifdef RTAC_CUDA_ENABLED
     // Mapping Functions for device CUDA access (GPU-CUDA) to device data
     // (GPU-OpenGL).
     protected:
@@ -127,10 +129,8 @@ class GLVector
     
     // CUDA helpers
     GLVector(const rtac::cuda::DeviceVector<T>& other);
-    GLVector(const rtac::cuda::HostVector<T>& other);
 
     GLVector& operator=(const rtac::cuda::DeviceVector<T>& other);
-    GLVector& operator=(const rtac::cuda::HostVector<T>& other);
     void set_device_data(unsigned int size, const T* data);
 
     rtac::cuda::DeviceVector<T>& to_device_vector(rtac::cuda::DeviceVector<T>& other) const;
@@ -152,7 +152,7 @@ GLVector<T>::GLVector() :
     size_(0),
     mappedPtr_(nullptr)
    
-#ifdef RTAC_DISPLAY_CUDA
+#ifdef RTAC_CUDA_ENABLED
     ,
     cudaResource_(nullptr),
     cudaDevicePtr_(nullptr)
@@ -213,6 +213,21 @@ GLVector<T>::GLVector(GLVector<T>&& other) :
  */
 template <typename T>
 GLVector<T>::GLVector(const std::vector<T>& other) :
+    GLVector(other.size())
+{
+    *this = other;
+}
+
+/**
+ * Instanciate a new GLVector, allocate data on the device and copy data from
+ * a rtac::cuda::HostVector. Copy happen from the host to the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param other HostVector to be copied.
+ */
+template <typename T>
+GLVector<T>::GLVector(const rtac::HostVector<T>& other) :
     GLVector(other.size())
 {
     *this = other;
@@ -283,6 +298,30 @@ template <typename T>
 GLVector<T>& GLVector<T>::operator=(const std::vector<T>& other)
 {
     this->set_data(other.size(), other.data());
+    return *this;
+}
+
+/**
+ * Reallocate data if needed and copy from a rtac::cuda::HostVector. Copy
+ * happen from the host to the device.
+ *
+ * An OpenGL context must have been created beforehand.
+ *
+ * @param other HostVector to be copied.
+ *
+ * @return A reference to this instance.
+ */
+template <typename T>
+GLVector<T>& GLVector<T>::operator=(const rtac::HostVector<T>& other)
+{
+    if(other.size() == 0) return *this;
+
+    this->resize(other.size());
+    this->bind(GL_ARRAY_BUFFER);
+    
+    glBufferSubData(GL_ARRAY_BUFFER, 0, this->size()*sizeof(T), other.data());
+
+    this->unbind(GL_ARRAY_BUFFER);
     return *this;
 }
 
@@ -581,7 +620,7 @@ void GLVector<T>::unmap() const
 }
 
 // BELOW HERE ARE CUDA SPECIFIC FUNCTIONALITIES
-#ifdef RTAC_DISPLAY_CUDA
+#ifdef RTAC_CUDA_ENABLED
 /**
  * Map device memory of the GLVector to a read-only CUDA device pointer.
  *
@@ -736,21 +775,6 @@ GLVector<T>::GLVector(const rtac::cuda::DeviceVector<T>& other) :
 }
 
 /**
- * Instanciate a new GLVector, allocate data on the device and copy data from
- * a rtac::cuda::HostVector. Copy happen from the host to the device.
- *
- * An OpenGL context must have been created beforehand.
- *
- * @param other HostVector to be copied.
- */
-template <typename T>
-GLVector<T>::GLVector(const rtac::cuda::HostVector<T>& other) :
-    GLVector(other.size())
-{
-    *this = other;
-}
-
-/**
  * Reallocate data if needed and copy from a rtac::cuda::DeviceVector. Copy
  * happen solely on the device.
  *
@@ -769,30 +793,6 @@ GLVector<T>& GLVector<T>::operator=(const rtac::cuda::DeviceVector<T>& other)
     auto devicePtr = this->map_cuda();
     CUDA_CHECK( cudaMemcpy(devicePtr, other.data(), this->size()*sizeof(T),
                            cudaMemcpyDeviceToDevice) );
-    return *this;
-}
-
-/**
- * Reallocate data if needed and copy from a rtac::cuda::HostVector. Copy
- * happen from the host to the device.
- *
- * An OpenGL context must have been created beforehand.
- *
- * @param other HostVector to be copied.
- *
- * @return A reference to this instance.
- */
-template <typename T>
-GLVector<T>& GLVector<T>::operator=(const rtac::cuda::HostVector<T>& other)
-{
-    if(other.size() == 0) return *this;
-
-    this->resize(other.size());
-    this->bind(GL_ARRAY_BUFFER);
-    
-    glBufferSubData(GL_ARRAY_BUFFER, 0, this->size()*sizeof(T), other.data());
-
-    this->unbind(GL_ARRAY_BUFFER);
     return *this;
 }
 
