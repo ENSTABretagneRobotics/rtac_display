@@ -137,7 +137,7 @@ void Display::take_screenshot(rtac::Image<T,VectorT>& output)
                  shape.width, shape.height,
                  GLFormat<T>::PixelFormat,
                  GLFormat<T>::Type,
-                 output.data().data());
+                 output.data());
     GL_CHECK_LAST();
 }
 

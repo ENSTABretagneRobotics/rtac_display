@@ -330,6 +330,7 @@ struct GLFormat<rtac::Point4<unsigned char>>
     static constexpr GLenum InternalFormat = GL_RGBA;
 };
 
+
 // template <>
 // struct GLFormat<double>
 // {
@@ -372,5 +373,51 @@ struct GLFormat<rtac::Point4<unsigned char>>
 
 }; //namespace display
 }; //namespace rtac
+
+#ifdef RTAC_CUDA_ENABLED
+
+#include <rtac_base/cuda/utils.h>
+
+namespace rtac { namespace display {
+
+template<>
+struct GLFormat<float2>
+{
+    using Scalar = float;
+
+    static constexpr unsigned int Size  = 2;
+    static constexpr GLenum PixelFormat = GL_RG;
+    static constexpr GLenum Type        = GL_FLOAT;
+
+    static constexpr GLenum InternalFormat = GL_RG32F;
+};
+
+template<>
+struct GLFormat<float3>
+{
+    using Scalar = float;
+
+    static constexpr unsigned int Size  = 3;
+    static constexpr GLenum PixelFormat = GL_RGB;
+    static constexpr GLenum Type        = GL_FLOAT;
+
+    static constexpr GLenum InternalFormat = GL_RGB32F;
+};
+
+template<>
+struct GLFormat<float4>
+{
+    using Scalar = float;
+
+    static constexpr unsigned int Size  = 4;
+    static constexpr GLenum PixelFormat = GL_RGBA;
+    static constexpr GLenum Type        = GL_FLOAT;
+
+    static constexpr GLenum InternalFormat = GL_RGBA32F;
+};
+#endif //RTAC_DISPLAY_CUDA
+
+} //namespace display
+} //namespace rtac
 
 #endif //_DEF_RTAC_DISPLAY_GL_FORMAT_H_
