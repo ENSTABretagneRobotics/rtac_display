@@ -30,9 +30,8 @@ int main()
     clock.reset();
     for(int n = 0; n < N; n++) {
         sum(glData);
-        glData.copy_to(glDump);
+        glDump = glData;
     }
-    //glData.copy_to(glDump);
     tGl = clock.now();
    
     GLReductor reductor;
@@ -43,9 +42,8 @@ int main()
     for(int n = 0; n < N; n++) {
         //reductor.reduce(glData2, p);
         GLReductor::reduce_in_place(glData2, p);
-        glData2.copy_to(glDump2);
+        glDump2 = glData2;
     }
-    //glData2.copy_to(glDump2);
     tGl2 = clock.now();
     
     DeviceVector<float> cudaData(data);

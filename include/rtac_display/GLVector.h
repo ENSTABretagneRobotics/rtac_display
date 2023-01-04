@@ -5,7 +5,7 @@
 //#define GL3_PROTOTYPES 1
 #include <GL/gl.h>
 
-#include <rtac_base/types/HostVector.h>
+#include <rtac_base/containers/HostVector.h>
 #include <rtac_base/types/MappedPointer.h>
 
 #ifdef RTAC_CUDA_ENABLED // CUDA support is optional
@@ -75,9 +75,7 @@ class GLVector
     GLVector& operator=(const rtac::HostVector<T>& other);
     void set_data(unsigned int size, const T* data);
     
-    template <template <typename> class VectorT>
-    void copy_to(VectorT<T>& other) const;
-    void copy_to(T* dst) const;
+    void copy_to_host(T* dst) const;
 
     void resize(size_t size);
     size_t size() const;
@@ -131,7 +129,8 @@ class GLVector
     GLVector(const rtac::cuda::DeviceVector<T>& other);
 
     GLVector& operator=(const rtac::cuda::DeviceVector<T>& other);
-    void set_device_data(unsigned int size, const T* data);
+    void copy_from_cuda(unsigned int size, const T* data);
+    void copy_to_cuda(T* dst) const;
 
     rtac::cuda::DeviceVector<T>& to_device_vector(rtac::cuda::DeviceVector<T>& other) const;
     rtac::cuda::DeviceVector<T>  to_device_vector() const;
@@ -348,22 +347,10 @@ void GLVector<T>::set_data(unsigned int size, const T* data)
 /**
  * Copy data to client memory (host memory in CUDA terminology)
  *
- * @param other a std::vector compliant container.
- */
-template <typename T> template <template <typename> class VectorT>
-void GLVector<T>::copy_to(VectorT<T>& other) const
-{
-    other.resize(this->size());
-    this->copy_to(other.data());
-}
-
-/**
- * Copy data to client memory (host memory in CUDA terminology)
- *
  * @param dst client size memory buffer already allocated.
  */
 template <typename T>
-void GLVector<T>::copy_to(T* dst) const
+void GLVector<T>::copy_to_host(T* dst) const
 {
     if(this->size() == 0) return;
 
@@ -787,12 +774,7 @@ GLVector<T>::GLVector(const rtac::cuda::DeviceVector<T>& other) :
 template <typename T>
 GLVector<T>& GLVector<T>::operator=(const rtac::cuda::DeviceVector<T>& other)
 {
-    if(other.size() == 0) return *this;
-
-    this->resize(other.size());
-    auto devicePtr = this->map_cuda();
-    CUDA_CHECK( cudaMemcpy(devicePtr, other.data(), this->size()*sizeof(T),
-                           cudaMemcpyDeviceToDevice) );
+    this->copy_from_cuda(other.size(), other.data());
     return *this;
 }
 
@@ -807,13 +789,25 @@ GLVector<T>& GLVector<T>::operator=(const rtac::cuda::DeviceVector<T>& other)
  * @return A reference to this instance.
  */
 template <typename T>
-void GLVector<T>::set_device_data(unsigned int size, const T* data)
+void GLVector<T>::copy_from_cuda(unsigned int size, const T* data)
 {
     if(size == 0) return;
 
     this->resize(size);
     auto devicePtr = this->map_cuda();
     CUDA_CHECK( cudaMemcpy(devicePtr, data, this->size()*sizeof(T),
+                           cudaMemcpyDeviceToDevice) );
+}
+
+/**
+ * Copy GLVector content to a cuda device memory location. Copy happens on the
+ * device.
+ */
+template <typename T>
+void GLVector<T>::copy_to_cuda(T* dst) const
+{
+    auto devicePtr = this->map_cuda();
+    CUDA_CHECK( cudaMemcpy(dst, devicePtr, this->size()*sizeof(T),
                            cudaMemcpyDeviceToDevice) );
 }
 
@@ -832,9 +826,8 @@ GLVector<T>::to_device_vector(rtac::cuda::DeviceVector<T>& other) const
     if(this->size() == 0) return other;
 
     other.resize(this->size());
-    auto devicePtr = this->map_cuda();
-    CUDA_CHECK( cudaMemcpy(other.data(), devicePtr, other.size()*sizeof(T),
-                           cudaMemcpyDeviceToDevice) );
+    this->copy_to_cuda(other.data());
+
     return other;
 }
 

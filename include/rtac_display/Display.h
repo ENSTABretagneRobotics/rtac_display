@@ -10,7 +10,7 @@
 
 #include <rtac_base/time.h>
 #include <rtac_base/types/CallbackQueue.h>
-#include <rtac_base/types/Image.h>
+#include <rtac_base/containers/Image.h>
 
 #include <rtac_display/utils.h>
 #include <rtac_display/GLFWContext.h>
