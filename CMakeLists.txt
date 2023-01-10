@@ -3,6 +3,7 @@ project(rtac_display VERSION 0.1)
 
 option(WITH_CUDA "enable cuda related code" ON)
 option(BUILD_TESTS "Build unit tests" ON)
+option(BUILD_DOCS  "Builds Doxygen documentation" OFF)
 
 if(${WITH_CUDA})
     enable_language(CUDA)
@@ -143,6 +144,10 @@ endif()
 
 if(BUILD_TESTS)
     add_subdirectory(tests)
+endif()
+
+if(BUILD_DOCS)
+    rtac_build_docs(rtac_display)
 endif()
 
 rtac_install_target(rtac_display
