@@ -12,7 +12,7 @@ using namespace rtac::display;
 
 int main()
 {
-    auto path = files::find_one(".*models3d/pyramide2_test01");
+    auto path = files::find_one(".*models3d/pyramide2_test01/.*obj");
     external::ObjLoader parser(path);
 
     parser.load_geometry();

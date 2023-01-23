@@ -1,14 +1,12 @@
 
 
+
 find_package(CLI11)
 if(TARGET CLI11::CLI11)
-    add_executable(rtac_ply_viewer
-        src/ply_viewer.cpp
+    add_executable(rtac_obj_viewer
+        src/obj_viewer.cpp
     )
-    target_link_libraries(rtac_ply_viewer PRIVATE
-        rtac_display
-        CLI11::CLI11
-    )
+    target_link_libraries(rtac_obj_viewer PRIVATE rtac_display)
 else()
-    message(WARNING "Could not find CLI11 library. rtac_ply_viewer won't be built.")
+    message(WARNING "Could not find CLI11 library. rtac_obj_viewer won't be built.")
 endif()
