@@ -89,8 +89,8 @@ class GLTexture
     void set_image(const Shape& shape, const T* data);
     template <typename T>
     void set_image(const Shape& shape, const GLVector<T>& data);
-    template <typename T>
-    void set_image(const Rect& shape, const GLVector<T>& data);
+    //template <typename T>
+    //void set_image(const Rect& shape, const GLVector<T>& data);
 
     void bind(GLenum target = GL_TEXTURE_2D);
     void unbind(GLenum target = GL_TEXTURE_2D);
@@ -233,39 +233,39 @@ void GLTexture::set_image(const Shape& shape, const GLVector<T>& data)
     shape_ = shape;
 }
 
-/**
- * Set part of texture image data from an OpenGL Buffer Object.
- * If texture is not big enough a std::out_of_range is thrown.
- *
- * The texture format is infered using the template type **T** and a template
- * specialization of rtac::display::GLFormat. See rtac::display::GLformat
- * documentation for more information.
- *
- * @param rect Dimensions of the texture {left,right,bottom,top}.
- * @param data  GLVector containing the pixel data.
- */
-template <typename T>
-void GLTexture::set_image(const Rect& rect, const GLVector<T>& data)
-{
-    if(rect.right > shape_.width || rect.top > shape_.height) {
-        throw std::out_of_range("Requested area does not fit in texture.");
-    }
-    using Format = GLFormat<T>;
-    format_ = GLFormat<T>::PixelFormat;
-
-    // ensuring no buffer bound to GL_PIXEL_UNPACK_BUFFER for data to be read
-    // from CPU side memory.
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, data.gl_id());
-
-    glBindTexture(GL_TEXTURE_2D, texId_);
-    glTexSubImage2D(GL_TEXTURE_2D, 0,
-        rect.left, rect.bottom,
-        rect.width(), rect.height(),
-        Format::PixelFormat, Format::Type, 0);
-    GL_CHECK_LAST();
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-}
+// /**
+//  * Set part of texture image data from an OpenGL Buffer Object.
+//  * If texture is not big enough a std::out_of_range is thrown.
+//  *
+//  * The texture format is infered using the template type **T** and a template
+//  * specialization of rtac::display::GLFormat. See rtac::display::GLformat
+//  * documentation for more information.
+//  *
+//  * @param rect Dimensions of the texture {left,right,bottom,top}.
+//  * @param data  GLVector containing the pixel data.
+//  */
+// template <typename T>
+// void GLTexture::set_image(const Rect& rect, const GLVector<T>& data)
+// {
+//     if(rect.right > shape_.width || rect.top > shape_.height) {
+//         throw std::out_of_range("Requested area does not fit in texture.");
+//     }
+//     using Format = GLFormat<T>;
+//     format_ = GLFormat<T>::PixelFormat;
+// 
+//     // ensuring no buffer bound to GL_PIXEL_UNPACK_BUFFER for data to be read
+//     // from CPU side memory.
+//     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, data.gl_id());
+// 
+//     glBindTexture(GL_TEXTURE_2D, texId_);
+//     glTexSubImage2D(GL_TEXTURE_2D, 0,
+//         rect.left, rect.bottom,
+//         rect.width(), rect.height(),
+//         Format::PixelFormat, Format::Type, 0);
+//     GL_CHECK_LAST();
+//     glBindTexture(GL_TEXTURE_2D, 0);
+//     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+// }
 
 inline void GLTexture::set_filter_mode(FilterMode mode)
 {
