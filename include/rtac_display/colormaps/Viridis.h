@@ -1,11 +1,13 @@
 #ifndef _DEF_RTAC_DISPLAY_COLORMAPS_VIRIDIS_H_
 #define _DEF_RTAC_DISPLAY_COLORMAPS_VIRIDIS_H_
 
+#include <vector>
+
 namespace rtac { namespace display { namespace colormap {
 
-inline Colormap::Ptr Viridis()
+inline std::vector<float> Viridis()
 {
-    return Colormap::Create(std::vector<float>({
+    return std::vector<float>({
             0.267004, 0.004874, 0.329415, 1.0,
             0.26851, 0.009605, 0.335427, 1.0,
             0.269944, 0.014625, 0.341379, 1.0,
@@ -261,7 +263,7 @@ inline Colormap::Ptr Viridis()
             0.964894, 0.902323, 0.123941, 1.0,
             0.974417, 0.90359, 0.130215, 1.0,
             0.983868, 0.904867, 0.136897, 1.0,
-            0.993248, 0.906157, 0.143936, 1.0}));
+            0.993248, 0.906157, 0.143936, 1.0});
 }
 
 }; //namespace colormap

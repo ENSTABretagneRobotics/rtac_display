@@ -103,7 +103,7 @@ void main()
 FanRenderer::FanRenderer(const GLContext::Ptr& context) :
     Renderer(context, vertexShader, fragmentShader),
     data_(GLTexture::Create()),
-    colormap_(colormap::Viridis()),
+    colormap_(Colormap::Create(colormap::Viridis())),
     valueRange_({0.0f,1.0f}),
     angle_({-M_PI, M_PI}),
     range_({0.0f,1.0f}),

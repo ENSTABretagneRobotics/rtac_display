@@ -64,6 +64,7 @@ class ImageRenderer : public Renderer
     virtual void draw(const View::ConstPtr& view) const;
 
     void set_colormap(const Colormap::Ptr& colormap);
+    void set_colormap(const std::vector<float>& colormap);
     bool enable_colormap();
     void disable_colormap();
     bool uses_colormap() const;

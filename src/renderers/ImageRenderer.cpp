@@ -100,6 +100,12 @@ void ImageRenderer::set_colormap(const Colormap::Ptr& colormap)
     this->enable_colormap();
 }
 
+void ImageRenderer::set_colormap(const std::vector<float>& colormap)
+{
+    colormap_ = Colormap::Create(colormap);
+    this->enable_colormap();
+}
+
 bool ImageRenderer::enable_colormap()
 {
     if(!colormap_) {
