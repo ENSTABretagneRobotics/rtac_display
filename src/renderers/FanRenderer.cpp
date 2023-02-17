@@ -108,7 +108,7 @@ FanRenderer::FanRenderer(const GLContext::Ptr& context) :
     angle_({-M_PI, M_PI}),
     range_({0.0f,1.0f}),
     corners_(6),
-    direction_(Direction::Up),
+    direction_(Direction::Down),
     linearBearingsProgram_(renderProgram_),
     nonlinearBearingsProgram_(create_render_program(vertexShader, fragmentShaderNonLinear))
 {
