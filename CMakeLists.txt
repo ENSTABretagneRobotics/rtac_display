@@ -154,4 +154,4 @@ rtac_install_target(rtac_display
     HEADER_FILES ${rtac_display_headers}
 )
 
-add_subdirectory(bin)
+# add_subdirectory(bin)

@@ -31,7 +31,7 @@ class PinholeView : public View3D
     using ConstPtr = std::shared_ptr<const PinholeView>;
 
     using Mat4    = View3D::Mat4;
-    using Shape   = View3D::Mat4;
+    using Shape   = View3D::Shape;
     using Pose    = View3D::Pose;
     using Vector3 = View3D::Vector3;
 
