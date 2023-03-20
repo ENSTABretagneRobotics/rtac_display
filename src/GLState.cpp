@@ -2,6 +2,9 @@
 
 namespace rtac { namespace display {
 
+constexpr std::array<GLenum,2>  GLState::DefaultTrueStates;
+constexpr std::array<GLenum,89> GLState::StateNames;
+
 GLState::GLState()
 {
     for(auto key : StateNames) {

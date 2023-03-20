@@ -70,6 +70,7 @@ class GLMesh
     static Ptr cube(float scale = 1.0f);
     static Ptr icosahedron(float scale = 1.0f);
     static Ptr cube_with_uvs(float scale = 1.0f);
+
     static Ptr from_ply(const std::string& path,
                         bool transposeUVs = false);
 };
@@ -241,6 +242,7 @@ inline GLMesh::Ptr GLMesh::cube_with_uvs(float scale) {
     return mesh;
 }
 
+#ifndef RTAC_CUDACC
 inline GLMesh::Ptr GLMesh::from_ply(const std::string& path, bool transposeUVs)
 {
     std::ifstream f(path, std::ios::binary | std::ios::in);
@@ -320,6 +322,7 @@ inline GLMesh::Ptr GLMesh::from_ply(const std::string& path, bool transposeUVs)
     
     return mesh;
 }
+#endif //RTAC_CUDACC
 
 }; //namespace display
 }; //namespace rtac
