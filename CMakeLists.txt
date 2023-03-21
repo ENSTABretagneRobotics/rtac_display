@@ -1,20 +1,19 @@
 cmake_minimum_required(VERSION 3.10)
-project(rtac_display VERSION 0.1)
+project(rtac_display VERSION 0.2)
 
 option(WITH_CUDA "enable cuda related code" ON)
 option(BUILD_TESTS "Build unit tests" ON)
 option(BUILD_DOCS  "Builds Doxygen documentation" OFF)
 
 if(${WITH_CUDA})
-    enable_language(CUDA)
     if(NOT TARGET rtac_cuda)
-        find_package(rtac_cuda REQUIRED)
+        find_package(rtac_cuda 0.2 REQUIRED)
     endif()
 endif()
 
 
 if(NOT TARGET rtac_base)
-    find_package(rtac_base REQUIRED)
+    find_package(rtac_base 0.2 REQUIRED)
 endif()
 
 set(OpenGL_GL_PREFERENCE GLVND)
