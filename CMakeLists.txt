@@ -21,7 +21,6 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
 
-
 # Optionally finding freetype for text rendering
 find_package(Freetype)
 if(NOT TARGET Freetype::Freetype)
@@ -139,6 +138,13 @@ if(TARGET Freetype::Freetype)
         src/text/TextRenderer.cpp
     )
     target_link_libraries(rtac_display PUBLIC Freetype::Freetype)
+endif()
+
+if(WITH_ASYNC)
+    list(APPEND rtac_display_headers
+        include/rtac_display/DisplayServer.h
+    )
+    target_sources(rtac_display PRIVATE src/DisplayServer.cpp)
 endif()
 
 if(BUILD_TESTS)
