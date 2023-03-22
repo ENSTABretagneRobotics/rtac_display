@@ -2,6 +2,11 @@
 
 namespace rtac { namespace display {
 
+// this rely on destructor of global variables being called at end of main()
+// Mays be loosely implemented on some compiler
+std::unique_ptr<DisplayServer> DisplayServer::instance_;
+std::mutex DisplayServer::creationMutex_;
+
 DisplayServer::DisplayServer(bool blockAtEnd) :
     shouldStop_(false),
     isRunning_(false),
@@ -26,9 +31,17 @@ DisplayServer::~DisplayServer()
     }
 }
 
-DisplayServer::Ptr DisplayServer::Create()
+DisplayServer* DisplayServer::Get()
 {
-    return Ptr(new DisplayServer());
+    if(instance_) 
+        return instance_.get();
+    {
+        std::lock_guard<std::mutex> lock(creationMutex_);
+        if(instance_) // test again in case instance was created beforehand
+            return instance_.get();
+        else
+            instance_ = std::unique_ptr<DisplayServer>(new DisplayServer());
+    }
 }
 
 void DisplayServer::run()

@@ -26,8 +26,13 @@ class DisplayServer
 {
     public:
 
-    using Ptr      = std::shared_ptr<DisplayServer>;
-    using ConstPtr = std::shared_ptr<const DisplayServer>;
+    using Ptr      = std::unique_ptr<DisplayServer>;
+    using ConstPtr = std::unique_ptr<const DisplayServer>;
+
+    private:
+
+    static std::unique_ptr<DisplayServer> instance_;
+    static std::mutex creationMutex_;
 
     protected:
 
@@ -43,11 +48,12 @@ class DisplayServer
     void run();
     void draw();
 
+    DisplayServer(bool blockAtEnd = true);
+
     public:
 
-    DisplayServer(bool blockAtEnd = true);
     ~DisplayServer();
-    static Ptr Create();
+    static DisplayServer* Get();
 
     bool should_stop() const;
 
