@@ -17,6 +17,7 @@ list(APPEND test_files
     src/png_codec.cpp
     src/obj_loader.cpp
     src/display_server.cpp
+    src/simple_plot.cpp
 )
 
 foreach(filename ${test_files})
