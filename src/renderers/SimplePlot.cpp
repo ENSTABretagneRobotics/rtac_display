@@ -62,8 +62,9 @@ void SimplePlot::draw(const View::ConstPtr& view) const
     glEnableVertexAttribArray(0);
 
     glUniform2f(glGetUniformLocation(renderProgram_, "xScale"), 2.0f / data_.size(), -1.0f);
+    float a = 2.0f / (1.1*dataRange_.length());
     glUniform2f(glGetUniformLocation(renderProgram_, "yScale"),
-                2.0f / (1.1*dataRange_.length()), 0.0f);
+                a, -a*dataRange_.center());
 
     glUniform4fv(glGetUniformLocation(renderProgram_, "color"),
                  1, (const float*)&color_);
