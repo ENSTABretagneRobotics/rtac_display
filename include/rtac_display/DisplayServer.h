@@ -77,7 +77,11 @@ template <class D, class... Args>
 D* DisplayServer::create_display(Args&&... args)
 {
     return this->execute([&]() {
-        auto display = std::make_unique<D>(std::forward<Args>(args)...);
+        GLFWContext::Ptr context;
+        if(displays_.size() > 0) {
+            context = displays_.back()->context();
+        }
+        auto display = std::make_unique<D>(std::forward<Args>(args)..., context);
         D* res = display.get();
         displays_.push_back(std::move(display));
         return res;

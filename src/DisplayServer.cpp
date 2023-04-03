@@ -33,15 +33,20 @@ DisplayServer::~DisplayServer()
 
 DisplayServer* DisplayServer::Get()
 {
-    if(instance_) 
+    if(instance_) {
         return instance_.get();
+    }
+
     {
         std::lock_guard<std::mutex> lock(creationMutex_);
-        if(instance_) // test again in case instance was created beforehand
+        if(instance_) {// test again in case instance was created beforehand
             return instance_.get();
-        else
-            instance_ = std::unique_ptr<DisplayServer>(new DisplayServer());
+        }
+        else {
+            instance_ = std::move(std::unique_ptr<DisplayServer>(new DisplayServer()));
+        }
     }
+    return instance_.get();
 }
 
 void DisplayServer::run()
