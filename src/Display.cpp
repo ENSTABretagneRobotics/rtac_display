@@ -1,5 +1,7 @@
 #include <rtac_display/Display.h>
 
+#include <thread>
+
 namespace rtac { namespace display {
 
 std::tuple<GLFWContext::Ptr, Display::Window, Display::Shape> Display::create_window_data(
@@ -37,7 +39,8 @@ std::tuple<GLFWContext::Ptr, Display::Window, Display::Shape> Display::create_wi
 Display::Display(const std::tuple<Context::Ptr, Window, Shape>& windowData) :
     DrawingSurface(std::get<0>(windowData)),
     window_(std::get<1>(windowData)),
-    displayFrameRate_(false)
+    displayFrameRate_(false),
+    pauseHandler_(samples::PauseHandler::Create())
 {
     if(!window_) {
         throw std::runtime_error("Initialization failure");
@@ -72,6 +75,8 @@ Display::Display(const std::tuple<Context::Ptr, Window, Shape>& windowData) :
                            | DrawingSurface::CLEAR_DEPTH);
 
     this->limit_frame_rate(60.0);
+
+    this->add_event_handler(pauseHandler_);
 }
 
 Display::Display(size_t width, size_t height, const std::string& title,
@@ -131,7 +136,12 @@ Display::Shape Display::window_shape() const
  */
 int Display::should_close() const
 {
+    using namespace std;
     glfwPollEvents();
+    while(pauseHandler_->is_paused()) {
+        glfwPollEvents();
+        std::this_thread::sleep_for(100ms);
+    }
     return glfwWindowShouldClose(window_.get()) > 0;
 }
 

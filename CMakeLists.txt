@@ -69,6 +69,7 @@ list(APPEND rtac_display_headers
     include/rtac_display/samples/ImageDisplay.h
     include/rtac_display/samples/OrbitControls.h
     include/rtac_display/samples/Display3D.h
+    include/rtac_display/samples/PauseHandler.h
 
     include/rtac_display/GLReductor.h
 )

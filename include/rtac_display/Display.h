@@ -16,6 +16,7 @@
 #include <rtac_display/GLFWContext.h>
 #include <rtac_display/DrawingSurface.h>
 #include <rtac_display/EventHandler.h>
+#include <rtac_display/samples/PauseHandler.h>
 
 #include <GLFW/glfw3.h>
 
@@ -71,6 +72,8 @@ class Display : public DrawingSurface
     MousePositionCallbacks mousePositionCallbacks_;
     MouseButtonCallbacks   mouseButtonCallbacks_;
     ScrollCallbacks        scrollCallbacks_;
+
+    samples::PauseHandler::Ptr pauseHandler_;
 
     static std::tuple<Context::Ptr, Window, Shape> create_window_data(
                                                  size_t width, size_t height,
