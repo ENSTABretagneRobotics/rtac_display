@@ -142,7 +142,7 @@ void GLReductor::reduce(const GLVector<T>& input, GLuint reductionProgram,
                      GLVector<T2>& output)
 {
     unsigned int N = input.size();
-    unsigned int blockCount = N / (2*BlockSize);
+    unsigned int blockCount = N / (2*BlockSize) + 1;
 
     if(output.size()*sizeof(T2) < blockCount*sizeof(T)) {
         output.resize((blockCount*sizeof(T) + sizeof(T2) - 1) / sizeof(T2));
