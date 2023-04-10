@@ -51,6 +51,7 @@ list(APPEND rtac_display_headers
     include/rtac_display/renderers/FanRenderer.h
     include/rtac_display/renderers/PointCloudRenderer.h
     include/rtac_display/renderers/SimplePlot.h
+    include/rtac_display/renderers/Scatter2D.h
 
     include/rtac_display/Colormap.h
     include/rtac_display/colormaps/Gray.h
@@ -92,6 +93,7 @@ list(APPEND rtac_display_SOURCES
     src/renderers/MeshRenderer.cpp
     src/renderers/FanRenderer.cpp
     src/renderers/SimplePlot.cpp
+    src/renderers/Scatter2D.cpp
 
     src/Colormap.cpp
     

@@ -18,6 +18,7 @@ list(APPEND test_files
     src/obj_loader.cpp
     src/display_server.cpp
     src/simple_plot.cpp
+    src/scatter2d.cpp
 )
 
 foreach(filename ${test_files})
