@@ -1,7 +1,10 @@
 #ifndef _DEF_RTAC_DISPLAY_SCALING_H_
 #define _DEF_RTAC_DISPLAY_SCALING_H_
 
+#include <iostream>
+
 #include <rtac_base/types/Bounds.h>
+#include <rtac_base/types/Point.h>
 
 namespace rtac { namespace display {
 
@@ -56,6 +59,53 @@ class Scaling1D
     void set_range(const Bounds<float>& range, bool disableAutoscale = true);
 
     bool update(Bounds<float> range);
+};
+
+class Scaling2D
+{
+    protected:
+
+    Scaling1D xScaling_;
+    Scaling1D yScaling_;
+
+    public:
+
+    Scaling2D(const ScalingMode& mode = ScalingMode(),
+              const Bounds<float>& xRange = Bounds<float>(0.0f, 1.0f),
+              const Bounds<float>& yRange = Bounds<float>(0.0f, 1.0f));
+    Scaling2D(const Bounds<float>& xRange, const Bounds<float>& yRange);
+
+    const Scaling1D& x_scaling() const { return xScaling_; }
+          Scaling1D& x_scaling()       { return xScaling_; }
+    const Scaling1D& y_scaling() const { return yScaling_; }
+          Scaling1D& y_scaling()       { return yScaling_; }
+
+    Bounds<float> x_range()  const { return xScaling_.range();  }
+    Bounds<float> y_range()  const { return yScaling_.range();  }
+    Bounds<float> x_limits() const { return xScaling_.limits(); }
+    Bounds<float> y_limits() const { return yScaling_.limits(); }
+    Point2<float> origin()   const;
+
+    void enable_autoscale();
+    void disable_autoscale();
+    void enable_memory();
+    void disable_memory();
+
+    void enable_origin();
+    void enable_origin(Point2<float> origin);
+    void set_origin(Point2<float> origin, bool enableOrigin = true);
+    void disable_origin();
+
+    void enable_limits();
+    void enable_limits(const Bounds<float>& xLimits, const Bounds<float>& yLimits);
+    void set_limits(const Bounds<float>& xLimits, const Bounds<float>& yLimits,
+                    bool enableLimits = true);
+    void disable_limits();
+
+    void set_range(const Bounds<float>& xRange, const Bounds<float>& yRange,
+                   bool disableAutoscale = true);
+
+    bool update(const Bounds<float>& xRange, const Bounds<float>& yRange);
 };
 
 } //namespace display

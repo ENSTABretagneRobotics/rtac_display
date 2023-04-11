@@ -98,6 +98,109 @@ bool Scaling1D::update(Bounds<float> range)
     return true;
 }
 
+// Scaling2D ////////////////////////////////////
+
+Scaling2D::Scaling2D(const ScalingMode& mode,
+                     const Bounds<float>& xRange,
+                     const Bounds<float>& yRange) :
+    xScaling_(mode, xRange),
+    yScaling_(mode, yRange)
+{}
+
+Scaling2D::Scaling2D(const Bounds<float>& xRange, const Bounds<float>& yRange) :
+    Scaling2D(ScalingMode(), xRange, yRange)
+{}
+
+Point2<float> Scaling2D::origin() const
+{
+    return Point2<float>({xScaling_.origin(), yScaling_.origin()});
+}
+
+void Scaling2D::enable_autoscale()
+{
+    xScaling_.enable_autoscale();
+    yScaling_.enable_autoscale();
+}
+
+void Scaling2D::disable_autoscale()
+{
+    xScaling_.disable_autoscale();
+    yScaling_.disable_autoscale();
+}
+
+void Scaling2D::enable_memory()
+{
+    xScaling_.enable_memory();
+    yScaling_.enable_memory();
+}
+
+void Scaling2D::disable_memory()
+{
+    xScaling_.disable_memory();
+    yScaling_.disable_memory();
+}
+
+void Scaling2D::enable_origin()
+{
+    xScaling_.enable_origin();
+    yScaling_.enable_origin();
+}
+
+void Scaling2D::enable_origin(Point2<float> origin)
+{
+    xScaling_.enable_origin(origin.x);
+    yScaling_.enable_origin(origin.y);
+}
+
+void Scaling2D::set_origin(Point2<float> origin, bool enableOrigin)
+{
+    xScaling_.set_origin(origin.x, enableOrigin);
+    yScaling_.set_origin(origin.y, enableOrigin);
+}
+
+void Scaling2D::disable_origin()
+{
+    xScaling_.disable_origin();
+    yScaling_.disable_origin();
+}
+
+void Scaling2D::enable_limits()
+{
+    xScaling_.enable_limits();
+    yScaling_.enable_limits();
+}
+
+void Scaling2D::enable_limits(const Bounds<float>& xLimits, const Bounds<float>& yLimits)
+{
+    xScaling_.enable_limits(xLimits);
+    yScaling_.enable_limits(yLimits);
+}
+
+void Scaling2D::set_limits(const Bounds<float>& xLimits, const Bounds<float>& yLimits,
+                           bool enableLimits)
+{
+    xScaling_.set_limits(xLimits, enableLimits);
+    yScaling_.set_limits(yLimits, enableLimits);
+}
+
+void Scaling2D::disable_limits()
+{
+    xScaling_.disable_limits();
+    yScaling_.disable_limits();
+}
+
+void Scaling2D::set_range(const Bounds<float>& xRange, const Bounds<float>& yRange,
+                          bool disableAutoscale)
+{
+    xScaling_.set_range(xRange, disableAutoscale);
+    yScaling_.set_range(yRange, disableAutoscale);
+}
+
+bool Scaling2D::update(const Bounds<float>& xRange, const Bounds<float>& yRange)
+{
+    return xScaling_.update(xRange) || yScaling_.update(yRange);
+}
+
 } //namespace display
 } //namespace rtac
 
