@@ -57,7 +57,6 @@ class GLVector
     mutable T*     mappedPtr_;
 
     void allocate(size_t size);
-    void clear();
 
     public:
 
@@ -80,6 +79,7 @@ class GLVector
     void resize(size_t size);
     size_t size() const;
     size_t capacity() const;
+    void clear();
 
     // not really const but no other way with OpenGL interface
     GLuint gl_id() const;
