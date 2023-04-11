@@ -5,10 +5,10 @@
 
 #include <rtac_base/types/Bounds.h>
 
-#include <rtac_display/GLVector.h>
+#include <rtac_display/PlotData2D.h>
 #include <rtac_display/Color.h>
-#include <rtac_display/GLReductor.h>
 #include <rtac_display/renderers/Renderer.h>
+#include <rtac_display/views/PlotView2D.h>
 
 namespace rtac { namespace display {
 
@@ -24,39 +24,37 @@ class Scatter2D : public Renderer
     
     protected:
 
-    GLVector<float> x_;
-    GLVector<float> y_;
-    Bounds<float>   xRange_;
-    Bounds<float>   yRange_;
+    PlotData2D::Ptr data_;
     Color::RGBAf    color_;
 
-    GLReductor reductor_;
-
-    Scatter2D(const GLContext::Ptr& context);
+    Scatter2D(const GLContext::Ptr& context, const PlotData2D::Ptr& data);
 
     public:
 
-    static Ptr Create(const GLContext::Ptr& context);
+    float dataMax_;
+
+    static Ptr Create(const GLContext::Ptr& context,
+                      const PlotData2D::Ptr& data = nullptr);
     
     template <template<typename>class VectorT>
     bool set_data(const VectorT<float>& x, const VectorT<float>& y);
-    void update_range();
+    template <template<typename>class VectorT>
+    bool set_data(const VectorT<float>& y);
 
     void set_color(const Color::RGBAf& color) { color_ = color; }
-    void draw(const View::ConstPtr& view) const;
+    void draw(const View::ConstPtr& view) const override;
 };
 
 template <template<typename>class VectorT>
 bool Scatter2D::set_data(const VectorT<float>& x, const VectorT<float>& y)
 {
-    if(x.size() != y.size()) {
-        return false;
-    }
-    x_ = x;
-    y_ = y;
-    auto ptr = y_.map();
-    this->update_range();
-    return true;
+    return data_->set_data(x,y);
+}
+
+template <template<typename>class VectorT>
+bool Scatter2D::set_data(const VectorT<float>& y)
+{
+    return data_->set_data(y);
 }
 
 } //namespace display

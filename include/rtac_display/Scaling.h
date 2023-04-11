@@ -36,10 +36,10 @@ class Scaling1D
               const Bounds<float>& range = Bounds<float>(0.0f,1.0f));
     Scaling1D(const Bounds<float>& range);
 
-    ScalingMode   mode()   const { return mode_;   }
-    Bounds<float> range()  const { return range_;  }
-    Bounds<float> limits() const { return limits_; }
-    float         origin() const { return origin_; }
+    const ScalingMode&   mode()   const { return mode_;   }
+    const Bounds<float>& range()  const { return range_;  }
+    const Bounds<float>& limits() const { return limits_; }
+    float origin() const { return origin_; }
 
     void enable_autoscale()  { mode_.autoscale_ = true;  }
     void disable_autoscale() { mode_.autoscale_ = false; }
@@ -80,10 +80,10 @@ class Scaling2D
     const Scaling1D& y_scaling() const { return yScaling_; }
           Scaling1D& y_scaling()       { return yScaling_; }
 
-    Bounds<float> x_range()  const { return xScaling_.range();  }
-    Bounds<float> y_range()  const { return yScaling_.range();  }
-    Bounds<float> x_limits() const { return xScaling_.limits(); }
-    Bounds<float> y_limits() const { return yScaling_.limits(); }
+    const Bounds<float>& x_range()  const { return xScaling_.range();  }
+    const Bounds<float>& y_range()  const { return yScaling_.range();  }
+    const Bounds<float>& x_limits() const { return xScaling_.limits(); }
+    const Bounds<float>& y_limits() const { return yScaling_.limits(); }
     Point2<float> origin()   const;
 
     void enable_autoscale();

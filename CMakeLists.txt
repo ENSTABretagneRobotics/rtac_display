@@ -43,6 +43,7 @@ list(APPEND rtac_display_headers
     include/rtac_display/views/View3D.h
     include/rtac_display/views/PinholeView.h
     include/rtac_display/views/OrthoView.h
+    include/rtac_display/views/PlotView2D.h
 
     include/rtac_display/renderers/Renderer.h
     include/rtac_display/renderers/Frame.h
@@ -67,6 +68,7 @@ list(APPEND rtac_display_headers
     include/rtac_display/GLFrameBuffer.h
     include/rtac_display/GLMesh.h
     include/rtac_display/EventHandler.h
+    include/rtac_display/PlotData2D.h
 
     include/rtac_display/samples/ImageDisplay.h
     include/rtac_display/samples/OrbitControls.h
@@ -87,6 +89,7 @@ list(APPEND rtac_display_SOURCES
     src/views/View3D.cpp
     src/views/PinholeView.cpp
     src/views/OrthoView.cpp
+    src/views/PlotView2D.cpp
 
     src/renderers/Renderer.cpp
     src/renderers/Frame.cpp
@@ -105,6 +108,7 @@ list(APPEND rtac_display_SOURCES
     src/GLRenderBuffer.cpp
     src/GLFrameBuffer.cpp
     src/EventHandler.cpp
+    src/PlotData2D.cpp
 
     src/samples/ImageDisplay.cpp
     src/samples/OrbitControls.cpp

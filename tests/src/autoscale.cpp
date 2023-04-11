@@ -36,7 +36,5 @@ int main()
     scaling.enable_origin();
     std::cout << scaling << std::endl;
 
-    std::cout << scaling.range().intersect_with(scaling.limits()) << std::endl;
-
     return 0;
 }
