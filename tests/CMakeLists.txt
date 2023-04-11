@@ -19,6 +19,7 @@ list(APPEND test_files
     src/display_server.cpp
     src/simple_plot.cpp
     src/scatter2d.cpp
+    src/autoscale.cpp
 )
 
 foreach(filename ${test_files})

@@ -36,6 +36,7 @@ list(APPEND rtac_display_headers
     include/rtac_display/GLFormat.h
     include/rtac_display/GLSLType.h
     include/rtac_display/Color.h
+    include/rtac_display/Scaling.h
 
     include/rtac_display/views/View.h
     include/rtac_display/views/ImageView.h
@@ -77,6 +78,7 @@ list(APPEND rtac_display_headers
 list(APPEND rtac_display_SOURCES
     src/utils.cpp
     src/GLState.cpp
+    src/Scaling.cpp
 
     src/GLMesh.cpp
 
