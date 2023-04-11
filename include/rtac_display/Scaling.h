@@ -113,5 +113,6 @@ class Scaling2D
 
 std::ostream& operator<<(std::ostream& os, const rtac::display::ScalingMode& mode);
 std::ostream& operator<<(std::ostream& os, const rtac::display::Scaling1D& scaling);
+std::ostream& operator<<(std::ostream& os, const rtac::display::Scaling2D& scaling);
 
 #endif //_DEF_RTAC_DISPLAY_SCALING_H_

@@ -1,5 +1,7 @@
 #include <rtac_display/Scaling.h>
 
+#include <sstream>
+
 namespace rtac { namespace display {
 
 ScalingMode::ScalingMode(bool autoscale,
@@ -198,7 +200,13 @@ void Scaling2D::set_range(const Bounds<float>& xRange, const Bounds<float>& yRan
 
 bool Scaling2D::update(const Bounds<float>& xRange, const Bounds<float>& yRange)
 {
-    return xScaling_.update(xRange) || yScaling_.update(yRange);
+    bool resX = xScaling_.update(xRange);
+    bool resY = yScaling_.update(yRange);
+    return resX || resY;
+    
+    // the code below does not work because if xScaling.update returns true,
+    // the compiler may optimise out yScaling_.update
+    //return xScaling_.update(xRange) || yScaling_.update(yRange);
 }
 
 } //namespace display
@@ -219,5 +227,15 @@ std::ostream& operator<<(std::ostream& os, const rtac::display::Scaling1D& scali
        << "\n- range  : " << scaling.range()
        << "\n- origin : " << scaling.origin()
        << "\n- limits : " << scaling.limits();
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const rtac::display::Scaling2D& scaling)
+{
+    os << "Scaling2D :";
+    std::ostringstream oss;
+    oss << "\n- x_scaling : " << scaling.x_scaling()
+        << "\n- y_scaling : " << scaling.y_scaling();
+    os << oss.str();
     return os;
 }
