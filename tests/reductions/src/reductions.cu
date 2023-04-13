@@ -56,7 +56,7 @@ __global__ void do_reduce(float* out, const float* in, unsigned int N)
 
 
 
-float sum(cuda::DeviceVector<float>& data)
+float sum(cuda::CudaVector<float>& data)
 {
     cuda::device::reduce(data.data(), data.data(), data.size());
     CUDA_CHECK_LAST();

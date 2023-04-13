@@ -11,7 +11,7 @@
 #ifdef RTAC_CUDA_ENABLED // CUDA support is optional
     #include <cuda_runtime.h>
     #include <cuda_gl_interop.h>
-    #include <rtac_base/cuda/DeviceVector.h>
+    #include <rtac_base/cuda/CudaVector.h>
 #endif
 
 #include <rtac_display/utils.h>
@@ -126,14 +126,14 @@ class GLVector
     void unmap_cuda() const;
     
     // CUDA helpers
-    GLVector(const rtac::cuda::DeviceVector<T>& other);
+    GLVector(const rtac::cuda::CudaVector<T>& other);
 
-    GLVector& operator=(const rtac::cuda::DeviceVector<T>& other);
+    GLVector& operator=(const rtac::cuda::CudaVector<T>& other);
     void copy_from_cuda(unsigned int size, const T* data);
     void copy_to_cuda(T* dst) const;
 
-    rtac::cuda::DeviceVector<T>& to_device_vector(rtac::cuda::DeviceVector<T>& other) const;
-    rtac::cuda::DeviceVector<T>  to_device_vector() const;
+    rtac::cuda::CudaVector<T>& to_device_vector(rtac::cuda::CudaVector<T>& other) const;
+    rtac::cuda::CudaVector<T>  to_device_vector() const;
 
     #endif
 };
@@ -748,31 +748,31 @@ void GLVector<T>::unmap_cuda() const
 // CUDA helpers implementations
 /**
  * Instanciate a new GLVector, allocate data on the device and copy data from
- * a rtac::cuda::DeviceVector. Copy happen solely on the device.
+ * a rtac::cuda::CudaVector. Copy happen solely on the device.
  *
  * An OpenGL context must have been created beforehand.
  *
- * @param other DeviceVector to be copied.
+ * @param other CudaVector to be copied.
  */
 template <typename T>
-GLVector<T>::GLVector(const rtac::cuda::DeviceVector<T>& other) :
+GLVector<T>::GLVector(const rtac::cuda::CudaVector<T>& other) :
     GLVector(other.size())
 {
     *this = other;
 }
 
 /**
- * Reallocate data if needed and copy from a rtac::cuda::DeviceVector. Copy
+ * Reallocate data if needed and copy from a rtac::cuda::CudaVector. Copy
  * happen solely on the device.
  *
  * An OpenGL context must have been created beforehand.
  *
- * @param other DeviceVector to be copied.
+ * @param other CudaVector to be copied.
  *
  * @return A reference to this instance.
  */
 template <typename T>
-GLVector<T>& GLVector<T>::operator=(const rtac::cuda::DeviceVector<T>& other)
+GLVector<T>& GLVector<T>::operator=(const rtac::cuda::CudaVector<T>& other)
 {
     this->copy_from_cuda(other.size(), other.data());
     return *this;
@@ -784,7 +784,7 @@ GLVector<T>& GLVector<T>::operator=(const rtac::cuda::DeviceVector<T>& other)
  *
  * An OpenGL context must have been created beforehand.
  *
- * @param other DeviceVector to be copied.
+ * @param other CudaVector to be copied.
  *
  * @return A reference to this instance.
  */
@@ -812,16 +812,16 @@ void GLVector<T>::copy_to_cuda(T* dst) const
 }
 
 /**
- * Copy data to an existing rtac::cuda::DeviceVector. Copy happen solely on
+ * Copy data to an existing rtac::cuda::CudaVector. Copy happen solely on
  * the device.
  *
- * @param other a non-const reference to a DeviceVector.
+ * @param other a non-const reference to a CudaVector.
  *
- * @return a reference to the same DeviceVector other.
+ * @return a reference to the same CudaVector other.
  */
 template <typename T>
-rtac::cuda::DeviceVector<T>&
-GLVector<T>::to_device_vector(rtac::cuda::DeviceVector<T>& other) const
+rtac::cuda::CudaVector<T>&
+GLVector<T>::to_device_vector(rtac::cuda::CudaVector<T>& other) const
 {
     if(this->size() == 0) return other;
 
@@ -832,15 +832,15 @@ GLVector<T>::to_device_vector(rtac::cuda::DeviceVector<T>& other) const
 }
 
 /**
- * Creates a new rtac::cuda::DeviceVector and copy data to it. Copy happen
+ * Creates a new rtac::cuda::CudaVector and copy data to it. Copy happen
  * solely on the device.
  *
- * @return a reference to the newly created DeviceVector.
+ * @return a reference to the newly created CudaVector.
  */
 template <typename T>
-rtac::cuda::DeviceVector<T> GLVector<T>::to_device_vector() const
+rtac::cuda::CudaVector<T> GLVector<T>::to_device_vector() const
 {
-    rtac::cuda::DeviceVector<T> res(this->size());
+    rtac::cuda::CudaVector<T> res(this->size());
     return this->to_device_vector(res);
 }
 #endif

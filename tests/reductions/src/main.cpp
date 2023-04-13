@@ -8,7 +8,7 @@ using namespace rtac::time;
 #include <rtac_display/GLReductor.h>
 using namespace rtac::display;
 
-#include <rtac_base/cuda/DeviceVector.h>
+#include <rtac_base/cuda/CudaVector.h>
 using namespace rtac::cuda;
 using namespace rtac;
 
@@ -46,7 +46,7 @@ int main()
     }
     tGl2 = clock.now();
     
-    DeviceVector<float> cudaData(data);
+    CudaVector<float> cudaData(data);
     HostVector<float> cudaDump(cudaData.size());
     clock.reset();
     for(int n = 0; n < N; n++) {
