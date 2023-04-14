@@ -23,6 +23,10 @@ list(APPEND test_files
     src/simple_plot_2d.cpp
 )
 
+if(TARGET rtac_cuda)
+    list(APPEND test_files src/fan_renderer2.cu)
+endif()
+
 foreach(filename ${test_files})
     get_filename_component(test_name ${filename} NAME_WE)
     set(target_name ${test_name}_${PROJECT_NAME})

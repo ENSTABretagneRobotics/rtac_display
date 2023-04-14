@@ -9,6 +9,7 @@
 #include <rtac_base/types/Rectangle.h>
 #include <rtac_base/interpolation.h>
 #include <rtac_base/types/SonarPing2D.h>
+#include <rtac_base/types/SonarPing.h>
 
 #include <rtac_display/GLFormat.h>
 #include <rtac_display/GLVector.h>
@@ -100,6 +101,11 @@ class FanRenderer : public Renderer
 
     template <typename T, template<typename>class VectorT>
     void set_ping(const rtac::SonarPing2D<T,VectorT>& ping);
+
+    template <typename T, template<typename>class VectorT>
+    void set_ping(const rtac::Ping2D<T,VectorT>& ping);
+    template <template<typename>class VectorT>
+    void set_bearings(const VectorT<float>& bearings);
 };
 
 template <typename T, template<typename>class VectorT>
@@ -110,6 +116,24 @@ void FanRenderer::set_ping(const rtac::SonarPing2D<T,VectorT>& ping)
 
     data_->set_image({ping.width(), ping.height()}, ping.ping_data().data());
 }
+
+template <template<typename>class VectorT>
+void FanRenderer::set_bearings(const VectorT<float>& bearings)
+{
+    HostVector<float> tmp(bearings);
+    this->set_bearings(tmp.size(), tmp.data());
+}
+
+template <typename T, template<typename>class VectorT>
+void FanRenderer::set_ping(const rtac::Ping2D<T,VectorT>& ping)
+{
+    this->set_bearings(GLVector<float>(ping.bearings()));
+    this->set_range(ping.range_bounds());
+    
+    data_->set_image({ping.width(), ping.height()},
+                     GLVector<T>(ping.ping_data_container()));
+}
+
 
 }; //namespace display
 }; //namespace rtac
