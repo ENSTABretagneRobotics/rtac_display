@@ -92,6 +92,10 @@ class GLVector
     // (interop with CUDA and host memory mapping functions).
     // BELOW HERE IS MORE ADVANCED USAGE ////////////////////////
 
+    T operator[](unsigned int idx) const { return this->map()[idx]; }
+    T front() const { return this->operator[](0);                   }
+    T back()  const { return this->operator[](this->size() - 1);    }
+
     // Mapping Functions for host access (CPU) to device data (GPU-OpenGL)
     protected:
 
