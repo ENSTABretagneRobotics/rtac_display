@@ -48,6 +48,8 @@ class Renderer
                       const std::string& vertexShader = vertexShader,
                       const std::string& fragmentShader = fragmentShader);
 
+    GLuint render_program() const { return renderProgram_; }
+
     const GLContext::Ptr context() const { return context_; }
     virtual void draw(const View::ConstPtr& view) const;
 };

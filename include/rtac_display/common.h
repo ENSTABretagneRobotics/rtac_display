@@ -1,6 +1,8 @@
 #ifndef _DEF_RTAC_DISPLAY_COMMON_H_
 #define _DEF_RTAC_DISPLAY_COMMON_H_
 
+#include <sstream>
+
 #include <GL/glew.h>
 //#define GL3_PROTOTYPES 1
 #include <GL/gl.h>

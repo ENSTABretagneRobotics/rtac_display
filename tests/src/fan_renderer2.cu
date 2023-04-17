@@ -32,6 +32,26 @@ int main()
     renderer->set_ping(p0);
     //renderer->disable_bearing_map();
 
+    auto program = renderer->render_program();
+    GLint uniformCount = -1, maxSize = -1;
+    glGetProgramiv(program, GL_ACTIVE_UNIFORMS,           &uniformCount);
+    glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxSize);
+
+    for(int i = 0; i < uniformCount; i++) {
+        std::vector<char> name(maxSize);
+        GLsizei strLength = -1;
+        GLint   uniformSize = -1;
+        GLenum  uniformType;
+        glGetActiveUniform(program, i, maxSize, 
+                           &strLength, &uniformSize, &uniformType, (GLchar*) name.data());
+        std::cout << strLength << std::endl;
+        name[strLength] = '\0';
+        std::cout << "Uniform '" << name.data() << "' :"
+                  << "\n- size : " << uniformSize
+                  << "\n- type : " << uniformType << std::endl;
+    }
+
+
     while(!display.should_close()) {
         display.draw();
     }
