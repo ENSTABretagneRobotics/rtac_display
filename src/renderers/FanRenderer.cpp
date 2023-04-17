@@ -25,6 +25,8 @@ uniform sampler2D fanData;
 uniform sampler2D colormap;
 
 uniform vec2 valueScaling;
+uniform vec2 angleScaling;
+uniform vec2 rangeScaling;
 uniform vec2 angleBounds;
 uniform vec2 rangeBounds;
 
@@ -36,23 +38,20 @@ void main()
 {
     float r     = length(xyPos);
     float theta = atan(xyPos.y, xyPos.x);
-    
-    vec2 normalized;
-    normalized.x = atan(xyPos.y, xyPos.x);
-    if(normalized.x < angleBounds.x)
-        normalized.x += M_2PI;
-    normalized.x = (normalized.x  - angleBounds.x)
-                 / (angleBounds.y - angleBounds.x);
-    normalized.y = (length(xyPos) - rangeBounds.x)
-                 / (rangeBounds.y - rangeBounds.x);
+    if(theta < angleBounds.x)
+        theta += M_2PI;
 
-    if(normalized.x >= 0.0f && normalized.x <= 1.0f &&
-       normalized.y >= 0.0f && normalized.y <= 1.0f) {
-        float value = valueScaling.x*texture(fanData,normalized).x + valueScaling.y;
-        outColor = texture(colormap, vec2(value, 0.0f));
+    if(theta < angleBounds.x || theta > angleBounds.y ||
+       r     < rangeBounds.x || r     > rangeBounds.y)
+    {
+        outColor = texture(colormap, vec2(0,0));
     }
     else {
-        outColor = texture(colormap, vec2(0.0f,0.0f));
+        vec2 p;
+        p.x = 1.0 - fma(angleScaling.x, theta,  angleScaling.y);
+        p.y = fma(rangeScaling.x, r,      rangeScaling.y);
+        float value = fma(valueScaling.x, texture(fanData,p).x, valueScaling.y);
+        outColor = texture(colormap, vec2(value, 0.0f));
     }
 }
 )");
@@ -66,6 +65,8 @@ uniform sampler2D colormap;
 uniform sampler2D bearingMap;
 
 uniform vec2 valueScaling;
+uniform vec2 angleScaling;
+uniform vec2 rangeScaling;
 uniform vec2 angleBounds;
 uniform vec2 rangeBounds;
 
@@ -77,25 +78,21 @@ void main()
 {
     float r     = length(xyPos);
     float theta = atan(xyPos.y, xyPos.x);
-    
-    vec2 normalized;
-    normalized.x = atan(xyPos.y, xyPos.x);
-    if(normalized.x < angleBounds.x)
-        normalized.x += M_2PI;
-    normalized.x = (normalized.x  - angleBounds.x)
-                 / (angleBounds.y - angleBounds.x);
-    normalized.y = (length(xyPos) - rangeBounds.x)
-                 / (rangeBounds.y - rangeBounds.x);
+    if(theta < angleBounds.x)
+        theta += M_2PI;
 
-    if(normalized.x >= 0.0f && normalized.x <= 1.0f &&
-       normalized.y >= 0.0f && normalized.y <= 1.0f) {
-        //normalized.x = texture(bearingMap, vec2(normalized.x,0.0)).x;
-        normalized.x = 1.0f - texture(bearingMap, vec2(normalized.x,0.0)).x;
-        float value = valueScaling.x*texture(fanData,normalized).x + valueScaling.y;
-        outColor = texture(colormap, vec2(value, 0.0f));
+    if(theta < angleBounds.x || theta > angleBounds.y ||
+       r     < rangeBounds.x || r     > rangeBounds.y)
+    {
+        outColor = texture(colormap, vec2(0,0));
     }
     else {
-        outColor = texture(colormap, vec2(0.0f,0.0f));
+        vec2 p;
+        p.x = fma(angleScaling.x, theta,  angleScaling.y);
+        p.y = fma(rangeScaling.x, r,      rangeScaling.y);
+        p.x = 1.0f - texture(bearingMap, vec2(p.x,0.0)).x;
+        float value = fma(valueScaling.x, texture(fanData,p).x, valueScaling.y);
+        outColor = texture(colormap, vec2(value, 0.0f));
     }
 }
 )");
@@ -113,8 +110,11 @@ FanRenderer::FanRenderer(const GLContext::Ptr& context) :
     nonlinearBearingsProgram_(create_render_program(vertexShader, fragmentShaderNonLinear))
 {
     this->set_geometry(angle_, range_);
-    data_->set_wrap_mode(GLTexture::WrapMode::Clamp);
+    //data_->set_filter_mode(GLTexture::FilterMode::Nearest);
     data_->set_filter_mode(GLTexture::FilterMode::Linear);
+
+    //data_->set_wrap_mode(GLTexture::WrapMode::Clamp);
+    data_->set_wrap_mode(GLTexture::WrapMode::Mirror);
 }
 
 FanRenderer::Ptr FanRenderer::Create(const GLContext::Ptr& context)
@@ -239,7 +239,9 @@ void FanRenderer::set_bearings(unsigned int nBeams, const float* bearings,
     Interpolator::Vector y0(nBeams);
     
     for(int i = 0; i < nBeams; i++) {
-        x0[i] = ((float)i) / (nBeams - 1);
+        //x0[i] = ((float)i) / (nBeams - 1);
+        // opengl textures coordinates and defined on [1/2N, 1 - 1/2N]
+        x0[i] = (i + 0.5f) / nBeams;
         y0[i] = bearings[i];
     }
 
@@ -348,8 +350,11 @@ void FanRenderer::draw(const View::ConstPtr& view) const
         1, GL_FALSE, mat.data());
 
     glUniform2f(glGetUniformLocation(renderProgram_, "valueScaling"),
-                1.0f / (valueRange_.upper - valueRange_.lower),
-               -valueRange_.lower / (valueRange_.upper - valueRange_.lower));
+                1.0f / valueRange_.length(), -valueRange_.lower / valueRange_.length());
+    glUniform2f(glGetUniformLocation(renderProgram_, "angleScaling"),
+                1.0f / angle_.length(), -angle_.lower / angle_.length());
+    glUniform2f(glGetUniformLocation(renderProgram_, "rangeScaling"),
+                1.0f / range_.length(), -range_.lower / range_.length());
     glUniform2f(glGetUniformLocation(renderProgram_, "angleBounds"),
                 angle_.lower, angle_.upper);
     glUniform2f(glGetUniformLocation(renderProgram_, "rangeBounds"),
