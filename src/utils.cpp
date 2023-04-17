@@ -7,7 +7,8 @@ namespace rtac { namespace display {
 GLuint compile_shader(GLenum shaderType, const std::string& source)
 {
     GLuint shaderId = glCreateShader(shaderType);
-    check_gl("compile_shader, ShaderId creation failure.");
+    //check_gl("compile_shader, ShaderId creation failure.");
+    GL_CHECK_LAST();
 
     if(shaderId == 0)
         throw std::runtime_error("could not create shader");
@@ -15,7 +16,8 @@ GLuint compile_shader(GLenum shaderType, const std::string& source)
     const GLchar* sourceStr = static_cast<const GLchar*>(source.c_str());
     glShaderSource(shaderId, 1, &sourceStr, 0);
     glCompileShader(shaderId);
-    check_gl("Shader compilation failure");
+    //check_gl("Shader compilation failure");
+    GL_CHECK_LAST();
 
     GLint compilationStatus(0);
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &compilationStatus);
@@ -56,7 +58,8 @@ GLuint create_render_program(const std::string& vertexShaderSource,
     GLuint fragmentShader = compile_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 
     GLuint programId = glCreateProgram();
-    check_gl("Program creation failure.");
+    //check_gl("Program creation failure.");
+    GL_CHECK_LAST();
 
     if(programId == 0)
         throw std::runtime_error("Could not create program.");
@@ -93,7 +96,8 @@ GLuint create_compute_program(const std::string& computeShaderSource)
     GLuint computeShader = compile_shader(GL_COMPUTE_SHADER, computeShaderSource);
 
     GLuint programId = glCreateProgram();
-    check_gl("Program creation failure.");
+    //check_gl("Program creation failure.");
+    GL_CHECK_LAST();
 
     if(programId == 0)
         throw std::runtime_error("Could not create program.");
@@ -125,7 +129,8 @@ GLuint create_compute_program(const std::string& computeShaderSource)
 GLuint create_compute_program(const std::vector<std::string>& computeShaderSources)
 {
     GLuint programId = glCreateProgram();
-    check_gl("Program creation failure.");
+    //check_gl("Program creation failure.");
+    GL_CHECK_LAST();
 
     if(programId == 0)
         throw std::runtime_error("Could not create program.");

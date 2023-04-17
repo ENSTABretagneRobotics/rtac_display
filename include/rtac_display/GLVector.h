@@ -486,9 +486,11 @@ T* GLVector<T>::do_map()
         throw std::runtime_error("GLVector already mapped. Cannot map a second time.");
 
     glBindBuffer(GL_ARRAY_BUFFER, bufferId_);
-    check_gl("GLVector : could not bind buffer for mapping.");
+    //check_gl("GLVector : could not bind buffer for mapping.");
+    GL_CHECK_LAST();
     mappedPtr_ = static_cast<T*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE));
-    check_gl("GLVector : could not map.");
+    //check_gl("GLVector : could not map.");
+    GL_CHECK_LAST();
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     return mappedPtr_;
 }
@@ -510,9 +512,11 @@ T* GLVector<T>::do_map_write_only()
         throw std::runtime_error("GLVector already mapped. Cannot map a second time.");
 
     glBindBuffer(GL_ARRAY_BUFFER, bufferId_);
-    check_gl("GLVector : could not bind buffer for mapping.");
+    //check_gl("GLVector : could not bind buffer for mapping.");
+    GL_CHECK_LAST();
     mappedPtr_ = static_cast<T*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-    check_gl("GLVector : could not map.");
+    //check_gl("GLVector : could not map.");
+    GL_CHECK_LAST();
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     return mappedPtr_;
 }
@@ -533,9 +537,11 @@ const T* GLVector<T>::do_map() const
         throw std::runtime_error("GLVector already mapped. Cannot map a second time.");
 
     glBindBuffer(GL_ARRAY_BUFFER, bufferId_);
-    check_gl("GLVector : could not bind buffer for mapping.");
+    //check_gl("GLVector : could not bind buffer for mapping.");
+    GL_CHECK_LAST();
     mappedPtr_ = static_cast<T*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
-    check_gl("GLVector : could not map.");
+    //check_gl("GLVector : could not map.");
+    GL_CHECK_LAST();
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     return mappedPtr_;
 }
@@ -603,9 +609,11 @@ void GLVector<T>::unmap() const
             "GLVector not mapped. Cannot unmap (this error is sign of a hidden issue)");
 
     glBindBuffer(GL_ARRAY_BUFFER, bufferId_);
-    check_gl("GLVector : could not bind buffer for unmapping.");
+    //check_gl("GLVector : could not bind buffer for unmapping.");
+    GL_CHECK_LAST();
     glUnmapBuffer(GL_ARRAY_BUFFER);
-    check_gl("GLVector : could not  unmap.");
+    //check_gl("GLVector : could not  unmap.");
+    GL_CHECK_LAST();
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     mappedPtr_ = nullptr;
 }
