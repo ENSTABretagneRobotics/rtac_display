@@ -85,7 +85,7 @@ void DrawingSurface::add_render_item(const Renderer::ConstPtr& renderer,
  * Update all handled views with the current display size and draw all the
  * handled renderers after clearing the display area.
  */
-void DrawingSurface::draw(const View::ConstPtr& view)
+void DrawingSurface::draw(const View::ConstPtr& view) const
 {
     Shape shape = view->screen_size();
     for(auto view : views_) {

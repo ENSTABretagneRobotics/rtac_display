@@ -60,8 +60,8 @@ class DrawingSurface : public Renderer
     
     Point2 viewportOrigin_;
     
-    RenderItems renderItems_;
-    TextItems   textItems_;
+    mutable RenderItems renderItems_;
+    mutable TextItems   textItems_;
 
     Views        views_;
     Color::RGBAf clearColor_;
@@ -82,7 +82,7 @@ class DrawingSurface : public Renderer
                          const View::Ptr& view);
 
     virtual void draw() { this->draw(View::New()); }
-    virtual void draw(const View::ConstPtr& view);
+    virtual void draw(const View::ConstPtr& view) const override;
 
     void set_viewport_origin(const Point2& origin);
     void set_viewport_size(const Shape& size);
