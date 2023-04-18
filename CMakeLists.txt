@@ -30,6 +30,7 @@ if(NOT TARGET Freetype::Freetype)
 endif()
 
 list(APPEND rtac_display_headers
+    include/rtac_display/common.h
     include/rtac_display/utils.h
     include/rtac_display/GLState.h
     include/rtac_display/GLContext.h
