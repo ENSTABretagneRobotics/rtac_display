@@ -6,6 +6,7 @@
 #include <cmath>
 
 #include <rtac_base/types/Bounds.h>
+#include <rtac_base/types/Complex.h>
 #include <rtac_base/types/Rectangle.h>
 #include <rtac_base/interpolation.h>
 #include <rtac_base/types/SonarPing2D.h>
@@ -104,6 +105,8 @@ class FanRenderer : public Renderer
 
     template <typename T, template<typename>class VectorT>
     void set_ping(const rtac::Ping2D<T,VectorT>& ping);
+    template <typename T, template<typename>class VectorT>
+    void set_ping(const rtac::Ping2D<Complex<T>,VectorT>& ping);
     template <template<typename>class VectorT>
     void set_bearings(const VectorT<float>& bearings);
 };
@@ -132,6 +135,24 @@ void FanRenderer::set_ping(const rtac::Ping2D<T,VectorT>& ping)
     
     data_->set_image({ping.width(), ping.height()},
                      GLVector<T>(ping.ping_data_container()));
+}
+
+template <typename T, template<typename>class VectorT>
+void FanRenderer::set_ping(const rtac::Ping2D<Complex<T>,VectorT>& ping)
+{
+    this->set_bearings(GLVector<float>(ping.bearings()));
+    this->set_range(ping.range_bounds());
+
+    HostVector<Complex<T>> pingData(ping.ping_data_container());
+    GLVector<float> tmp(pingData.size());
+    {
+        auto ptr = tmp.map();
+        for(unsigned int i = 0; i < pingData.size(); i++) {
+            ptr[i] = abs(pingData[i]);
+        }
+    }
+    
+    this->set_data({ping.width(), ping.height()}, tmp);
 }
 
 
