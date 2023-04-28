@@ -21,6 +21,11 @@
 #include <rtac_display/Colormap.h>
 #include <rtac_display/colormaps/Viridis.h>
 
+#ifdef RTAC_CUDA_ENABLED
+#include <rtac_base/cuda/CudaVector.h>
+#include <rtac_base/cuda/vector_utils.h>
+#endif //RTAC_CUDA_ENABLED
+
 namespace rtac { namespace display {
 
 class FanRenderer : public Renderer
@@ -109,6 +114,10 @@ class FanRenderer : public Renderer
     void set_ping(const rtac::Ping2D<Complex<T>,VectorT>& ping);
     template <template<typename>class VectorT>
     void set_bearings(const VectorT<float>& bearings);
+    
+    #ifdef RTAC_CUDA_ENABLED
+    void set_ping(const rtac::Ping2D<Complex<float>,cuda::CudaVector>& ping);
+    #endif //RTAC_CUDA_ENABLED
 };
 
 template <typename T, template<typename>class VectorT>
@@ -155,6 +164,19 @@ void FanRenderer::set_ping(const rtac::Ping2D<Complex<T>,VectorT>& ping)
     this->set_data({ping.width(), ping.height()}, tmp);
 }
 
+#ifdef RTAC_CUDA_ENABLED
+void FanRenderer::set_ping(const rtac::Ping2D<Complex<float>,cuda::CudaVector>& ping)
+{
+    using namespace rtac::cuda;
+
+    this->set_bearings(GLVector<float>(ping.bearings()));
+    this->set_range(ping.range_bounds());
+
+    CudaVector<float> tmp = abs(ping.ping_data_container());
+    tmp = log(tmp += 1.0e-2*max(tmp));
+    this->set_data({ping.width(), ping.height()}, GLVector<float>(tmp));
+}
+#endif //RTAC_CUDA_ENABLED
 
 }; //namespace display
 }; //namespace rtac
