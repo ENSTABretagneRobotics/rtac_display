@@ -136,12 +136,12 @@ Display::Shape Display::window_shape() const
  */
 int Display::should_close() const
 {
-    using namespace std;
-    glfwPollEvents();
-    while(pauseHandler_->is_paused()) {
-        glfwPollEvents();
-        std::this_thread::sleep_for(100ms);
-    }
+    //using namespace std;
+    //glfwPollEvents();
+    //while(pauseHandler_->is_paused()) {
+    //    glfwPollEvents();
+    //    std::this_thread::sleep_for(100ms);
+    //}
     return glfwWindowShouldClose(window_.get()) > 0;
 }
 
@@ -160,7 +160,7 @@ int Display::should_close() const
 int Display::is_drawing()
 {
     this->draw();
-    glfwPollEvents();
+    //glfwPollEvents();
     return glfwWindowShouldClose(window_.get()) == 0;
 }
 
@@ -185,6 +185,13 @@ void Display::wait_for_close() const
  */
 void Display::draw()
 {
+    using namespace std;
+    glfwPollEvents();
+    while(pauseHandler_->is_paused()) {
+        glfwPollEvents();
+        std::this_thread::sleep_for(100ms);
+    }
+
     //glfwMakeContextCurrent(window_.get());
     this->grab_context();
     
