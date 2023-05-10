@@ -165,7 +165,7 @@ void FanRenderer::set_ping(const rtac::Ping2D<Complex<T>,VectorT>& ping)
 }
 
 #ifdef RTAC_CUDA_ENABLED
-void FanRenderer::set_ping(const rtac::Ping2D<Complex<float>,cuda::CudaVector>& ping)
+inline void FanRenderer::set_ping(const rtac::Ping2D<Complex<float>,cuda::CudaVector>& ping)
 {
     using namespace rtac::cuda;
 
